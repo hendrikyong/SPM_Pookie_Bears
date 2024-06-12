@@ -77,7 +77,7 @@ function generateBuildChoices(buildingClasses){
 }
 
 // Check whether the map is completely filled
-function checkIfMapIsFull(){
+function checkIfMapIsFull(map){
     for (const row of map){
         for (const element of row){
             if (element === undefined){
@@ -90,11 +90,33 @@ function checkIfMapIsFull(){
     return false;
 }
 
-while (checkIfMapIsFull()){
+// Print map function
+function printMap(map){
+    let rowNo = 1;
+    let rowHeaders = "   A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T";
+    let rowDivider = "======================================================================================================"
+    console.log(rowHeaders);
+    for (const row of map){
+        let rowStatement = "||";
+        for (const element of row){
+            if (element === undefined){
+                rowStatement += " X ||";
+            }
+            else{
+                rowStatement += ` element.character ||`;
+            }
+        }
+        console.log(rowStatement += `   ${rowNo}\n${rowDivider}`)
+        rowNo += 1;
+    }
+}
+
+// Main Program
+while (checkIfMapIsFull(map)){
     console.log("Aracade Mode");
     console.log(`Move: ${moves}`);
-    console.log(map);
-
+    
+    printMap(map);
 
     moves += 1;
 }
