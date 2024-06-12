@@ -225,6 +225,7 @@ function isArrayInArray(userInputCoords, availableCoords) {
 
 // ================== MAIN PROGRAM ===================
 
+// Loops until every square is occupied
 while (checkIfMapIsFull(map)){
     // Display map and moves
     console.log("Aracade Mode");
@@ -301,4 +302,8 @@ while (checkIfMapIsFull(map)){
     }
     moves += 1;
 }
+
+// When game ends
+console.log("================= THE GAME HAS ENDED =================)");
+console.log(`Points obtained: ${0}`);
 
