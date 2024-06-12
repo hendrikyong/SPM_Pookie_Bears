@@ -76,9 +76,21 @@ function generateBuildChoices(buildingClasses){
     return randomBuildings;
 }
 
+// Check whether the map is completely filled
+function checkIfMapIsFull(){
+    for (const row of map){
+        for (const element of row){
+            if (element === undefined){
+                // Return true if there is an empty value
+                return true;
+            }
+        }
+    }
+    // Return false when the map is completely filled
+    return false;
+}
 
-
-while (moves < 401){
+while (checkIfMapIsFull()){
     console.log("Aracade Mode");
     console.log(`Move: ${moves}`);
     console.log(map);
