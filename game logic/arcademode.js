@@ -1,4 +1,5 @@
 // ================ INITIATED CLASSES ================
+// These to be placed in a js file that can be accessed by other js files
 
 class Building {
     coordX;
@@ -70,7 +71,8 @@ class Industry extends Building {
 
 // ===================================================
 
-// ================== MAIN PROGRAM ===================
+// ==================== FUNCTIONS ====================
+// These to be placed in a js file that can be accessed by other js files
 
 const ps = require("prompt-sync");
 const prompt = ps();
@@ -167,7 +169,7 @@ function printMap(map){
 }
 
 // Validates user input and returns unique message
-function dataValidator(min, max){
+function integerValidator(min, max){
     let userInput = 0;
     while (true){
         try {
@@ -186,8 +188,24 @@ function dataValidator(min, max){
     } 
 }
 
+// Validates userInput for column 
+function columnValidator(){
+    let userInput;
+    const stringOfLetters = "ABCDEFGHIJKLMNOPQRST";
+
+    while (true){
+        userInput = prompt(`Enter column: `)
+        if (userInput.length === 1 && stringOfLetters.includes(userInput)){
+            return userInput;
+        }
+        else{
+            console.log("Input is not valid, ensure that an capitalised letter is inputted!");
+        }
+    }
+}
+
+// Checks whether userInputCoords matches one of availableCoords' coords
 function isArrayInArray(userInputCoords, availableCoords) {
-    // Loop through each inner array in availableCoords
     for (const array of availableCoords) {
         let isMatch = true;
         for (let i = 0; i < 2; i++) {
@@ -202,55 +220,82 @@ function isArrayInArray(userInputCoords, availableCoords) {
     }
     return false;
 }
-// Main Program
+
+// ===================================================
+
+// ================== MAIN PROGRAM ===================
 
 while (checkIfMapIsFull(map)){
+    // Display map and moves
     console.log("Aracade Mode");
     console.log(`Move: ${moves}`);
-    
     let availableCoords = printMap(map);
-    let buildingChoices = generateBuildChoices(buildingClasses);
-    console.log(`Buidling choices: \n1. ${buildingChoices[0].type}       2.${buildingChoices[1].type}`);
-    let userBuildChoice = dataValidator(1,2);
 
+    // User decide to demolish or build a building
+    console.log("Build or Demolish? 1 and 2 respectively.")
+    let buildOrDemolish = integerValidator(1,2);
 
-
-    let buildingToBuild = buildingChoices[userBuildChoice-1];
-
-    // Validates whether coords inputted is available for moves 2 and later
-    while (true){
-
-        //Coords X validator
-        let coordsX;
+    // User decide to demolish
+    if (buildOrDemolish === 2){
         while (true){
-            const stringOfLetters = "ABCDEFGHIJKLMNOPQRST";
-            coordsX = prompt("Enter column: ");
-            if (coordsX.length === 1 && stringOfLetters.includes(coordsX)){
-                break;
+            console.log("Enter X Coordinates");
+            let coordsX = columnValidator();
+            let newCoordsX = coordsX.charCodeAt(0)-65; // Coverts the alphabet to an index
+            
+            console.log("Enter Y Coordinates");
+            let coordsY = integerValidator(1,19);
+            if (map[coordsY][newCoordsX] === undefined){
+                console.log("There is no building to be demolished!");
             }
             else{
-                console.log("Input is not valid, ensure that an capitalised letter is inputted!");
+                console.log("Are you sure? 0 to confirm demolish and 1 to cancel.")
+                let userInput = integerValidator(0,1);
+                if (userInput === 0){
+                    map[coordsY][newCoordsX] = undefined;
+                    break;
+                }
+                else{
+                    break;
+                }
             }
         }
-        let coordsY = dataValidator(0,19);
+    }
+    // User decide to build
+    else {
+        let buildingChoices = generateBuildChoices(buildingClasses);
+        console.log(`Buidling choices: \n1. ${buildingChoices[0].type}       2.${buildingChoices[1].type}`);
 
-        let newCoordsX = coordsX.charCodeAt(0)-65;
-        if (moves === 1){
-            buildingToBuild.addCoord(newCoordsX, coordsY);
-            map[coordsY][newCoordsX] = buildingToBuild;
-            break;
-        }
-        else {
-            let userInputCoords = [newCoordsX, coordsY];
-            if (map[coordsY][newCoordsX] !== undefined){
-                console.log("This square already has a building!");
-            }
-            else if (!isArrayInArray(userInputCoords, availableCoords)){
-                console.log("This square is not available for building!");
-            }
-            else {
+        // User decide which building to build
+        let userBuildChoice = integerValidator(1,2);
+        let buildingToBuild = buildingChoices[userBuildChoice-1];
+
+        // Validates whether coords inputted is available for moves 2 and later
+        while (true){
+            console.log("Enter X Coordinates");
+            let coordsX = columnValidator();
+            let newCoordsX = coordsX.charCodeAt(0)-65; // Coverts the alphabet to an index
+
+            console.log("Enter Y Coordinates");
+            let coordsY = integerValidator(0,19);
+            // Building is simply built on first turn with 0 validation
+            if (moves === 1){
+                buildingToBuild.addCoord(newCoordsX, coordsY);
                 map[coordsY][newCoordsX] = buildingToBuild;
                 break;
+            }
+            // Moves 1 onwards there is validation 
+            else {
+                let userInputCoords = [newCoordsX, coordsY];
+                if (map[coordsY][newCoordsX] !== undefined){
+                    console.log("This square already has a building!");
+                }
+                else if (!isArrayInArray(userInputCoords, availableCoords)){
+                    console.log("This square is not available for building!");
+                }
+                else {
+                    map[coordsY][newCoordsX] = buildingToBuild;
+                    break;
+                }
             }
         }
     }
