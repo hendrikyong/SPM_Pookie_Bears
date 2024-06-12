@@ -238,17 +238,17 @@ while (checkIfMapIsFull(map)){
     // User decide to demolish
     if (buildOrDemolish === 2){
         while (true){
-            console.log("Enter X Coordinates");
+            console.log("\nEnter X Coordinates");
             let coordsX = columnValidator();
             let newCoordsX = coordsX.charCodeAt(0)-65; // Coverts the alphabet to an index
             
-            console.log("Enter Y Coordinates");
+            console.log("\nEnter Y Coordinates");
             let coordsY = integerValidator(1,19);
             if (map[coordsY][newCoordsX] === undefined){
                 console.log("There is no building to be demolished!");
             }
             else{
-                console.log("Are you sure? 0 to confirm demolish and 1 to cancel.")
+                console.log("\nAre you sure? 0 to confirm demolish and 1 to cancel.")
                 let userInput = integerValidator(0,1);
                 if (userInput === 0){
                     map[coordsY][newCoordsX] = undefined;
@@ -263,7 +263,7 @@ while (checkIfMapIsFull(map)){
     // User decide to build
     else {
         let buildingChoices = generateBuildChoices(buildingClasses);
-        console.log(`Buidling choices: \n1. ${buildingChoices[0].type}       2.${buildingChoices[1].type}`);
+        console.log(`\nBuidling choices: \n1. ${buildingChoices[0].type}       2.${buildingChoices[1].type}`);
 
         // User decide which building to build
         let userBuildChoice = integerValidator(1,2);
@@ -271,11 +271,11 @@ while (checkIfMapIsFull(map)){
 
         // Validates whether coords inputted is available for moves 2 and later
         while (true){
-            console.log("Enter X Coordinates");
+            console.log("\nEnter X Coordinates");
             let coordsX = columnValidator();
             let newCoordsX = coordsX.charCodeAt(0)-65; // Coverts the alphabet to an index
 
-            console.log("Enter Y Coordinates");
+            console.log("\nEnter Y Coordinates");
             let coordsY = integerValidator(0,19);
             // Building is simply built on first turn with 0 validation
             if (moves === 1){
