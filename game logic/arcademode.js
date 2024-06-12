@@ -7,6 +7,36 @@ class Building {
         this.type = type;
         this.type = character;
     }
+    checkSurroundingSpace(){
+        let arrayOfSpace = [];
+
+        // Checking of XCoords to append corresponding row coords
+        if (this.coordY === 0){
+            arrayOfSpace.push([this.coordX + 1, this.coordY]);
+        }
+        else if (this.coordY === 19){
+            arrayOfSpace.push([this.coordX - 1, this.coordY]);
+        }
+        else{
+            arrayOfSpace.push([this.coordX + 1, this.coordY]);
+            arrayOfSpace.push([this.coordX - 1, this.coordY]);
+        }
+
+        // Checking of YCoords to append corresponding col coords
+        if (this.coordY === 0){
+            arrayOfSpace.push([this.coordX, this.coordY + 1]);
+        }
+        else if (this.coordY === 19){
+            arrayOfSpace.push([this.coordX, this.coordY - 1]);
+        }
+        else{
+            arrayOfSpace.push([this.coordX, this.coordY + 1]);
+            arrayOfSpace.push([this.coordX, this.coordY - 1]);
+        }
+
+        return arrayOfSpace;
+    }
+
     pointCalculation() {
         return new Error("Calculation has not been implemented!");
     }
@@ -107,9 +137,10 @@ function checkIfMapIsFull(map){
     return false;
 }
 
-// Print map function
+// Print map function and checks for available spaces
 function printMap(map){
-    let rowNo = 1;
+    let arrayOfCoords = [];
+    let rowNo = 0;
     let rowHeaders = "   A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T";
     let rowDivider = "======================================================================================================"
     console.log(`${rowHeaders}\n${rowDivider}`);
@@ -121,34 +152,108 @@ function printMap(map){
             }
             else{
                 rowStatement += ` ${element.character} ||`;
+                let tempArray = element.checkSurroundingSpace();
+                for (let coord of tempArray){
+                    if (!arrayOfCoords.includes(coord)){
+                        arrayOfCoords.push(coord);
+                    }
+                }
             }
         }
         console.log(rowStatement += `   ${rowNo}\n${rowDivider}`)
         rowNo += 1;
-    }
+        }
+    return arrayOfCoords;
 }
 
+// Validates user input and returns unique message
+function dataValidator(min, max){
+    let userInput = 0;
+    while (true){
+        try {
+            userInput = prompt(`Please enter an option within ${min} - ${max}: `)
+            userInput = Number(userInput);
+            if (userInput >= min && userInput <= max){
+                return userInput;
+            }
+            else{ 
+                console.log("Please ensure that number entered is within range.");
+            }
+        }
+        catch (err){
+            console.error(err);
+        }
+    } 
+}
+
+function isArrayInArray(userInputCoords, availableCoords) {
+    // Loop through each inner array in availableCoords
+    for (const array of availableCoords) {
+        let isMatch = true;
+        for (let i = 0; i < 2; i++) {
+            if (userInputCoords[i] !== array[i]) {
+            isMatch = false;
+            break;
+            }
+        }
+        if (isMatch) {
+            return true
+        }
+    }
+    return false;
+}
 // Main Program
 
 while (checkIfMapIsFull(map)){
     console.log("Aracade Mode");
     console.log(`Move: ${moves}`);
     
-    printMap(map);
+    let availableCoords = printMap(map);
     let buildingChoices = generateBuildChoices(buildingClasses);
-    if (moves === 1){
-        console.log(`Buidling choices: \n1. ${buildingChoices[0].type}       2.${buildingChoices[1].type}`);
-        let userBuildChoice = prompt("Enter no. of buiding to build: ")
-        let buildingToBuild = buildingChoices[userBuildChoice-1];
-        let coordsX = prompt("Enter row: ");
-        let coordsY = prompt("Enter column: ");
-        coordsX = coordsX.charCodeAt(0)-65;
-        console.log(coordsX);
-        buildingToBuild.addCoord(coordsX, coordsY-1);
-        map[coordsX][coordsY-1] = buildingToBuild;
-    }
-    else {
+    console.log(`Buidling choices: \n1. ${buildingChoices[0].type}       2.${buildingChoices[1].type}`);
+    let userBuildChoice = dataValidator(1,2);
 
+
+
+    let buildingToBuild = buildingChoices[userBuildChoice-1];
+
+    // Validates whether coords inputted is available for moves 2 and later
+    while (true){
+
+        //Coords X validator
+        let coordsX;
+        while (true){
+            const stringOfLetters = "ABCDEFGHIJKLMNOPQRST";
+            coordsX = prompt("Enter column: ");
+            if (coordsX.length === 1 && stringOfLetters.includes(coordsX)){
+                break;
+            }
+            else{
+                console.log("Input is not valid, ensure that an capitalised letter is inputted!");
+            }
+        }
+        let coordsY = dataValidator(0,19);
+
+        let newCoordsX = coordsX.charCodeAt(0)-65;
+        if (moves === 1){
+            buildingToBuild.addCoord(newCoordsX, coordsY);
+            map[coordsY][newCoordsX] = buildingToBuild;
+            break;
+        }
+        else {
+            let userInputCoords = [newCoordsX, coordsY];
+            if (map[coordsY][newCoordsX] !== undefined){
+                console.log("This square already has a building!");
+            }
+            else if (!isArrayInArray(userInputCoords, availableCoords)){
+                console.log("This square is not available for building!");
+            }
+            else {
+                map[coordsY][newCoordsX] = buildingToBuild;
+                break;
+            }
+        }
     }
     moves += 1;
 }
+
