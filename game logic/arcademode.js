@@ -39,7 +39,7 @@ class Building {
     }
 
     pointCalculation() {
-        return new Error("Calculation has not been implemented!");
+        return 0;
     }
 
     addCoord(coordX, coordY){
@@ -51,6 +51,22 @@ class Building {
 class Residential extends Building {
     type = "Residential";
     character = "R";
+
+    pointCalculation(map, spacesToCheck){
+        let score = 0;
+        for (const space of spacesToCheck){
+            if (map[space[1]][space[0]] !== undefined){
+                let adjBuilding = map[space[1]][space[0]];
+                if (adjBuilding.type === "Industry" || adjBuilding.type === "Comercial" || adjBuilding.type === "Residential"){
+                    score += 1;
+                }
+                else if (adjBuilding.type === "Park"){
+                    score += 2;
+                }
+            }
+        }
+        return score;
+    }
 }
 class Commercial extends Building {
     type = "Commercial";
@@ -76,30 +92,6 @@ class Industry extends Building {
 
 const ps = require("prompt-sync");
 const prompt = ps();
-
-
-const buildingClasses = [ Residential, Park, Road, Industry, Commercial ];
-let moves = 1;
-let map =  [[,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,],
-            [,,,,,,,,,,,,,,,,,,,,]];
 
 // Generate two unique buildings
 function generateBuildChoices(buildingClasses){
@@ -139,8 +131,12 @@ function checkIfMapIsFull(map){
     return false;
 }
 
-// Print map function and checks for available spaces
+// Print map function and perform operations for the following: 
+// 1. Check for available spaces 
+// 2. Score calculation 
+// Return a dictionary 
 function printMap(map){
+    let totalPoints = 0
     let arrayOfCoords = [];
     let rowNo = 0;
     let rowHeaders = "   A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T";
@@ -148,13 +144,16 @@ function printMap(map){
     console.log(`${rowHeaders}\n${rowDivider}`);
     for (const row of map){
         let rowStatement = "||";
+        // Checks for buildings in squares
         for (const element of row){
             if (element === undefined){
                 rowStatement += " X ||";
             }
             else{
+                // Execute operations when there is a building
                 rowStatement += ` ${element.character} ||`;
                 let tempArray = element.checkSurroundingSpace();
+                totalPoints += element.pointCalculation(map, tempArray);
                 for (let coord of tempArray){
                     if (!arrayOfCoords.includes(coord)){
                         arrayOfCoords.push(coord);
@@ -164,8 +163,12 @@ function printMap(map){
         }
         console.log(rowStatement += `   ${rowNo}\n${rowDivider}`)
         rowNo += 1;
-        }
-    return arrayOfCoords;
+    }
+    let dict = {
+        "totalPoints" : totalPoints,
+        "availableCoords" : arrayOfCoords
+    }
+    return dict;
 }
 
 // Validates user input and returns unique message
@@ -225,15 +228,42 @@ function isArrayInArray(userInputCoords, availableCoords) {
 
 // ================== MAIN PROGRAM ===================
 
+const buildingClasses = [ Residential, Park, Road, Industry, Commercial ];
+let moves = 1;
+let map =  [[,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,]];
+let totalPoints = 0;
+
 // Loops until every square is occupied
 while (checkIfMapIsFull(map)){
     // Display map and moves
-    console.log("Aracade Mode");
-    console.log(`Move: ${moves}`);
-    let availableCoords = printMap(map);
-
+    let dict = printMap(map);
+    availableCoords = dict["availableCoords"];
+    
+    console.log("\n//======= Aracade Mode =======//");
+    console.log(`           Move: ${moves}`);
+    console.log(`           Score: ${dict["totalPoints"]}`);
+    console.log("//============================//");
     // User decide to demolish or build a building
-    console.log("Build or Demolish? 1 and 2 respectively.")
+    console.log("\nBuild or Demolish? 1 and 2 respectively.")
     let buildOrDemolish = integerValidator(1,2);
 
     // User decide to demolish
@@ -302,6 +332,7 @@ while (checkIfMapIsFull(map)){
     }
     moves += 1;
 }
+
 
 // When game ends
 console.log("================= THE GAME HAS ENDED =================)");
