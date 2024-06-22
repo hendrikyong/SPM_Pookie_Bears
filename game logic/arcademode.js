@@ -71,18 +71,82 @@ class Residential extends Building {
 class Commercial extends Building {
     type = "Commercial";
     character = "C";
+    roundsAlive = 0;
+
+    pointCalculation(map, spacesToCheck){
+        let score = 0;
+        score += this.roundsAlive;
+        for (const space of spacesToCheck){
+            if (map[space[1]][space[0]] !== undefined){
+                let adjBuilding = map[space[1]][space[0]];
+                if (adjBuilding.type === "Residential" || adjBuilding.type === "Commercial"){
+                    score += 1;
+                }
+            }
+        }
+        return score;
+    }
+
+    addLife(){
+        this.roundsAlive += 1;
+    }
 }
 class Park extends Building {
     type = "Park";
     character = "O";
+
+    pointCalculation(map, spacesToCheck){
+        let score = 0;
+        for (const space of spacesToCheck){
+            if (map[space[1]][space[0]] !== undefined){
+                let adjBuilding = map[space[1]][space[0]];
+                if (adjBuilding.type === "Park"){
+                    score += 1;
+                }
+            }
+        }
+        return score;
+    }
 }
 class Road extends Building {
     type = "Road";
     character = "*";
+
+    pointCalculation(map, spacesToCheck){
+        let score = 0;
+        for (const space of spacesToCheck){
+            if (map[space[1]][space[0]] !== undefined){
+                let adjBuilding = map[space[1]][space[0]];
+                if (adjBuilding.type === "Road"){
+                    score += 1;
+                }
+            }
+        }
+        return score;
+    }
 }
 class Industry extends Building {
     type = "Industry";
     character = "I";
+    roundsAlive = 0;
+
+    pointCalculation(map, spacesToCheck){
+        let score = 0;
+        score += this.roundsAlive;
+        for (const space of spacesToCheck){
+            if (map[space[1]][space[0]] !== undefined){
+                let adjBuilding = map[space[1]][space[0]];
+                if (adjBuilding.type === "Residential"){
+                    score += 1;
+                }
+            }
+        }
+        return score;
+    }
+
+    addLife(){
+        this.roundsAlive += 1;
+    }
 }
 
 // ===================================================
@@ -153,6 +217,10 @@ function printMap(map){
                 // Execute operations when there is a building
                 rowStatement += ` ${element.character} ||`;
                 let tempArray = element.checkSurroundingSpace();
+                // Add rounds alive for Industry type
+                if (element.type === "Industry"){
+                    element.addLife();
+                }
                 totalPoints += element.pointCalculation(map, tempArray);
                 for (let coord of tempArray){
                     if (!arrayOfCoords.includes(coord)){
@@ -324,6 +392,7 @@ while (checkIfMapIsFull(map)){
                     console.log("This square is not available for building!");
                 }
                 else {
+                    buildingToBuild.addCoord(newCoordsX, coordsY);
                     map[coordsY][newCoordsX] = buildingToBuild;
                     break;
                 }
