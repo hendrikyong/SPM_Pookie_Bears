@@ -2,12 +2,14 @@
 // These to be placed in a js file that can be accessed by other js files
 
 class Building {
+    id;
     coordX;
     coordY;
-    constructor(type, character){
-        this.type = type;
-        this.type = character;
+    surroundingBuildings = [undefined, undefined, undefined, undefined];
+    constructor(id){
+        this.id = id;
     }
+    // Returns an array of coords to check
     checkSurroundingSpace(){
         let arrayOfSpace = [];
 
@@ -38,13 +40,39 @@ class Building {
         return arrayOfSpace;
     }
 
-    pointCalculation() {
+    // Returns 0 if calculateScoreAndCoins is not implemented in respective classes
+    // Else return dict with keys : score, coins (optional)
+    calculateScoreAndCoins() {
         return 0;
     }
 
+    // Adds coords of building to each object for checkSuroundingSpace()
     addCoord(coordX, coordY){
         this.coordX = coordX;
         this.coordY = coordY;
+    }
+
+    // Return position index.
+    // 0 = North; 1 = South; 2 = East; 3 = West (N, S, E, W)
+    checkPosition(space){
+        // Position: S
+        let position;
+        if (space[1] > this.coordY && space[0] === this.coordX){
+            position = 1;
+        }
+        // Position: N
+        else if (space[1] < this.coordY && space[0] === this.coordX){
+            position = 0;
+        }
+        // Position: W
+        else if (space[1] === this.coordY && space[0] > this.coordX){
+            position = 2;
+        }
+        //Position: E
+        else if (space[1] === this.coordY && space[0] < this.coordX){
+            position = 3;
+        }
+        return position;
     }
 }
 
@@ -52,100 +80,157 @@ class Residential extends Building {
     type = "Residential";
     character = "R";
 
-    pointCalculation(map, spacesToCheck){
-        let score = 0;
+    // Return dict with key: "score"
+    calculateScoreAndCoins(map, spacesToCheck){
+        let scoreEarned = 0;
         for (const space of spacesToCheck){
+            let position = this.checkPosition(space);
+            // If space is a building
             if (map[space[1]][space[0]] !== undefined){
                 let adjBuilding = map[space[1]][space[0]];
-                if (adjBuilding.type === "Industry" || adjBuilding.type === "Comercial" || adjBuilding.type === "Residential"){
-                    score += 1;
+                // Checks if buildings next to it (East & West) is Industry
+                if (adjBuilding.type === "Industry" && (position === 3 || position === 4) && this.surroundingBuildings[position] === undefined){
+                    scoreEarned += 1;
                 }
-                else if (adjBuilding.type === "Park"){
-                    score += 2;
+                // Checks if adjacent building is Residential or Commercial
+                else if ((adjBuilding.type === "Residential" || adjBuilding.type === "Commercial") && this.surroundingBuildings[position] === undefined){
+                    scoreEarned += 1;
+                }
+                // Checks if adjacent building is Park
+                else if (adjBuilding.type === "Park" && this.surroundingBuildings[position] === undefined){
+                    scoreEarned += 2;
+                }
+                this.surroundingBuildings[position] = adjBuilding;
+            }
+            // If space is empty
+            else {
+                // Checks if its undefined space remains undefined under surroundingBuildings.
+                // Used when one of the surrounding building is demolised the previous turn  
+                if (this.surroundingBuildings[position] !== undefined){
+                    this.surroundingBuildings[position] = undefined;
                 }
             }
         }
-        return score;
+        return {"score" : scoreEarned};
+    }
+}
+class Industry extends Building {
+    type = "Industry";
+    character = "I";
+    defaultScore = 1;
+
+    // Returns dict with keys: "score" and "coins"
+    calculateScoreAndCoins(map, spacesToCheck){
+        let scoreEarned = 0;
+        let coins = 0;
+        for (const space of spacesToCheck){
+            let position = this.checkPosition(space);
+            // If space is a building
+            if (map[space[1]][space[0]] !== undefined){
+                let adjBuilding = map[space[1]][space[0]];
+                this.surroundingBuildings[position] = adjBuilding;
+            }
+            // If space is empty
+            else { 
+                if (this.surroundingBuildings[position] !== undefined){
+                    this.surroundingBuildings[position] = undefined;
+                }
+            }
+        }
+        // Point is added for existing
+        if (this.defaultScore === 1){
+            scoreEarned += this.defaultScore;
+            this.defaultScore = 0;
+        }
+
+        coins = this.surroundingBuildings.filter(building => building?.type === "Residential").length;
+        return {"score" : scoreEarned, "coins" : coins};
     }
 }
 class Commercial extends Building {
     type = "Commercial";
     character = "C";
-    roundsAlive = 0;
 
-    pointCalculation(map, spacesToCheck){
-        let score = 0;
-        score += this.roundsAlive;
+    //Returns objects with keys: "score" and "coins"
+    calculateScoreAndCoins(map, spacesToCheck){
+        let scoreEarned = 0;
+        let coins = 0;
         for (const space of spacesToCheck){
+            let position = this.checkPosition(space);
+            // If space is a building
             if (map[space[1]][space[0]] !== undefined){
                 let adjBuilding = map[space[1]][space[0]];
-                if (adjBuilding.type === "Residential" || adjBuilding.type === "Commercial"){
-                    score += 1;
+                // Checks if adjacent buildings are Residential
+                if (adjBuilding.type === "Commercial" && this.surroundingBuildings[position] === undefined){
+                    scoreEarned += 1;
+                }
+                this.surroundingBuildings[position] = adjBuilding;
+            }
+            // If space is empty
+            else { 
+                if (this.surroundingBuildings[position] !== undefined){
+                    this.surroundingBuildings[position] = undefined;
                 }
             }
         }
-        return score;
+
+        coins = this.surroundingBuildings.filter(building => building?.type === "Residential").length;
+        return {"score" : scoreEarned, "coins" : coins};
     }
 
-    addLife(){
-        this.roundsAlive += 1;
-    }
 }
 class Park extends Building {
     type = "Park";
     character = "O";
 
-    pointCalculation(map, spacesToCheck){
-        let score = 0;
+    calculateScoreAndCoins(map, spacesToCheck){
+        let scoreEarned = 0;
         for (const space of spacesToCheck){
+            let position = this.checkPosition(space);
+            // If space is a building
             if (map[space[1]][space[0]] !== undefined){
                 let adjBuilding = map[space[1]][space[0]];
-                if (adjBuilding.type === "Park"){
-                    score += 1;
+                // Checks if adjacent buildings are Residential
+                if (adjBuilding.type === "Park" && this.surroundingBuildings[position] === undefined){
+                    scoreEarned += 1;
+                }
+                this.surroundingBuildings[position] = adjBuilding;
+            }
+            // If space is empty
+            else { 
+                if (this.surroundingBuildings[position] !== undefined){
+                    this.surroundingBuildings[position] = undefined;
                 }
             }
         }
-        return score;
+        return {"score" : scoreEarned};
     }
 }
 class Road extends Building {
     type = "Road";
     character = "*";
 
-    pointCalculation(map, spacesToCheck){
-        let score = 0;
+    calculateScoreAndCoins(map, spacesToCheck){
+        let scoreEarned = 0;
         for (const space of spacesToCheck){
+            let position = this.checkPosition(space);
+            // If space is a building
             if (map[space[1]][space[0]] !== undefined){
                 let adjBuilding = map[space[1]][space[0]];
-                if (adjBuilding.type === "Road"){
-                    score += 1;
+                // Checks if adjacent buildings are Residential
+                if (adjBuilding.type === "Road" && this.surroundingBuildings[position] === undefined){
+                    scoreEarned += 1;
+                }
+                this.surroundingBuildings[position] = adjBuilding;
+            }
+            // If space is empty
+            else { 
+                if (this.surroundingBuildings[position] !== undefined){
+                    this.surroundingBuildings[position] = undefined;
                 }
             }
         }
-        return score;
-    }
-}
-class Industry extends Building {
-    type = "Industry";
-    character = "I";
-    roundsAlive = 0;
-
-    pointCalculation(map, spacesToCheck){
-        let score = 0;
-        score += this.roundsAlive;
-        for (const space of spacesToCheck){
-            if (map[space[1]][space[0]] !== undefined){
-                let adjBuilding = map[space[1]][space[0]];
-                if (adjBuilding.type === "Residential"){
-                    score += 1;
-                }
-            }
-        }
-        return score;
-    }
-
-    addLife(){
-        this.roundsAlive += 1;
+        return {"score" : scoreEarned};
     }
 }
 
@@ -158,7 +243,7 @@ const ps = require("prompt-sync");
 const prompt = ps();
 
 // Generate two unique buildings
-function generateBuildChoices(buildingClasses){
+function generateBuildChoices(buildingClasses, moves){
     let randomIndexes = [];
     let randomBuildings = [];
 
@@ -172,12 +257,13 @@ function generateBuildChoices(buildingClasses){
     for (const index of randomIndexes) {
         const randomBuildingClass = buildingClasses[index];
         if (randomBuildingClass){
-            randomBuildings.push(new randomBuildingClass()); // Create new instance
+            randomBuildings.push(new randomBuildingClass(moves)); // Create new instance
         }
         else{
             console.error(`Invalid random index: ${index}`)
         }
     }
+
     return randomBuildings;
 }
 
@@ -200,7 +286,8 @@ function checkIfMapIsFull(map){
 // 2. Score calculation 
 // Return a dictionary 
 function printMap(map){
-    let totalPoints = 0
+    let score = 0;
+    let coins = 0;
     let arrayOfCoords = [];
     let rowNo = 0;
     let rowHeaders = "   A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T";
@@ -217,13 +304,16 @@ function printMap(map){
                 // Execute operations when there is a building
                 rowStatement += ` ${element.character} ||`;
                 let tempArray = element.checkSurroundingSpace();
-                // Add rounds alive for Industry type
-                if (element.type === "Industry"){
-                    element.addLife();
+                // Add score awarded to total score
+                let tempDict = element.calculateScoreAndCoins(map, tempArray);
+                score += tempDict["score"];
+                
+                // Add coins awarded to total coins
+                if (element.type === "Commercial" || element.type === "Industry"){
+                    coins += tempDict["coins"];
                 }
-                totalPoints += element.pointCalculation(map, tempArray);
                 for (let coord of tempArray){
-                    if (!arrayOfCoords.includes(coord)){
+                    if (arrayOfCoords.includes(coord) === false){
                         arrayOfCoords.push(coord);
                     }
                 }
@@ -232,11 +322,11 @@ function printMap(map){
         console.log(rowStatement += `   ${rowNo}\n${rowDivider}`)
         rowNo += 1;
     }
-    let dict = {
-        "totalPoints" : totalPoints,
+    return {
+        "score" : score,
+        "coins" : coins,
         "availableCoords" : arrayOfCoords
-    }
-    return dict;
+    };
 }
 
 // Validates user input and returns unique message
@@ -296,7 +386,7 @@ function isArrayInArray(userInputCoords, availableCoords) {
 
 // ================== MAIN PROGRAM ===================
 
-const buildingClasses = [ Residential, Park, Road, Industry, Commercial ];
+const buildingClasses = [ Residential, Industry, Commercial, Park, Road];
 let moves = 1;
 let map =  [[,,,,,,,,,,,,,,,,,,,,],
             [,,,,,,,,,,,,,,,,,,,,],
@@ -318,17 +408,26 @@ let map =  [[,,,,,,,,,,,,,,,,,,,,],
             [,,,,,,,,,,,,,,,,,,,,],
             [,,,,,,,,,,,,,,,,,,,,],
             [,,,,,,,,,,,,,,,,,,,,]];
-let totalPoints = 0;
+let score = 0
+let coins = 16;
 
-// Loops until every square is occupied
-while (checkIfMapIsFull(map)){
+// Loops until every square is occupied or run out of coins
+while (checkIfMapIsFull(map) && coins !== 0){
     // Display map and moves
     let dict = printMap(map);
     availableCoords = dict["availableCoords"];
+
+    // Debugging statements
+    // console.log(`Added score: ${dict["score"]}`);
+    // console.log(`Added coins: ${dict["coins"]}`);
+
+    score += dict["score"];
+    coins += dict["coins"]
     
     console.log("\n//======= Aracade Mode =======//");
     console.log(`           Move: ${moves}`);
-    console.log(`           Score: ${dict["totalPoints"]}`);
+    console.log(`           Coins: ${coins}`);
+    console.log(`           Score: ${score}`);
     console.log("//============================//");
     // User decide to demolish or build a building
     console.log("\nBuild or Demolish? 1 and 2 respectively.")
@@ -347,10 +446,12 @@ while (checkIfMapIsFull(map)){
                 console.log("There is no building to be demolished!");
             }
             else{
+                let buildingToDemolish = map[coordsY][newCoordsX];
                 console.log("\nAre you sure? 0 to confirm demolish and 1 to cancel.")
                 let userInput = integerValidator(0,1);
                 if (userInput === 0){
                     map[coordsY][newCoordsX] = undefined;
+                    coins -= 1;
                     break;
                 }
                 else{
@@ -361,12 +462,13 @@ while (checkIfMapIsFull(map)){
     }
     // User decide to build
     else {
-        let buildingChoices = generateBuildChoices(buildingClasses);
+        let buildingChoices = generateBuildChoices(buildingClasses, moves);
         console.log(`\nBuidling choices: \n1. ${buildingChoices[0].type}       2.${buildingChoices[1].type}`);
 
         // User decide which building to build
         let userBuildChoice = integerValidator(1,2);
         let buildingToBuild = buildingChoices[userBuildChoice-1];
+        coins -= 1;
 
         // Validates whether coords inputted is available for moves 2 and later
         while (true){
@@ -405,5 +507,6 @@ while (checkIfMapIsFull(map)){
 
 // When game ends
 console.log("================= THE GAME HAS ENDED =================)");
-console.log(`Points obtained: ${0}`);
+console.log(`Total Moves: ${moves}`);
+console.log(`Total coins: ${coins}`);
 
