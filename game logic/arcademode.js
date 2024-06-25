@@ -304,6 +304,7 @@ function checkIfMapIsFull(map) {
 // 2. Score calculation
 // Return a dictionary
 function printMap(map) {
+  let buildingPresence = false;
   let score = 0;
   let coins = 0;
   let arrayOfCoords = [];
@@ -320,6 +321,7 @@ function printMap(map) {
       if (element === undefined) {
         rowStatement += " X ||";
       } else {
+        buildingPresence = true;
         // Execute operations when there is a building
         rowStatement += ` ${element.character} ||`;
         let tempArray = element.checkSurroundingSpace();
@@ -345,6 +347,7 @@ function printMap(map) {
     score: score,
     coins: coins,
     availableCoords: arrayOfCoords,
+    buildingPresence : buildingPresence
   };
 }
 
@@ -435,6 +438,7 @@ let coins = 16;
 while (checkIfMapIsFull(map) && coins !== 0) {
   // Display map and moves
   let dict = printMap(map);
+  let buildingPresence =  dict["buildingPresence"];
   availableCoords = dict["availableCoords"];
 
   // Debugging statements
@@ -499,7 +503,7 @@ while (checkIfMapIsFull(map) && coins !== 0) {
       console.log("\nEnter Y Coordinates");
       let coordsY = integerValidator(0, 19);
       // Building is simply built on first turn with 0 validation
-      if (moves === 1) {
+      if (moves === 1 || buildingPresence === false) {
         buildingToBuild.addCoord(newCoordsX, coordsY);
         map[coordsY][newCoordsX] = buildingToBuild;
         break;
