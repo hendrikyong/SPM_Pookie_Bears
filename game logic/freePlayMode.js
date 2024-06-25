@@ -260,7 +260,7 @@ const prompt = ps();
 function generateBuildChoices(buildingClasses, moves){
     let buildingChoices = [];
     for (const buildingClass of buildingClasses){
-        buildingClass.push(new buildingChoices(moves));
+        buildingChoices.push(new buildingClass(moves));
     }
     return buildingChoices;
 }
@@ -325,13 +325,21 @@ function expandMapAndAdjust(map) {
 // 1. Check for available spaces 
 // 2. Score calculation 
 // Return a dictionary 
-function printMap(map){
+function printMap(map, lengthAndWidth){
     let coins = 0;
     let score = 0;
     let arrayOfCoords = [];
     let rowNo = 0;
-    let rowHeaders = "   A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T";
-    let rowDivider = "======================================================================================================"
+    let alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXY";
+    alphabets = alphabets.slice(0, lengthAndWidth)
+    console.log(`Length :${lengthAndWidth}`);
+    console.log(alphabets)
+    let rowHeaders = "   ";
+    let rowDivider = "==";
+    for (const column of alphabets){
+        rowHeaders += `${column}    `;
+        rowDivider += "=====";
+    }
     console.log(`${rowHeaders}\n${rowDivider}`);
     for (const row of map){
         let rowStatement = "||";
@@ -405,29 +413,14 @@ function columnValidator(){
     }
 }
 
-// Checks whether userInputCoords matches one of availableCoords' coords
-function isArrayInArray(userInputCoords, availableCoords) {
-    for (const array of availableCoords) {
-        let isMatch = true;
-        for (let i = 0; i < 2; i++) {
-            if (userInputCoords[i] !== array[i]) {
-            isMatch = false;
-            break;
-            }
-        }
-        if (isMatch) {
-            return true
-        }
-    }
-    return false;
-}
-
 // ===============================================` ====
 
 const buildingClasses = [ Residential, Industry, Commercial, Park, Road];
 let coins = 0;
 let score = 0;
+let moves = 0;
 let consecNegProfit = 0;
+let lengthAndWidth = 0;
 let map =  [[,,,,,],
             [,,,,,],
             [,,,,,],
@@ -439,7 +432,8 @@ while (consecNegProfit < 20){
     if (hasBuildingOnBorder(map)){
         expandMapAndAdjust(map);
     }
-    let dict = printMap(map);
+    lengthAndWidth = map[0].length;
+    let dict = printMap(map, lengthAndWidth);
 
     score += dict["score"];
     coins += dict["coins"];
@@ -463,12 +457,22 @@ while (consecNegProfit < 20){
     // User decide to demolish
     if (buildOrDemolish === 2){
         while (true){
-            console.log("\nEnter X Coordinates");
-            let coordsX = columnValidator();
-            let newCoordsX = coordsX.charCodeAt(0)-65; // Coverts the alphabet to an index
+            let newCoordsX;
+            // Validates X Coords
+            while (true){
+                console.log("\nEnter X Coordinates");
+                let coordsX = columnValidator();
+                newCoordsX = coordsX.charCodeAt(0)-65; // Coverts the alphabet to an index
+                if (newCoordsX <= lengthAndWidth){
+                    break;
+                }
+                else{
+                    console.log("Enter within the range.");
+                }
+            }
             
             console.log("\nEnter Y Coordinates");
-            let coordsY = integerValidator(1,19);
+            let coordsY = integerValidator(1,lengthAndWidth);
             if (map[coordsY][newCoordsX] === undefined){
                 console.log("There is no building to be demolished!");
             }
@@ -502,12 +506,20 @@ while (consecNegProfit < 20){
         coins -= 1;
 
         while (true){
-            console.log("\nEnter X Coordinates");
-            let coordsX = columnValidator();
-            let newCoordsX = coordsX.charCodeAt(0)-65; // Coverts the alphabet to an index
+            while (true){
+                console.log("\nEnter X Coordinates");
+                let coordsX = columnValidator();
+                newCoordsX = coordsX.charCodeAt(0)-65; // Coverts the alphabet to an index
+                if (newCoordsX <= lengthAndWidth){
+                    break;
+                }
+                else{
+                    console.log("Enter within the range.");
+                }
+            }
 
             console.log("\nEnter Y Coordinates");
-            let coordsY = integerValidator(0,19);
+            let coordsY = integerValidator(0,lengthAndWidth);
             // Building is simply built on first turn with 0 validation
 
             // Moves 1 onwards there is validation 
@@ -523,6 +535,7 @@ while (consecNegProfit < 20){
     }
     moves += 1;
 }
+
 
 
 
