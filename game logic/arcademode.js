@@ -429,7 +429,7 @@ let map = [
   [, , , , , , , , , , , , , , , , , , , ,],
 ];
 let score = 0;
-let coins = 0;
+let coins = 16;
 
 // Loops until every square is occupied or run out of coins
 while (checkIfMapIsFull(map) && coins !== 0) {
@@ -522,24 +522,23 @@ while (checkIfMapIsFull(map) && coins !== 0) {
   moves += 1;
 }
 
-if (checkIfMapIsFull(map) || coins === 0) {
-  // When game ends
-  console.log("================= THE GAME HAS ENDED =================");
-  console.log(`Total Moves: ${moves}`);
-  console.log(`Total Coins: ${coins}`);
-  console.log(`Total Score: ${score}`);
 
-  /*if score > (check all user score)
-  prompt for user name 
-  create a map to store all user score 
-    // Convert the map back to an array of objects
-        let uniqueUserScores = Array.from(userScoresMap, ([name, score]) => ({
-          name,
-          score,
-        }));
+// When game ends
+console.log("================= THE GAME HAS ENDED =================");
+console.log(`Total Moves: ${moves}`);
+console.log(`Total Coins: ${coins}`);
+console.log(`Total Score: ${score}`);
 
-    //Sort the uniqueUserScores array by score in descending order
-        uniqueUserScores.sort((a, b) => b.score - a.score);
-  
-  */
-}
+/*if score > (check all user score)
+prompt for user name 
+create a map to store all user score 
+  // Convert the map back to an array of objects
+      let uniqueUserScores = Array.from(userScoresMap, ([name, score]) => ({
+        name,
+        score,
+      }));
+
+  //Sort the uniqueUserScores array by score in descending order
+      uniqueUserScores.sort((a, b) => b.score - a.score);
+
+*/
