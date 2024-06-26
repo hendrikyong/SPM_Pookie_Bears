@@ -90,6 +90,8 @@ class Residential extends Building {
     calculatePointsAndProfit(map, spacesToCheck){
         let coinsEarned = 1;
         let scoreEarned = 0;
+        let visited = [] // store visited buildings from the roadtraveller
+
         for (const space of spacesToCheck){
             let position = this.checkPosition(space);
             // If space is a building
@@ -107,6 +109,16 @@ class Residential extends Building {
                 else if (adjBuilding.type === "Park" && this.surroundingBuildings[position] === undefined){
                     scoreEarned += 2;
                 }
+                
+                // Checks if adjacent building is Road
+                // north south east west
+                else if (adjBuilding.type === "Road" && this.surroundingBuildings[position] === undefined){
+                    let roadScore = this.roadTravel(adjBuilding,visited);
+                    scoreEarned += roadScore;
+                    visited = visited.concat(roadScore.visited);
+                
+                }
+
                 this.surroundingBuildings[position] = adjBuilding;
             }
             // If space is empty
@@ -121,7 +133,40 @@ class Residential extends Building {
         coinsEarned -= this.surroundingBuildings.filter(building => building?.type === "Residential").length;
         return {"coins" : coinsEarned, "score" : scoreEarned};
     }
+
+     roadTravel(roadBuilding, visited) {
+        let scoreGained = 0;
+        let travelledRoads = [roadBuilding];
+        
+        while (travelledRoads.length > 0) {
+            let currentRoad = travelledRoads.pop();
+            if (visited.includes(currentRoad.id)) {
+                continue;
+            }
+    
+            visited.push(currentRoad.id);
+    
+            let adjRoadBuildings = currentRoad.surroundingBuildings;
+            for (let building of adjRoadBuildings) {
+                if (building === undefined || visited.includes(building.id)) {
+                    continue;
+                }
+    
+                if (building.type === "Park") {
+                    scoreGained += 2;
+                } else if (building.type === "Residential" || building.type === "Commercial") {
+                    scoreGained += 1;
+                } else if (building.type === "Road") {
+                    travelledRoads.push(building);
+                }
+            }
+        }
+        return scoreGained;
+    }
+    
 }
+
+
 class Industry extends Building {
     type = "Industry";
     character = "I";
@@ -228,10 +273,11 @@ class Road extends Building {
             // If space is a building
             if (map[space[1]][space[0]] !== undefined){
                 let adjBuilding = map[space[1]][space[0]];
-                // Checks if adjacent buildings are Residential
+                // Checks if connected to a road
                 if (adjBuilding.type === "Road" && this.surroundingBuildings[position] === undefined){
                     scoreEarned += 1;
                 }
+
                 this.surroundingBuildings[position] = adjBuilding;
             }
             // If space is empty
