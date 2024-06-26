@@ -454,8 +454,15 @@ while (checkIfMapIsFull(map) && coins !== 0) {
   console.log(`           Score: ${score}`);
   console.log("//============================//");
   // User decide to demolish or build a building
-  console.log("\nBuild or Demolish? 1 and 2 respectively.");
-  let buildOrDemolish = integerValidator(1, 2);
+  console.log("\nBuild or Demolish? 1 and 2 respectively.\n0 to quit game.");
+  
+  let buildOrDemolish = integerValidator(0,2); // changed by neil to quit game
+
+  // quit game
+  if (buildOrDemolish === 0){
+    console.log("Quitting game...")  
+    process.exit();
+  };
 
   // User decide to demolish
   if (buildOrDemolish === 2) {
