@@ -113,10 +113,7 @@ class Residential extends Building {
                 // Checks if adjacent building is Road
                 // north south east west
                 else if (adjBuilding.type === "Road" && this.surroundingBuildings[position] === undefined){
-                    let roadScore = this.roadTravel(adjBuilding,visited);
-                    scoreEarned += roadScore;
-                    visited = visited.concat(roadScore.visited);
-                
+                    scoreEarned += this.roadTravel(adjBuilding, visited);
                 }
 
                 this.surroundingBuildings[position] = adjBuilding;
@@ -134,36 +131,41 @@ class Residential extends Building {
         return {"coins" : coinsEarned, "score" : scoreEarned};
     }
 
-     roadTravel(roadBuilding, visited) {
-        let scoreGained = 0;
-        let travelledRoads = [roadBuilding];
-        
+    roadTravel(roadBuilding, visited) {
+        let scoreGained = 0
+        let travelledRoads = [roadBuilding]
+
         while (travelledRoads.length > 0) {
             let currentRoad = travelledRoads.pop();
             if (visited.includes(currentRoad.id)) {
                 continue;
             }
-    
+
             visited.push(currentRoad.id);
-    
+
             let adjRoadBuildings = currentRoad.surroundingBuildings;
             for (let building of adjRoadBuildings) {
-                if (building === undefined || visited.includes(building.id)) {
+                if (building === undefined || visited.includes(building.id)){
                     continue;
                 }
-    
-                if (building.type === "Park") {
-                    scoreGained += 2;
-                } else if (building.type === "Residential" || building.type === "Commercial") {
-                    scoreGained += 1;
-                } else if (building.type === "Road") {
-                    travelledRoads.push(building);
+
+
+                else if (building.type === "Park") {
+                    scoreGained += 2
+                }
+                
+                else if (building.type === "Residential" || building.type === "Commercial") {
+                    scoreGained += 2; // 1 FOR EACH RESIDENTIAL OR COMMERCIAL BUILDING
+                } 
+                
+                else if (building.type === "Road") {
+                    travelledRoads.push(roadBuilding);
                 }
             }
         }
+
         return scoreGained;
     }
-    
 }
 
 
