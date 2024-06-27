@@ -1,0 +1,233 @@
+/* CSS Code */
+
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1;
+    margin: 0;
+    height: 100%;
+    background-color: #1C1D21;
+}
+
+.nav-trigger {
+    position: fixed;
+    z-index: 4;
+    top: 2.5rem;
+    right: 2.5rem;
+    height: 2.75rem;
+    width: 44px;
+    overflow: hidden;
+    color: transparent;
+    white-space: nowrap;
+    text-indent: 100%;
+}
+
+.nav-trigger span,
+.nav-trigger span::before,
+.nav-trigger span::after {
+    position: absolute;
+    height: 4px;
+    width: 36px;
+    border-radius: 2px;
+    background: #e3e4e8;
+    transition: transform .5s, background .5s;
+}
+
+.nav-trigger span {
+    top: 50%;
+    left: 4px;
+    margin-top: -2px;
+}
+
+.nav-trigger span::before,
+.nav-trigger span::after {
+    content: '';
+    left: 0;
+}
+
+.nav-trigger span::before {
+    top: -10px;
+}
+
+.nav-trigger span::after {
+    top: 10px;
+}
+
+body.nav-open .nav-trigger span {
+    background: transparent;
+}
+
+body.nav-open .nav-trigger span::before {
+    transform: translateY(10px) rotate(-225deg);
+}
+
+body.nav-open .nav-trigger span::after {
+    transform: translateY(-10px) rotate(225deg);
+}
+
+#grid {
+    width: 80%;
+    margin: 50px auto;
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    grid-gap: 1px;
+}
+
+#grid td {
+    width: 30px;
+    height: 30px;
+    background-color: #fff;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+nav {
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 0;
+    overflow-x: hidden;
+    background-color: #25262a;
+    transition: width .5s;
+    color: #e3e4e8;
+}
+
+body.nav-open nav {
+    width: 360px;
+}
+
+nav header {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 500;
+    letter-spacing: 4px;
+    top: 2.5rem;
+}
+
+nav .top-half {
+    position: relative;
+    top: 8rem;
+    height: 43%;
+    overflow: hidden;
+}
+
+nav .bottom-half {
+    position: relative;
+    top: 6rem;
+    height: 49%;
+    overflow: hidden;
+}
+
+nav .legend {
+    text-align: center;
+    font-size: 1rem;
+}
+
+nav .legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+nav .legend-item {
+    display: flex;
+    align-items: center;
+    margin: 5px 10px;
+}
+
+nav .legend-item img {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+nav .game-stats {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+nav .game-stats .score,
+nav .game-stats .coins {
+    text-align: center;
+}
+
+nav .game-stats h2 {
+    font-size: 1.2rem;
+}
+
+nav .main-tabs {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+nav .construction,
+nav .finances {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.button-58,
+.button-1,
+.button-59 {
+    display: inline-block;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.button-1 {
+    position: relative;
+}
+
+.button-1-shadow,
+.button-1-edge,
+.button-1-front {
+    position: absolute;
+}
+
+.button-1-shadow {
+    top: 2px;
+    left: 2px;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.button-1-edge {
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #007bff;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.button-1-front {
+    top: 2px;
+    left: 2px;
+    height: 100%;
+    width: 100%;
+    background-color: #007bff;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
