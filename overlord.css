@@ -1,0 +1,235 @@
+:root {
+  --black: #000000;
+}
+*,
+*::before,
+*::after {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #101010;
+  overflow-x: hidden;
+}
+/* NAVIGATION BAR */
+header {
+  width: 100%;
+  min-height: 9vh;
+  background-color: #000000;
+  padding: 0 3%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2000;
+}
+header .logo {
+  color: white;
+  text-decoration: none;
+  font-family: "Super Legend Boy";
+  font-size: 1.7rem;
+}
+header .logo:hover {
+  color: rgb(68, 68, 68);
+  transition: 0.4s;
+}
+header ul {
+  position: relative;
+}
+header ul li {
+  list-style: none;
+  position: relative;
+  float: left;
+  color: white;
+  font-family: "Super Legend Boy";
+  text-decoration: none;
+  padding: 20px 25px;
+}
+header ul li a {
+  color: white;
+  font-family: "Super Legend Boy";
+}
+header ul li a:hover {
+  color: rgb(68, 68, 68);
+  transition: 0.4s;
+}
+header .github-container {
+  margin-top: 2%;
+  padding: 0;
+  height: 5vh;
+  width: 5vw;
+}
+header .github-container div {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  object-fit: contain;
+}
+header .github-container div img {
+  height: 100%;
+}
+header .github-container div img:hover {
+  opacity: 0.5;
+  transition: 0.4s;
+}
+header ul li:hover {
+  color: rgb(68, 68, 68);
+  transition: 0.4s;
+}
+header ul li ul {
+  position: absolute;
+  left: 0;
+  padding: 0;
+  width: 180px;
+  background-color: black;
+  display: none;
+  z-index: 1000;
+}
+header ul li:hover ul {
+  display: block;
+  z-index: 1000;
+}
+header ul li ul li {
+  position: relative;
+  width: 100%;
+}
+header ul li ul li a {
+  color: white;
+  text-decoration: none;
+}
+header ul li ul li a:hover {
+  color: rgb(68, 68, 68);
+  transition: 0.4s;
+}
+@media (max-width: 900px) {
+  header {
+    padding: 10px 20px;
+  }
+  header nav {
+    position: absolute;
+    width: 100%;
+    top: 9vh;
+    left: 0;
+    background-color: black;
+    display: none;
+    z-index: 2000;
+  }
+  header.active nav {
+    display: initial;
+  }
+  header nav ul li {
+    width: 100%;
+  }
+  header nav ul li ul {
+    position: relative;
+    width: 100%;
+    left: 0;
+  }
+  header .logo {
+    font-size: 1.2rem;
+  }
+  .menu-toggle {
+    position: relative;
+    width: 40px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .menu-toggle::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background: white;
+    transform: translateY(-12px);
+    box-shadow: 0 12px white;
+  }
+  .menu-toggle::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background: white;
+    transform: translateY(12px);
+  }
+  header.active .menu-toggle::before {
+    transform: rotate(45deg);
+    box-shadow: 0 0 white;
+  }
+  header.active .menu-toggle::after {
+    transform: rotate(-45deg);
+    box-shadow: 0 0 white;
+  }
+}
+
+/* NAVIGATION BAR */
+/* FONTS */
+@font-face {
+  font-family: "Atlantis International";
+  src: url("../Font/AtlantisInternational-jen0.ttf");
+}
+.title,
+.sub-title,
+.first-tier-header,
+.second-tier-header,
+.text {
+  color: white;
+}
+.title,
+.sub-title {
+  font-family: "Joystix";
+}
+.first-tier-header,
+.second-tier-header {
+  font-family: "Press Start 2P";
+}
+.first-tier-header {
+  text-decoration: underline;
+  text-align: center;
+  font-size: 2vw;
+}
+.text {
+  font-family: "Atlantis International";
+  line-height: 1em;
+}
+.button-text {
+  font-family: "Joystix";
+  color: var(--black);
+}
+/* FONTS */
+/* FOOTER */
+footer {
+  background: var(--black);
+  margin-top: 2%;
+  height: 20%;
+}
+/* BUTTON */
+a {
+  text-decoration: none;
+}
+.button {
+  background-color: red;
+  font-size: 1.2vw;
+  padding: 2vh 2.4vw;
+  width: var(--box-width);
+  height: var(--box-height);
+  box-shadow: 4px 4px 0 0 white;
+}
+.button:hover {
+  box-shadow: none;
+  color: white;
+  transform: translateX(4px) translateY(4px);
+}
+@media (max-width: 850px) {
+  .button {
+    padding: 1.4vw 1.3vw;
+    box-shadow: 2px 2px 0 0 white;
+    font-size: 1.5vw;
+  }
+}
+/* BUTTON  */
