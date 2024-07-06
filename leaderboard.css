@@ -1,3 +1,49 @@
-.leaderboard {
-  border: white dotted 3px;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+}
+body {
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #101010;
+}
+
+.leaderboard-header th {
+  width: 100%;
+  background: none;
+  border-bottom: none;
+  font-size: 2.5vw !important;
+}
+.leaderboard-header .rank {
+  width: 10%;
+}
+.leaderboard-header .name {
+  width: 45%;
+}
+.leaderboard-header .score {
+  width: 45%;
+}
+.leaderboard-row td {
+  text-decoration-color: black !important;
+  border-bottom: 1px solid black;
+  font-family: "Atlantis International";
+  font-size: 2.5vw !important;
+}
+.leaderboard-row > * {
+  border: 1px solid black;
+  text-align: left;
+}
+.leaderboard-row .rank {
+  width: 10% !important;
+}
+.leaderboard-row .name {
+  width: 45% !important;
+}
+.leaderboard-row .score {
+  width: 45% !important;
 }
