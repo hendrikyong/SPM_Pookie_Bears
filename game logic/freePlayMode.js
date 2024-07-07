@@ -96,7 +96,6 @@ const buildings = {
 }
 
 let selectedBuilding = null;
-let selectedBuildingsArray = [];
 let points = 0;
 // let coins = 16; unlimited for freeplay
 let turnNumber = 1;
@@ -145,6 +144,7 @@ function endTurn() {
     document.getElementById('turn').textContent = turnNumber;
     buildingPlacedThisTurn = false;
     expandedThisTurn = false;
+    calculateScore();
 }
 
 function updateUI() {
@@ -179,4 +179,126 @@ function isOnPerimeter(index) {
 
     // check if the box position is on the perimeter (last or first row/column)
     return row === 0 || row === gridSize - 1 || col === 0 || col === gridSize - 1;
+}
+
+function calculateScore() {
+    let score = 0;
+    const grid = Array.from({ length: gridSize }, (_, i) => gridState.slice(i * gridSize, (i + 1) * gridSize));
+
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            const building = grid[row][col];
+            if (building) {
+                switch (building.type) {
+                    case 'residential':
+                        score += scoreResidential(grid, row, col);
+                        break;
+                    case 'industry':
+                        score += scoreIndustry(grid, row, col);
+                        break;
+                    case 'commercial':
+                        score += scoreCommercial(grid, row, col);
+                        break;
+                    case 'park':
+                        score += scorePark(grid, row, col);
+                        break;
+                    case 'road':
+                        score += scoreRoad(grid, row);
+                        break;
+                }
+            }
+        }
+    }
+
+    points = score;
+    document.getElementById('score').textContent = points;
+}
+
+function scoreResidential(grid, row, col) {
+    const adjacents = getAdjacents(grid, row, col);
+
+    // check if adjacent to industry
+    if (adjacents.some(b => b && b.type === 'industry')) {
+        return 1;
+    }
+
+    let score = 0;
+    adjacents.forEach(b => {
+        if (b) {
+            if (b.type === 'residential' || b.type === 'commercial') {
+                score += 1;
+            } else if (b.type === 'park') {
+                score += 2;
+            }
+        }
+    });
+    
+    return score;
+}
+
+
+function scoreIndustry(grid, row, col) {
+    return 1;
+}
+
+function scoreCommercial(grid, row, col) {
+    let score = 0;
+    const adjacents = getAdjacents(grid, row, col);
+    adjacents.forEach(b => {
+        if (b) {
+            if (b.type === 'residential' || b.type === 'commercial') {
+                score += 1;
+            }
+        }
+    });
+    return score;
+}
+
+function scorePark(grid, row, col) {
+    let score = 0;
+    const adjacents = getAdjacents(grid, row, col);
+    score += adjacents.filter(b => b && b.type === 'park').length; // if theres a park adjacent, score 2 points
+    return score;
+}
+
+function scoreRoad(grid, row) {
+    let score = 0;
+    let connectedRoads = 0;
+    let hasConnectedSegment = false;
+
+    for (let col = 0; col < gridSize; col++) {
+        if (grid[row][col] && grid[row][col].type === 'road') {
+            connectedRoads++;
+            hasConnectedSegment = true;
+        } else {
+            if (connectedRoads > 1) {
+                score += 1; // Score 1 point per connected road segment
+            }
+            connectedRoads = 0; // Reset the count for the next sequence
+        }
+    }
+
+    // Check if there is another connected road at the end of the row
+    if (connectedRoads > 1) {
+        score += 1;
+    }
+
+    // If the road is alone, it does not generate any point
+    if (!hasConnectedSegment) {
+        score = 0;
+    }
+
+    return score;
+}
+
+
+
+
+function getAdjacents(grid, row, col) {
+    const adjacents = [];
+    if (row > 0) adjacents.push(grid[row - 1][col]);
+    if (row < gridSize - 1) adjacents.push(grid[row + 1][col]);
+    if (col > 0) adjacents.push(grid[row][col - 1]);
+    if (col < gridSize - 1) adjacents.push(grid[row][col + 1]);
+    return adjacents;
 }
