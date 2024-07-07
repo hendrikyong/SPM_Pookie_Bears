@@ -16,16 +16,15 @@ body {
 
 #Leaderboard {
   margin: 2rem 0 0 0;
-  border: red dotted;
   font-size: 1.8rem;
 }
 
 .leaderboard-row .rank {
-  width: 50% !important;
+  width: 10% !important;
 }
 .leaderboard-row .name {
-  width: 100% !important;
+  width: 55% !important;
 }
 .leaderboard-row .score {
-  width: 100% !important;
+  width: 35% !important;
 }
