@@ -89,6 +89,11 @@ function placeBuilding(box) {
         buildingPlacedThisTurn = true;
         selectedBuilding = null;
     }
+
+    else if (!selectedBuilding) {
+        alert("No building selected");
+    }
+
     else {
         alert("You have already placed a building in this turn. End your turn first")
         updateUI();
@@ -105,4 +110,29 @@ function updateUI() {
     document.querySelectorAll('.building').forEach(building => {
         building.classList.remove('selected');
     });
+}
+
+function toggleDemolishMode() {
+    demolishMode = !demolishMode;
+
+    const demolishButton = document.getElementById('demolish-button');
+    if (demolishMode) {
+        demolishButton.classList.add('active');
+    } else {
+        demolishButton.classList.remove('active');
+    }
+}
+
+function demolishBuilding(box) {
+    if (box.classList.length > 1) { 
+        
+        let buildingType = [...box.classList].find(cls => cls !== 'grid-box');
+
+        box.textContent = '';
+        box.classList.remove(buildingType);
+
+        buildingPlacedThisTurn = false;
+        selectedBuilding = null;
+        updateUI();
+    }
 }
