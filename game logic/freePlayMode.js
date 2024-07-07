@@ -29,3 +29,7 @@ function createGrid(size) {
 function expandGrid(size) {
     createGrid(size);
 }
+
+const buildings = {
+
+}
