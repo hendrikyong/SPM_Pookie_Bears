@@ -1,14 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <title>NGEE ANN CITY</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./style.css">
+    <!-- All fonts linked -->
+    <link href="https://fonts.cdnfonts.com/css/joystix" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/super-legend-boy" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'>
+    <link href="https://fonts.cdnfonts.com/css/fff-atlantis" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'>
 
+    <link rel="stylesheet" href="./css/overlord.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="./leaderboard.js" defer></script>
+
+    <script src="https://kit.fontawesome.com/15369d822f.js" crossorigin="anonymous"></script>
+    <title>Ngee Ann City</title>
 </head>
+
 <body>
     <!-- Your content goes here -->
     <!-- <h1>NGEE ANN CITY</h1>
@@ -115,6 +128,36 @@
                     <li>Park</li>
                     <li>Road</li>
                 </ul> -->
+    <header>
+        <a class="logo" href="index.html">Ngee Ann City</a>
+        <!--or can put image of the NAC logo here-->
+        <div class="menu-toggle"></div>
+        <nav>
+            <ul>
+                <li>Instructions
+                </li>
+                <li>Play Now
+                    <ul>
+                        <li><a href="#">Free Play Mode</a></li>
+                        <li><a href="#">Arcade Mode</a></li>
+                    </ul>
+                </li>
+                <li>Leaderboard
+                    <ul>
+                        <li><a href="#">Free Play</a></li>
+                        <li><a href="#">Arcade</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <section class="cover">
+        <div class="prompt">
+            <div class="row">
+                <form class="username-label">
+                    <label class="second-tier-header" for="username">Enter username: </label>
+                    <input class="text" id="username" placeholder="Enter username..." required>
+                </form>
             </div>
             <!-- <header>
                 <h2>Navigation</h2>
@@ -122,11 +165,11 @@
             <div class="game-stats">
                 <div class="score">
                     <h2>Score</h2>
-                    <span id="score">0</span>
+                    <span>2</span>
                 </div>
                 <div class="coins">
                     <h2>Coins</h2>
-                    <span id="coins">16</span>
+                    <span>16</span>
                 </div>
             </div>
         </div>
@@ -137,7 +180,7 @@
                 <button id="constructionBtn" type="button">Construction</button>
                 <button id="financesBtn" type="button">Finances</button>
             </div>
-            <!-- <div class="construction">
+            <div class="construction">
                 <div class="building">
                     <button class="button-58" role="button">
                         <img src="./images/house.png" alt="Residential">
@@ -179,38 +222,8 @@
                         </button>
                     </div>
                 </div>
-            </div> -->
-
-            <div id="container">
-                <div class="building-options">
-                    <div class="building" id="residential" onclick="selectBuilding('residential')">
-                        <div class="building-type"><strong>R</strong></div>
-                        <div>Residential (R)<br>Cost: 1</div>
-                    </div>
-                    <div class="building" id="industry" onclick="selectBuilding('industry')">
-                        <div class="building-type"><strong>I</strong></div>
-                        <div>Industry (I)<br>Cost: 1</div>
-                    </div>
-                    <div class="building" id="commercial" onclick="selectBuilding('commercial')">
-                        <div class="building-type"><strong>C</strong></div>
-                        <div>Commercial (C)<br>Cost: 1</div>
-                    </div>
-                    <div class="building" id="park" onclick="selectBuilding('park')">
-                        <div class="building-type"><strong>O</strong></div>
-                        <div>Park (O)<br>Cost: 1</div>
-                    </div>
-                    <div class="building" id="road" onclick="selectBuilding('road')">
-                        <div class="building-type"><strong>*</strong></div>
-                        <div>Road (*)<br>Cost: 1</div>
-                    </div>
-                    <div class="action-button" id="build-button" onclick="buildStructure()">Build</div>
-                    <div class="action-button" id="demolish-button" onclick="enterDemolishMode()">Demolish</div>
-                </div>
-                <hr>
-                <div class="building-description">
-                    <div class="text" id="description-text">Select a building to see its description here</div>
-                </div>
             </div>
+
             <div class="finances hidden">
                 <div class="building-info">
                     <table class="table table-hover table-dark table-custom">
@@ -282,8 +295,7 @@
                 </div>
             </div>
         </div>
-    </nav>
-    <div class="overlay"></div>
-    <script src="script.js"></script>
+    </section>
 </body>
+
 </html>
