@@ -1,0 +1,30 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+}
+
+body {
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #101010;
+}
+
+#Leaderboard {
+  margin: 2rem 0 0 0;
+  font-size: 1.8rem;
+}
+
+.leaderboard-row .rank {
+  width: 10% !important;
+}
+.leaderboard-row .name {
+  width: 55% !important;
+}
+.leaderboard-row .score {
+  width: 35% !important;
+}
