@@ -1,0 +1,21 @@
+/* styles.css */
+#grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 columns */
+    grid-template-rows: repeat(5, 1fr);    /* 5 rows */
+    gap: 2px; /* Optional: space between boxes */
+    width: 500px; /* Set width */
+    height: 500px; /* Set height */
+}
+
+.grid-box {
+    background-color: lightgray;
+    border: 1px solid #ccc; /* Optional: border for better visibility */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grid-box:hover {
+    background-color: gray; /* Optional: hover effect */
+}
