@@ -1,0 +1,118 @@
+.get-name {
+  border: white solid 1px;
+  background-color: black;
+  margin-top: 10rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+}
+
+body {
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #101010;
+}
+.restart-prompt {
+  background-color: black;
+  border: 1px white solid;
+  border-radius: 4px;
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  padding: 3% 5%;
+}
+.restart-prompt .row {
+  margin-bottom: 10%;
+}
+.game {
+  margin-top: 2%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+.wrapper {
+  width: 70vmin;
+  height: 75vmin;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  border-radius: 4px;
+  background: #101010;
+  border: 1px white solid;
+}
+.game-details {
+  color: white;
+  font-size: 2rem;
+  font-weight: 500;
+  padding: 3%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.prompt {
+  border: 1px white solid;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  width: 30%;
+  height: 30%;
+}
+.cover {
+  background-color: #1c1a2c;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.prompt > * {
+  padding: 2%;
+}
+.username-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.second-tier-header {
+  font-size: 0.8vw;
+}
+#username {
+  color: black;
+  font-size: 1.3vw;
+}
+.button {
+  font-size: 0.8vw !important;
+  padding: 1.2vh 1vw !important;
+  box-shadow: 2px 2px 0 0 white !important;
+}
+.button:hover {
+  box-shadow: none;
+  color: white;
+  transform: translateX(2px) translateY(2px);
+}
+.submit-button {
+  border: none;
+}
+
+.option {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  margin-bottom: 1rem;
+}
