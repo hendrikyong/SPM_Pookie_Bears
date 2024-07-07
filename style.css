@@ -123,7 +123,6 @@ button {
     width: 30%;
     padding: 5em 2em;
     background: #808080;
-    overflow: hidden;
     transform: translateZ(0);
     transform: translateX(100%);
     transition: transform 0.5s cubic-bezier(0.07, 0.23, 0.34, 1);
@@ -199,7 +198,8 @@ button {
     height: 12.5rem;
     margin: 0;
     line-height: 1;
-    background-color: #3F51B5;
+    background-color: #a6e4a6;
+    border-radius: 15px;
 }
 
 .legend h2 {
@@ -257,7 +257,8 @@ button {
     height: 6rem;
     margin: 0;
     line-height: 1;
-    background-color: #3F51B5;
+    background-color: #a6e4a6;
+    border-radius: 15px;
 }
 
 .coins{
@@ -268,7 +269,8 @@ button {
     height: 6rem;
     margin: 0;
     line-height: 1;
-    background-color: #3F51B5;
+    background-color: #a6e4a6;
+    border-radius: 15px;
 }
 
 /*bottom-half*/
@@ -279,14 +281,14 @@ button {
     margin-top: 10px;
 }
 
-.building {
+/* .building {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
     margin-bottom: 1.25rem;
     margin-top: 1.25rem;
-}
+} */
 
 .building button {
     display: flex;
@@ -298,7 +300,7 @@ button {
     display: flex;
     flex-direction: column;
     padding: 10px;
-    background-color: #3F51B5;
+    background-color: #a6e4a6;
 }
 
 .construction button img {
@@ -350,7 +352,7 @@ button {
     align-items: center;
     margin-bottom: 1.25rem;
     padding: 0.5rem;
-    background-color: #3F51B5;
+    background-color: #a6e4a6;
     /*
 display: flex;
     flex-direction: column;
@@ -653,20 +655,374 @@ display: flex;
 
 
 /* Grid */
-#grid {
-    margin: auto;
-    margin-top: 18rem;
+.platform {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    width: auto;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: #ffffff;
+    overflow: auto;
 }
 
-#grid tr td {
-    border: 1px solid #fff;
-    background-color: #999;
+.turn-counter {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.score-counter {
+    position: fixed;
+    text-align: center;
+    z-index: 1;
+    top: 10.5rem;
+    width: 5.5rem;
+    right: 0rem;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    z-index: 1000;
+}
+
+.coins-counter {
+    position: fixed;
+    text-align: center;
+    z-index: 1;
+    top: 12.5rem;
+    width: 5.5rem;
+    right: 0rem;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    z-index: 1000;
+}
+
+.grid {
+    display: grid;
+    padding: 20px;
+    background-color: white;
+    gap: 10px;
+    transform: scale(0.9);
+    perspective: 800px; /* Add perspective for 3D effect */
+}
+
+.grid-square {
     width: 40px;
     height: 40px;
+    background: linear-gradient(145deg, #e6e6e6, #cfcfcf); /* Add gradient for 3D effect */
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 5px; /* Add slight border radius */
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1); /* Add shadow for 3D effect */
+    transition: transform 0.2s; /* Add transition for hover effect */
+}
+
+.grid-square:hover {
+    transform: translateY(-5px); /* Lift square on hover */
+}
+
+.grid-square.highlight {
+    background: yellow;
+    cursor: pointer;
+}
+
+.grid-square.built {
+    background: green;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    box-shadow: 
+        0 0 0 1px rgba(0, 0, 0, 0.1), /* Outline */
+        0 4px 6px rgba(0, 0, 0, 0.1), /* Light shadow */
+        0 8px 12px rgba(0, 0, 0, 0.1), /* Medium shadow */
+        0 12px 18px rgba(0, 0, 0, 0.1); /* Dark shadow */
+}
+
+
+/* zoom */
+#zoom-in, #zoom-out,
+#res-btn, #ind-btn, #com-btn, #park-btn, #road-btn {
+    margin: 10px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: white; /* Add background color for better visibility */
+    border: 1px solid #ddd; /* Add border to match the rest of the UI */
+    border-radius: 5px; /* Add border radius for a rounded look */
+    display: flex; /* Center align the content inside the button */
+    align-items: center; /* Center align the content inside the button */
+    justify-content: center; /* Center align the content inside the button */
+    cursor: pointer; /* Change cursor to pointer for better UX */
+}
+
+#zoom-in {
+    position: fixed;
+    z-index: 1;
+    top: 5.5rem;
+    right: 4.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
+#zoom-out {
+    position: fixed;
+    z-index: 1;
+    top: 5.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 1.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
+
+/* building btn */
+#zoom-out {
+    position: fixed;
+    z-index: 1;
+    top: 5.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 1.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
+#zoom-out {
+    position: fixed;
+    z-index: 1;
+    top: 5.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 1.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
+#zoom-out {
+    position: fixed;
+    z-index: 1;
+    top: 5.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 1.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
+#zoom-out {
+    position: fixed;
+    z-index: 1;
+    top: 5.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 1.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
+#zoom-out {
+    position: fixed;
+    z-index: 1;
+    top: 5.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 1.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
+/* table */
+/* .platform {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    width: auto;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: #ffffff;
+    overflow: auto;
+}
+
+#zoom-in, #zoom-out {
+    margin: 10px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.grid-container {
+    overflow: auto;
+    transform-origin: top left;
+}
+
+.grid {
+    border-collapse: collapse;
+}
+
+.grid td {
+    width: 40px;
+    height: 40px;
+    background-color: #cfcfcf;
+    border: 1px solid #ddd;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.grid td.highlight {
+    background-color: yellow;
+    cursor: pointer;
+}
+
+.grid td.built {
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    font-size: 50px;
+} */
+
+
+
+
+
+/* code from diontate */
+.building {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    margin-top: 0.25rem;
+}
+
+.building-options {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    background-color: #a6e4a6;
+    padding-bottom: 0;
+}
+
+#container {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #a6e4a6;
+}
+
+
+.building, .action-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    flex-grow: 1;
+    position: relative;
+    background-color: #a6e4a6;
+    transition: background-color 0.3s, opacity 0.3s;
+}
+
+.building.disabled {
+    opacity: 0.5; /* Greyed-out state */
+    background-color: #d3d3d3; /* Greyed-out background */
+    cursor: not-allowed;
+}
+
+.building.selected {
+    background-color: #78c678; /* Darker shade for selected building */
+}
+
+.building::after {
+    content: "";
+    position: absolute;
+    right: -20px;
+    width: 20px;
+    height: 100%;
+    cursor: pointer;
+}
+
+#special {
+    border-left: none;
+}
+
+.building:last-child, .action-button:last-child {
+    border-right: none;
+}
+
+.building-type {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+}
+
+hr {
+    border: none; /* Removes the default border */
+    height: 1px; /* Adjust this to make the line thicker or thinner */
+    background-color: black; /* This is the color of the line */
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.building-description {
+    display: flex;
+    width: 100%;
+    padding-top: 10px;
+    margin-bottom: 20px;
     text-align: center;
 }
 
+.description-box {
+    display: none; 
+}
 
+/* buttons */
+.action-button {
+    background-color: #ff7b00;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    flex-grow: 1;
+    margin-left: 10px;
+}
 
+#demolish-button {
+    background-color: #f44336;
+}
 
+/*To show highlighted buildings that can be demolished*/
+.grid-square.highlight-demolish {
+    background-color: #ff6961;
+    cursor: pointer;
+}
 
+/*test*/
+.grid-square img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
