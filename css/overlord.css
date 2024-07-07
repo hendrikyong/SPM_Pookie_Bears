@@ -169,10 +169,6 @@ header ul li ul li a:hover {
 
 /* NAVIGATION BAR */
 /* FONTS */
-@font-face {
-  font-family: "Atlantis International";
-  src: url("./Font/AtlantisInternational-jen0.ttf");
-}
 .title,
 .sub-title,
 .first-tier-header,
