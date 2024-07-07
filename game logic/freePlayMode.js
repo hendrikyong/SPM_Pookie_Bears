@@ -1,34 +1,65 @@
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('grid');
-
-    createGrid(5) // start at 5x5 grid
-
-
+    createGrid(gridSize); // start at 5x5 grid
 });
 
-function createGrid(size) {
-    grid.innerHTML='';
+let gridSize = 5; // Initial grid size
+let gridState = new Array(gridSize * gridSize).fill(null); // To store the state of the grid
 
+function createGrid(size) {
+    // clear grid content
+    grid.innerHTML = '';
+
+    // set grid properties on css for its size (col,row) (5x5)
     grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
     grid.style.gridTemplateRows = `repeat(${size}, 1fr)`;
 
+    // loop to create grid boxes based on the size ( size * size = n of rows, n of column )
     for (let i = 0; i < size * size; i++) {
+        // div for each box in the grid
         const box = document.createElement('div');
         box.classList.add('grid-box');
+
+        // if theres a building at the box in the loop, display the icon and type
+        if (gridState[i]) {
+            box.textContent = gridState[i].icon;
+            box.classList.add(gridState[i].type);
+        }
+
+        // add event listener to each grid box
         box.addEventListener('click', () => {
             if (demolishMode) {
-                demolishBuilding(box);
+                demolishBuilding(box, i);
+            } else {
+                placeBuilding(box, i);
             }
-            else {
-                placeBuilding(box);
-            }
-        })
+        });
+        // append this grid box to the html
         grid.appendChild(box);
+    }
+
+    if (size == 25) {
+        alert("Reached max grid size!")
     }
 }
 
-function expandGrid(size) {
-    createGrid(size);
+function expandGrid(newSize) {
+    // MAX the grid size to 25x25
+    newSize = Math.min(newSize, 25);
+
+    // make new array for expanded grid
+    const newGridState = new Array(newSize * newSize).fill(null);
+
+    // copy existing grid state into the new grid array
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            newGridState[i * newSize + j] = gridState[i * gridSize + j];
+        }
+    }
+    
+    gridSize = newSize;
+    gridState = newGridState; // update the grid state to this new expanded grid state
+    createGrid(gridSize);
 }
 
 const buildings = {
@@ -38,14 +69,12 @@ const buildings = {
         upkeep: 1,
         profit: 1
     },
-
     industry: {
         description: 'Each industry generates 2 coins per turn and cost 1 coin per turn to upkeep.',
         icon: 'I',
         upkeep: 1,
         profit: 2
     },
-
     commercial: {
         description: 'Each commercial generates 3 coins per turn and cost 2 coins per turn to upkeep.',
         icon: 'C',
@@ -69,33 +98,44 @@ const buildings = {
 let selectedBuilding = null;
 let selectedBuildingsArray = [];
 let points = 0;
-let coins = 16;
+// let coins = 16; unlimited for freeplay
 let turnNumber = 1;
 let demolishMode = false;
 let buildingPlacedThisTurn = false;
+let expandedThisTurn = false;
 
 function selectBuilding(buildingType) {
     selectedBuilding = buildingType;
     document.getElementById(selectedBuilding).classList.add('selected');
 }
 
-function placeBuilding(box) {
+function placeBuilding(box, index) {
     if (!buildingPlacedThisTurn && selectedBuilding) {
-        box.textContent = buildings[selectedBuilding].icon;
-        box.classList.add(selectedBuilding);
+        
+        // check if placed building is on the perimeter and expand the grid
+        if (isOnPerimeter(index) && !expandedThisTurn) {
+            gridState[index] = { type: selectedBuilding, icon: buildings[selectedBuilding].icon };
+            expandGrid(gridSize + 10);
+            expandedThisTurn = true;
+            updateUI();
+            
+            return;
+        }
+        // place the perimeter after expansion if there is an expansion
+        if (!gridState[index] || gridState[index].type !== selectedBuilding) {
+            box.textContent = buildings[selectedBuilding].icon;
+            box.classList.add(selectedBuilding);
+            gridState[index] = { type: selectedBuilding, icon: buildings[selectedBuilding].icon };
 
-        updateUI();
+            updateUI();
 
-        buildingPlacedThisTurn = true;
-        selectedBuilding = null;
-    }
-
-    else if (!selectedBuilding) {
+            buildingPlacedThisTurn = true;
+            selectedBuilding = null;
+        }
+    } else if (!selectedBuilding) {
         alert("No building selected");
-    }
-
-    else {
-        alert("You have already placed a building in this turn. End your turn first")
+    } else {
+        alert("You have already placed a building in this turn. End your turn first");
         updateUI();
     }
 }
@@ -104,6 +144,7 @@ function endTurn() {
     turnNumber++;
     document.getElementById('turn').textContent = turnNumber;
     buildingPlacedThisTurn = false;
+    expandedThisTurn = false;
 }
 
 function updateUI() {
@@ -123,16 +164,19 @@ function toggleDemolishMode() {
     }
 }
 
-function demolishBuilding(box) {
-    if (box.classList.length > 1) { 
-        
-        let buildingType = [...box.classList].find(cls => cls !== 'grid-box');
-
+function demolishBuilding(box, index) {
+    if (gridState[index]) {
         box.textContent = '';
-        box.classList.remove(buildingType);
-
-        buildingPlacedThisTurn = false;
-        selectedBuilding = null;
-        updateUI();
+        box.classList.remove(gridState[index].type);
+        gridState[index] = null;
     }
+}
+
+function isOnPerimeter(index) {
+    // calculate row and column of the box position based on the index and grid size
+    const row = Math.floor(index / gridSize);
+    const col = index % gridSize;
+
+    // check if the box position is on the perimeter (last or first row/column)
+    return row === 0 || row === gridSize - 1 || col === 0 || col === gridSize - 1;
 }
