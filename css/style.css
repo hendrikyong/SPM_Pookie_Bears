@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass Mono';
     line-height: 1;
     margin: 0;
     height: 100%;
@@ -210,13 +210,12 @@ button {
     margin: 0.5em 0;
 } 
 
-.legend-items {
+.buildings-legends, .menu-legends {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-    margin: 0;
-    padding: 0;
+    justify-content: space-around;
+    gap: 30px;
+    margin-top: 20px;
 }
 
 .legend-item {
@@ -701,7 +700,7 @@ display: flex;
     position: fixed;
     text-align: center;
     z-index: 1;
-    top: 12.5rem;
+    top: 13.5rem;
     width: 5.5rem;
     right: 0rem;
     transform: translateX(-50%);
@@ -764,7 +763,9 @@ display: flex;
 
 /* zoom */
 #zoom-in, #zoom-out,
-#res-btn, #ind-btn, #com-btn, #park-btn, #road-btn {
+.building,
+#build-btn, #demolish-btn,
+#save-btn, #legend-btn, #htp-btn {
     margin: 10px;
     padding: 10px;
     font-size: 16px;
@@ -797,50 +798,97 @@ display: flex;
 
 
 /* building btn */
-#zoom-out {
+#residential {
     position: fixed;
     z-index: 1;
-    top: 5.5rem; /* Adjusted to ensure there is space between the buttons */
+    top: 16.5rem; /* Adjusted to ensure there is space between the buttons */
     right: 1.85rem;
     height: 2.75rem;
     width: 2.75rem;
 }
 
-#zoom-out {
+#industry {
     position: fixed;
     z-index: 1;
-    top: 5.5rem; /* Adjusted to ensure there is space between the buttons */
+    top: 16.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 4.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
+#commercial {
+    position: fixed;
+    z-index: 1;
+    top: 19.5rem; /* Adjusted to ensure there is space between the buttons */
     right: 1.85rem;
     height: 2.75rem;
     width: 2.75rem;
 }
 
-#zoom-out {
+#park {
     position: fixed;
     z-index: 1;
-    top: 5.5rem; /* Adjusted to ensure there is space between the buttons */
+    top: 19.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 4.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
+#road {
+    position: fixed;
+    z-index: 1;
+    top: 22.5rem; /* Adjusted to ensure there is space between the buttons */
     right: 1.85rem;
     height: 2.75rem;
     width: 2.75rem;
 }
 
-#zoom-out {
+#build-btn {
     position: fixed;
     z-index: 1;
-    top: 5.5rem; /* Adjusted to ensure there is space between the buttons */
+    top: 26.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 4.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
+#demolish-btn {
+    position: fixed;
+    z-index: 1;
+    top: 26.5rem; /* Adjusted to ensure there is space between the buttons */
     right: 1.85rem;
     height: 2.75rem;
     width: 2.75rem;
 }
 
-#zoom-out {
+/* 3 btns */
+#save-btn {
     position: fixed;
     z-index: 1;
-    top: 5.5rem; /* Adjusted to ensure there is space between the buttons */
+    top: 36.5rem; /* Adjusted to ensure there is space between the buttons */
     right: 1.85rem;
     height: 2.75rem;
     width: 2.75rem;
 }
+
+#legend-btn {
+    position: fixed;
+    z-index: 1;
+    top: 40.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 1.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
+#htp-btn {
+    position: fixed;
+    z-index: 1;
+    top: 44.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 1.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
 
 /* table */
 /* .platform {
@@ -927,7 +975,7 @@ display: flex;
 }
 
 
-.building, .action-button {
+.building {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -935,7 +983,8 @@ display: flex;
     flex-grow: 1;
     position: relative;
     background-color: #a6e4a6;
-    transition: background-color 0.3s, opacity 0.3s;
+    transition: background-color 0.3s, opacity 0.3s, border-color 0.3s;
+    border: 2px solid transparent; /* Add border with transparent color */
 }
 
 .building.disabled {
@@ -946,6 +995,7 @@ display: flex;
 
 .building.selected {
     background-color: #78c678; /* Darker shade for selected building */
+    border-color: black; /* Black border for selected building */
 }
 
 .building::after {
@@ -998,7 +1048,7 @@ hr {
 }
 
 /* buttons */
-.action-button {
+/* .action-button {
     background-color: #ff7b00;
     color: white;
     padding: 10px;
@@ -1008,11 +1058,7 @@ hr {
     cursor: pointer;
     flex-grow: 1;
     margin-left: 10px;
-}
-
-#demolish-button {
-    background-color: #f44336;
-}
+} */
 
 /*To show highlighted buildings that can be demolished*/
 .grid-square.highlight-demolish {
@@ -1025,4 +1071,179 @@ hr {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+.buildings-btn img {
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#build-btn.selected,
+#demolish-btn.selected {
+    border-color: black;
+}
+
+
+
+
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 15% from the top and centered */
+    padding: 25px;
+    border: 1px solid #888;
+    width: 45%; /* Could be more or less, depending on screen size */
+    height: 75%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* help */
+/* Tab styles */
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border: none;
+    outline: none;
+    transition: background-color 0.3s;
+}
+
+.tab-button:hover {
+    background-color: #ddd;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* general */
+#general {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+/* points */
+h3 {
+    font-size: 1.5em;
+    margin-top: 0;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+li strong {
+    font-weight: bold;
+}
+ 
+.types {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    text-align: center;
+    align-items: center;
+}
+
+.types div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+}
+
+.types img {
+    width: 50px;
+    height: 50px;
+}
+
+.points-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* coins tab */
+#coins-tab h3 {
+    margin-top: 1rem;
+}
+
+.coins-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+/* legend */
+.legend-items {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.legend-item img {
+    width: 50px;
+    height: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.point-calc, .coins-calc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 40px;
+}
+
+.modal-content {
+    padding: 30px;
 }
