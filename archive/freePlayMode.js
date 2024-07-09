@@ -1,542 +1,363 @@
-// ================ INITIATED CLASSES ================
-// These to be placed in a js file that can be accessed by other js files
+document.addEventListener('DOMContentLoaded', () => {
+    const grid = document.getElementById('grid');
+    createGrid(gridSize); // start at 5x5 grid
+});
 
-class Building {
-    id;
-    coordX;
-    coordY;
-    surroundingBuildings = [undefined, undefined, undefined, undefined];
-    constructor(id){
-        this.id = id;
-    }
-    // Returns an array of coords to check
-    checkSurroundingSpace(){
-        let arrayOfSpace = [];
+let gridSize = 5; // Initial grid size
+let gridState = new Array(gridSize * gridSize).fill(null); // To store the state of the grid
 
-        // Checking of XCoords to append corresponding row coords
-        if (this.coordY === 0){
-            arrayOfSpace.push([this.coordX + 1, this.coordY]);
-        }
-        else if (this.coordY === 19){
-            arrayOfSpace.push([this.coordX - 1, this.coordY]);
-        }
-        else{
-            arrayOfSpace.push([this.coordX + 1, this.coordY]);
-            arrayOfSpace.push([this.coordX - 1, this.coordY]);
-        }
+function createGrid(size) {
+    // clear grid content
+    grid.innerHTML = '';
 
-        // Checking of YCoords to append corresponding col coords
-        if (this.coordY === 0){
-            arrayOfSpace.push([this.coordX, this.coordY + 1]);
-        }
-        else if (this.coordY === 19){
-            arrayOfSpace.push([this.coordX, this.coordY - 1]);
-        }
-        else{
-            arrayOfSpace.push([this.coordX, this.coordY + 1]);
-            arrayOfSpace.push([this.coordX, this.coordY - 1]);
+    // set grid properties on css for its size (col,row) (5x5)
+    grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+    grid.style.gridTemplateRows = `repeat(${size}, 1fr)`;
+
+    // loop to create grid boxes based on the size ( size * size = n of rows, n of column )
+    for (let i = 0; i < size * size; i++) {
+        // div for each box in the grid
+        const box = document.createElement('div');
+        box.classList.add('grid-box');
+
+        // if theres a building at the box in the loop, display the icon and type
+        if (gridState[i]) {
+            box.textContent = gridState[i].icon;
+            box.classList.add(gridState[i].type);
         }
 
-        return arrayOfSpace;
+        // add event listener to each grid box
+        box.addEventListener('click', () => {
+            if (demolishMode) {
+                demolishBuilding(box, i);
+            } else {
+                placeBuilding(box, i);
+            }
+        });
+        // append this grid box to the html
+        grid.appendChild(box);
     }
 
-    // Returns 0 if calculatePointsAndProfit is not implemented in respective classes
-    // Else return dict with keys : score, coins (optional)
-    calculatePointsAndProfit() {
-        return 0;
-    }
-
-    // Adds coords of building to each object for checkSuroundingSpace()
-    addCoord(coordX, coordY){
-        this.coordX = coordX;
-        this.coordY = coordY;
-    }
-
-    // Adjusts coordinates according to increase of map
-    adjustCoord(){
-        this.coordX += 5;
-        this.coordY += 5;
-    }
-
-    // Return position index.
-    // 0 = North; 1 = South; 2 = East; 3 = West (N, S, E, W)
-    checkPosition(space){
-        // Position: S
-        let position;
-        if (space[1] > this.coordY && space[0] === this.coordX){
-            position = 1;
-        }
-        // Position: N
-        else if (space[1] < this.coordY && space[0] === this.coordX){
-            position = 0;
-        }
-        // Position: W
-        else if (space[1] === this.coordY && space[0] > this.coordX){
-            position = 2;
-        }
-        //Position: E
-        else if (space[1] === this.coordY && space[0] < this.coordX){
-            position = 3;
-        }
-        return position;
+    if (size == 25) {
+        alert("Reached max grid size!")
     }
 }
 
-class Residential extends Building {
-    type = "Residential";
-    character = "R";
+function expandGrid(newSize) {
+    // MAX the grid size to 25x25
+    newSize = Math.min(newSize, 25);
 
-    // Return dict with key: "score" and "coins"
-    calculatePointsAndProfit(map, spacesToCheck){
-        let coinsEarned = 1;
-        let scoreEarned = 0;
-        for (const space of spacesToCheck){
-            let position = this.checkPosition(space);
-            // If space is a building
-            if (map[space[1]][space[0]] !== undefined){
-                let adjBuilding = map[space[1]][space[0]];
-                // Checks if buildings next to it (East & West) is Industry
-                if (adjBuilding.type === "Industry" && (position === 3 || position === 4) && this.surroundingBuildings[position] === undefined){
-                    scoreEarned += 1;
-                }
-                // Checks if adjacent building is Residential or Commercial
-                else if ((adjBuilding.type === "Residential" || adjBuilding.type === "Commercial") && this.surroundingBuildings[position] === undefined){
-                    scoreEarned += 1;
-                }
-                // Checks if adjacent building is Park
-                else if (adjBuilding.type === "Park" && this.surroundingBuildings[position] === undefined){
-                    scoreEarned += 2;
-                }
-                this.surroundingBuildings[position] = adjBuilding;
-            }
-            // If space is empty
-            else {
-                // Checks if its undefined space remains undefined under surroundingBuildings.
-                // Used when one of the surrounding building is demolised the previous turn  
-                if (this.surroundingBuildings[position] !== undefined){
-                    this.surroundingBuildings[position] = undefined;
-                }
-            }
+    // make new array for expanded grid
+    const newGridState = new Array(newSize * newSize).fill(null);
+
+    // copy existing grid state into the new grid array
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            newGridState[i * newSize + j] = gridState[i * gridSize + j];
         }
-        coinsEarned -= this.surroundingBuildings.filter(building => building?.type === "Residential").length;
-        return {"coins" : coinsEarned, "score" : scoreEarned};
     }
+    
+    gridSize = newSize;
+    gridState = newGridState; // update the grid state to this new expanded grid state
+    createGrid(gridSize);
 }
-class Industry extends Building {
-    type = "Industry";
-    character = "I";
 
-    // Returns dict with key: "coins"
-    calculatePointsAndProfit(map, spacesToCheck){
-        let coinsEarned = 1;
-        let scoreEarned = 0;
-        for (const space of spacesToCheck){
-            let position = this.checkPosition(space);
-            // If space is a building
-            if (map[space[1]][space[0]] !== undefined){
-                let adjBuilding = map[space[1]][space[0]];
-                this.surroundingBuildings[position] = adjBuilding;
-            }
-            // If space is empty
-            else { 
-                if (this.surroundingBuildings[position] !== undefined){
-                    this.surroundingBuildings[position] = undefined;
-                }
-            }
-        }
-        // Point is added for existing
-        if (this.defaultScore === 1){
-            scoreEarned += this.defaultScore;
-            this.defaultScore = 0;
-        }
+const buildings = {
+    residential: {
+        description: 'Each residential building generates 1 coin per turn. Each cluster of residential buildings (must be immediately next to each other) requires 1 coin per turn to upkeep.',
+        icon: 'R',
+        upkeep: 1,
+        profit: 1
+    },
+    industry: {
+        description: 'Each industry generates 2 coins per turn and cost 1 coin per turn to upkeep.',
+        icon: 'I',
+        upkeep: 1,
+        profit: 2
+    },
+    commercial: {
+        description: 'Each commercial generates 3 coins per turn and cost 2 coins per turn to upkeep.',
+        icon: 'C',
+        upkeep: 2,
+        profit: 3
+    },
+    park: {
+        description: 'Each park costs 1 coin to upkeep',
+        icon: 'O',
+        upkeep: 1,
+        profit: 0
+    },
+    road: {
+        description: 'Each unconnected road segment costs 1 coin to upkeep.',
+        icon: '*',
+        upkeep: 1,
+        profit: 0
+    },
+}
+
+let selectedBuilding = null;
+let points = 0;
+// let coins = 16; unlimited for freeplay
+let turnNumber = 1;
+let demolishMode = false;
+let buildingPlacedThisTurn = false;
+let expandedThisTurn = false;
+
+function selectBuilding(buildingType) {
+    
+    document.querySelectorAll('.building').forEach(building => {
+        building.classList.remove('selected');
+    });
+
+    selectedBuilding = buildingType;
+    document.getElementById(selectedBuilding).classList.add('selected');
+}
+
+function placeBuilding(box, index) {
+    if (!buildingPlacedThisTurn && selectedBuilding) {
         
-        // Unsure if industry still generate coins
-        // coinsEarned += this.surroundingBuildings.filter(building => building?.type === "Residential").length;
-        return {"score" : scoreEarned, "coins" : coinsEarned};
-    }
-}
-class Commercial extends Building {
-    type = "Commercial";
-    character = "C";
-
-    //Returns objects with key: "coins"
-    calculatePointsAndProfit(map, spacesToCheck){
-        let coinsEarned = 1;
-        let scoreEarned = 0;
-        for (const space of spacesToCheck){
-            let position = this.checkPosition(space);
-            // If space is a building
-            if (map[space[1]][space[0]] !== undefined){
-                let adjBuilding = map[space[1]][space[0]];
-                // Checks if adjacent buildings are Residential
-                if (adjBuilding.type === "Commercial" && this.surroundingBuildings[position] === undefined){
-                    scoreEarned += 1;
-                }
-                this.surroundingBuildings[position] = adjBuilding;
-            }
-            // If space is empty
-            else { 
-                if (this.surroundingBuildings[position] !== undefined){
-                    this.surroundingBuildings[position] = undefined;
-                }
-            }
+        // check if placed building is on the perimeter and expand the grid
+        if (isOnPerimeter(index) && !expandedThisTurn) {
+            gridState[index] = { type: selectedBuilding, icon: buildings[selectedBuilding].icon };
+            expandGrid(gridSize + 10);
+            expandedThisTurn = true;
+            updateUI();
+            buildingPlacedThisTurn = true;
+            selectedBuilding = null;
+            
+            return;
         }
+        // place the perimeter after expansion if there is an expansion
+        if (!gridState[index] || gridState[index].type !== selectedBuilding) {
+            box.textContent = buildings[selectedBuilding].icon;
+            box.classList.add(selectedBuilding);
+            gridState[index] = { type: selectedBuilding, icon: buildings[selectedBuilding].icon };
 
-        // Unsure if Commercial generates coins
-        // coinsEarned += this.surroundingBuildings.filter(building => building?.type === "Residential").length;
-        return {"score" : scoreEarned, "coins" : coinsEarned};
-    }
+            updateUI();
 
-}
-class Park extends Building {
-    type = "Park";
-    character = "O";
-
-    calculatePointsAndProfit(map, spacesToCheck){
-        let coinsEarned = -1;
-        let scoreEarned = 0;
-        for (const space of spacesToCheck){
-            let position = this.checkPosition(space);
-            // If space is a building
-            if (map[space[1]][space[0]] !== undefined){
-                let adjBuilding = map[space[1]][space[0]];
-                // Checks if adjacent buildings are Residential
-                if (adjBuilding.type === "Park" && this.surroundingBuildings[position] === undefined){
-                    scoreEarned += 1;
-                }
-                this.surroundingBuildings[position] = adjBuilding;
-            }
-            // If space is empty
-            else { 
-                if (this.surroundingBuildings[position] !== undefined){
-                    this.surroundingBuildings[position] = undefined;
-                }
-            }
+            buildingPlacedThisTurn = true;
+            selectedBuilding = null;
         }
-        return {"score" : scoreEarned, "coins" : coinsEarned};
-    }
-}
-class Road extends Building {
-    type = "Road";
-    character = "*";
-
-    calculatePointsAndProfit(map, spacesToCheck){
-        let coinsEarned = 0;
-        let scoreEarned = 0;
-        for (const space of spacesToCheck){
-            let position = this.checkPosition(space);
-            // If space is a building
-            if (map[space[1]][space[0]] !== undefined){
-                let adjBuilding = map[space[1]][space[0]];
-                // Checks if adjacent buildings are Residential
-                if (adjBuilding.type === "Road" && this.surroundingBuildings[position] === undefined){
-                    scoreEarned += 1;
-                }
-                this.surroundingBuildings[position] = adjBuilding;
-            }
-            // If space is empty
-            else { 
-                if (this.surroundingBuildings[position] !== undefined){
-                    this.surroundingBuildings[position] = undefined;
-                }
-            }
-        }
-        // Profit becomes negative when there is no connecting road
-        if (this.surroundingBuildings.filter(building => building?.type === "Road").length === 0){
-            coinsEarned -= 1;
-        }
-        return {"coins" : coinsEarned, "score" : scoreEarned};
+    } else if (!selectedBuilding) {
+        alert("No building selected");
+    } else {
+        alert("You have already placed a building in this turn. End your turn first");
+        updateUI();
     }
 }
 
-// ===================================================
-
-// ==================== FUNCTIONS ====================
-// These to be placed in a js file that can be accessed by other js files
-
-const ps = require("prompt-sync");
-const prompt = ps();
-
-function generateBuildChoices(buildingClasses, moves){
-    let buildingChoices = [];
-    for (const buildingClass of buildingClasses){
-        buildingChoices.push(new buildingClass(moves));
-    }
-    return buildingChoices;
+function endTurn() {
+    turnNumber++;
+    document.getElementById('turn').textContent = turnNumber;
+    buildingPlacedThisTurn = false;
+    expandedThisTurn = false;
+    calculateScore();
 }
 
-// Check whether there is a building built on border
-function hasBuildingOnBorder(map) {
-    // Check top and bottom borders (including corners)
-    for (let col = 0; col < map[0].length; col++) {
-        if (map[0][col] !== undefined || map[map.length - 1][col] !== undefined) {
-            return true;
-        }
-    }
-  
-    // Check left and right borders (including corners)
-    for (let row = 0; row < map.length; row++) {
-        if (map[row][0] !== undefined || map[row][map[row].length - 1] !== undefined) {
-            return true;
-        }
-    }
-  
-    // No value found on borders yet
-    return false;
+function updateUI() {
+    document.querySelectorAll('.building').forEach(building => {
+        building.classList.remove('selected');
+    });
 }
 
-// Expand map
-function expandMapAndAdjust(map) {
-    for (const row of map){
-        for (const space of row){
-            if (space !== undefined){
-                space.adjustCoord();
-            }
-        }
-    }
+function toggleDemolishMode() {
+    demolishMode = !demolishMode;
 
-    let lengthOfRow = map[0].length;
-    console.log(lengthOfRow);
-    let tempRow = [];
-    // Prepare empty rows
-    for (let i = 0; i < lengthOfRow + 10; i++){
-        tempRow.push(undefined);
+    const demolishButton = document.getElementById('demolish-button');
+    if (demolishMode) {
+        demolishButton.classList.add('active');
+    } else {
+        demolishButton.classList.remove('active');
     }
-
-    for (let i = 0; i < 5; i++){
-        map.splice( 0, 0, tempRow);
-        map.push(tempRow);
-    }
-
-    for (let i = 5; i < 10; i++){
-        let selectedRow = map[i];
-        for (let i = 0; i < 5; i++){
-            selectedRow = [undefined, ...selectedRow];
-            selectedRow.push(undefined);
-        }
-        map[i] = selectedRow;
-    }
-
-    return map;
 }
-  
 
-// Print map function and perform operations for the following: 
-// 1. Check for available spaces 
-// 2. Score calculation 
-// Return a dictionary 
-function printMap(map, lengthAndWidth){
-    let coins = 0;
+function demolishBuilding(box, index) {
+    if (gridState[index]) {
+        box.textContent = '';
+        box.classList.remove(gridState[index].type);
+        gridState[index] = null;
+    }
+}
+
+function isOnPerimeter(index) {
+    // calculate row and column of the box position based on the index and grid size
+    const row = Math.floor(index / gridSize);
+    const col = index % gridSize;
+
+    // check if the box position is on the perimeter (last or first row/column)
+    return row === 0 || row === gridSize - 1 || col === 0 || col === gridSize - 1;
+}
+
+function calculateScore() {
     let score = 0;
-    let arrayOfCoords = [];
-    let rowNo = 0;
-    let alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXY";
-    alphabets = alphabets.slice(0, lengthAndWidth)
-    console.log(`Length :${lengthAndWidth}`);
-    console.log(alphabets)
-    let rowHeaders = "   ";
-    let rowDivider = "==";
-    for (const column of alphabets){
-        rowHeaders += `${column}    `;
-        rowDivider += "=====";
-    }
-    console.log(`${rowHeaders}\n${rowDivider}`);
-    for (const row of map){
-        let rowStatement = "||";
-        // Checks for buildings in squares
-        for (const element of row){
-            if (element === undefined){
-                rowStatement += " X ||";
-            }
-            else{
-                // Execute operations when there is a building
-                rowStatement += ` ${element.character} ||`;
-                let tempArray = element.checkSurroundingSpace();
-                // Add score awarded to total score
-                let tempDict = element.calculatePointsAndProfit(map, tempArray);
-                score += tempDict["score"];
-                
-                // Add coins awarded to total coins
-                if (element.type === "Commercial" || element.type === "Industry"){
-                    coins += tempDict["coins"];
+    const grid = Array.from({ length: gridSize }, (_, i) => gridState.slice(i * gridSize, (i + 1) * gridSize));
+
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            const building = grid[row][col];
+            if (building) {
+                switch (building.type) {
+                    case 'residential':
+                        score += scoreResidential(grid, row, col);
+                        break;
+                    case 'industry':
+                        score += scoreIndustry(grid, row, col);
+                        break;
+                    case 'commercial':
+                        score += scoreCommercial(grid, row, col);
+                        break;
+                    case 'park':
+                        score += scorePark(grid, row, col);
+                        break;
+                    case 'road':
+                        score += scoreRoad(grid, row);
+                        break;
                 }
-                for (let coord of tempArray){
-                    if (arrayOfCoords.includes(coord) === false){
-                        arrayOfCoords.push(coord);
+            }
+        }
+    }
+
+    points = score;
+    document.getElementById('score').textContent = points;
+}
+
+function scoreResidential(grid, row, col) {
+    const adjacents = getAdjacents(grid, row, col);
+    let score = 0;
+    console.log(`Scoring residential at (${row}, ${col}) with adjacents:`, adjacents);
+    // check if adjacent to industry
+    if (adjacents.some(b => b && b.type === 'industry')) {
+        score = 1
+        console.log(`Found industry adjacent to residential at (${row}, ${col}). Score: ${score}`);
+
+        adjacents.forEach(b => {
+            if (b) {
+                if (b.type === 'residential' || b.type === 'commercial') {
+                    score = 1;
+                } else if (b.type === 'park') {
+                    score = 1;
+                }
+            }
+        });
+        return score;
+
+        
+    }
+
+    adjacents.forEach(b => {
+        if (b) {
+            if (b.type === 'residential' || b.type === 'commercial') {
+                score += 1;
+            } else if (b.type === 'park') {
+                score += 2;
+            }
+        }
+    });
+    
+    return score;
+}
+
+
+function scoreIndustry(grid, row, col) {
+    return 1;
+}
+
+function scoreCommercial(grid, row, col) {
+    let score = 0;
+    const adjacents = getAdjacents(grid, row, col);
+    adjacents.forEach(b => {
+        if (b) {
+            if (b.type === 'residential' || b.type === 'commercial') {
+                score += 1;
+            }
+        }
+    });
+    return score;
+}
+
+function scorePark(grid, row, col) {
+    let score = 0;
+    const adjacents = getAdjacents(grid, row, col);
+    score += adjacents.filter(b => b && b.type === 'park').length; // if theres a park adjacent, score 2 points
+    return score;
+}
+
+function scoreRoad(grid, row) {
+    let score = 0;
+    let connectedRoads = 0;
+    let hasConnectedSegment = false;
+
+    for (let col = 0; col < gridSize; col++) {
+        if (grid[row][col] && grid[row][col].type === 'road') {
+            connectedRoads++;
+            hasConnectedSegment = true;
+        } else {
+            if (connectedRoads > 1) {
+                score += 1; // Score 1 point per connected road segment
+            }
+            connectedRoads = 0; // reset count for next row of roads
+        }
+    }
+
+    // check if theres another road at the next row
+    if (connectedRoads > 1) {
+        score += 1;
+    }
+
+    // if the road is alone it does not generate any point
+    if (!hasConnectedSegment) {
+        score = 0;
+    }
+
+    return score;
+}
+
+
+
+
+function getAdjacents(grid, row, col) {
+    const adjacents = [];
+    const visited = new Set();
+    const queue = [{ row, col }];
+
+    // grid movement directions
+    const directions = [
+        { row: -1, col: 0 }, // up
+        { row: 1, col: 0 },  // down
+        { row: 0, col: -1 }, // left
+        { row: 0, col: 1 }   // right
+    ];
+
+    visited.add(`${row},${col}`); // Mark the starting building as visited to skip itself
+
+    // go through all the directions around a building for buildings
+    while (queue.length > 0) {
+        const { row: currentRow, col: currentCol } = queue.shift();
+
+        // check all 4 directions
+        for (const direction of directions) {
+            const newRow = currentRow + direction.row;
+            const newCol = currentCol + direction.col;
+
+            // check if the new building is adjacent to a road and is not visited
+            if (newRow >= 0 && newRow < grid.length && newCol >= 0 && newCol < grid[0].length && !visited.has(`${newRow},${newCol}`)) {
+                const adjacent = grid[newRow][newCol];
+
+                if (adjacent) {
+                    visited.add(`${newRow},${newCol}`);
+                    adjacents.push(adjacent);
+
+                    // continue through to next road
+                    if (adjacent.type === 'road') {
+                        queue.push({ row: newRow, col: newCol });
                     }
                 }
             }
         }
-        console.log(rowStatement += `   ${rowNo}\n${rowDivider}`)
-        rowNo += 1;
     }
-    return {
-        "score" : score,
-        "coins" : coins,
-        "availableCoords" : arrayOfCoords
-    };
+
+    return adjacents;
 }
-
-// Validates user input and returns unique message
-function integerValidator(min, max){
-    let userInput = 0;
-    while (true){
-        try {
-            userInput = prompt(`Please enter an option within ${min} - ${max}: `)
-            userInput = Number(userInput);
-            if (userInput >= min && userInput <= max){
-                return userInput;
-            }
-            else{ 
-                console.log("Please ensure that number entered is within range.");
-            }
-        }
-        catch (err){
-            console.error(err);
-        }
-    } 
-}
-
-// Validates userInput for column 
-function columnValidator(){
-    let userInput;
-    const stringOfLetters = "ABCDEFGHIJKLMNOPQRST";
-
-    while (true){
-        userInput = prompt(`Enter column: `)
-        if (userInput.length === 1 && stringOfLetters.includes(userInput)){
-            return userInput;
-        }
-        else{
-            console.log("Input is not valid, ensure that an capitalised letter is inputted!");
-        }
-    }
-}
-
-// ===============================================` ====
-
-const buildingClasses = [ Residential, Industry, Commercial, Park, Road];
-let coins = 0;
-let score = 0;
-let moves = 0;
-let consecNegProfit = 0;
-let lengthAndWidth = 0;
-let map =  [[,,,,,],
-            [,,,,,],
-            [,,,,,],
-            [,,,,,],
-            [,,,,,]];
-
-while (consecNegProfit < 20){
-    // Display map and moves
-    if (hasBuildingOnBorder(map)){
-        expandMapAndAdjust(map);
-    }
-    lengthAndWidth = map[0].length;
-    let dict = printMap(map, lengthAndWidth);
-
-    score += dict["score"];
-    coins += dict["coins"];
-
-    if (coins < 0){
-        consecNegProfit += 1;
-    }
-    else {
-        consecNegProfit = 0;
-    }
-
-    console.log("\n//======= Aracade Mode =======//");
-    console.log(`           Move: ${moves}`);
-    console.log(`           Profit: ${coins}`);
-    console.log(`           Score: ${score}`);
-    console.log("//============================//");
-    // User decide to demolish or build a building
-    console.log("\nBuild or Demolish? 1 and 2 respectively.")
-    let buildOrDemolish = integerValidator(1,2);
-
-    // User decide to demolish
-    if (buildOrDemolish === 2){
-        while (true){
-            let newCoordsX;
-            // Validates X Coords
-            while (true){
-                console.log("\nEnter X Coordinates");
-                let coordsX = columnValidator();
-                newCoordsX = coordsX.charCodeAt(0)-65; // Coverts the alphabet to an index
-                if (newCoordsX <= lengthAndWidth){
-                    break;
-                }
-                else{
-                    console.log("Enter within the range.");
-                }
-            }
-            
-            console.log("\nEnter Y Coordinates");
-            let coordsY = integerValidator(1,lengthAndWidth);
-            if (map[coordsY][newCoordsX] === undefined){
-                console.log("There is no building to be demolished!");
-            }
-            else{
-                let buildingToDemolish = map[coordsY][newCoordsX];
-                console.log("\nAre you sure? 0 to confirm demolish and 1 to cancel.")
-                let userInput = integerValidator(0,1);
-                if (userInput === 0){
-                    map[coordsY][newCoordsX] = undefined;
-                    coins -= 1;
-                    break;
-                }
-                else{
-                    break;
-                }
-            }
-        }
-    }
-    // User decide to build
-    else {
-        let buildingChoices = generateBuildChoices(buildingClasses, moves);
-        console.log(`\nBuidling choices: \n1. ${buildingChoices[0].type}       
-                        2.${buildingChoices[1].type}       
-                        3.${buildingChoices[2].type}       
-                        4.${buildingChoices[3].type}       
-                        5.${buildingChoices[4].type}`);
-        
-        // User decide which building to build
-        let userBuildChoice = integerValidator(1,5);
-        let buildingToBuild = buildingChoices[userBuildChoice-1];
-        coins -= 1;
-
-        while (true){
-            while (true){
-                console.log("\nEnter X Coordinates");
-                let coordsX = columnValidator();
-                newCoordsX = coordsX.charCodeAt(0)-65; // Coverts the alphabet to an index
-                if (newCoordsX <= lengthAndWidth){
-                    break;
-                }
-                else{
-                    console.log("Enter within the range.");
-                }
-            }
-
-            console.log("\nEnter Y Coordinates");
-            let coordsY = integerValidator(0,lengthAndWidth);
-            // Building is simply built on first turn with 0 validation
-
-            // Moves 1 onwards there is validation 
-            if (map[coordsY][newCoordsX] !== undefined){
-                console.log("This square already has a building!");
-            }
-            else {
-                buildingToBuild.addCoord(newCoordsX, coordsY);
-                map[coordsY][newCoordsX] = buildingToBuild;
-                break;
-            }
-        }
-    }
-    moves += 1;
-}
-
-
 
 
 
