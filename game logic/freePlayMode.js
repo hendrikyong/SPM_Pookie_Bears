@@ -295,16 +295,16 @@ function scoreRoad(grid, row) {
             if (connectedRoads > 1) {
                 score += 1; // Score 1 point per connected road segment
             }
-            connectedRoads = 0; // Reset the count for the next sequence
+            connectedRoads = 0; // reset count for next row of roads
         }
     }
 
-    // Check if there is another connected road at the end of the row
+    // check if theres another road at the next row
     if (connectedRoads > 1) {
         score += 1;
     }
 
-    // If the road is alone, it does not generate any point
+    // if the road is alone it does not generate any point
     if (!hasConnectedSegment) {
         score = 0;
     }
@@ -320,7 +320,7 @@ function getAdjacents(grid, row, col) {
     const visited = new Set();
     const queue = [{ row, col }];
 
-    // Directions for moving in the grid
+    // grid movement directions
     const directions = [
         { row: -1, col: 0 }, // up
         { row: 1, col: 0 },  // down
@@ -328,17 +328,18 @@ function getAdjacents(grid, row, col) {
         { row: 0, col: 1 }   // right
     ];
 
-    visited.add(`${row},${col}`); // Mark the starting cell as visited to skip itself
+    visited.add(`${row},${col}`); // Mark the starting building as visited to skip itself
 
+    // go through all the directions around a building for buildings
     while (queue.length > 0) {
         const { row: currentRow, col: currentCol } = queue.shift();
 
-        // Check all 4 directions
+        // check all 4 directions
         for (const direction of directions) {
             const newRow = currentRow + direction.row;
             const newCol = currentCol + direction.col;
 
-            // Check if the new cell is within bounds and not visited
+            // check if the new building is adjacent to a road and is not visited
             if (newRow >= 0 && newRow < grid.length && newCol >= 0 && newCol < grid[0].length && !visited.has(`${newRow},${newCol}`)) {
                 const adjacent = grid[newRow][newCol];
 
@@ -346,7 +347,7 @@ function getAdjacents(grid, row, col) {
                     visited.add(`${newRow},${newCol}`);
                     adjacents.push(adjacent);
 
-                    // Only continue if it's a road
+                    // continue through to next road
                     if (adjacent.type === 'road') {
                         queue.push({ row: newRow, col: newCol });
                     }
@@ -357,7 +358,6 @@ function getAdjacents(grid, row, col) {
 
     return adjacents;
 }
-
 
 
 
