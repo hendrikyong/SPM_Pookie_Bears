@@ -43,6 +43,11 @@ img {
   text-decoration: none;
 }
 
+.menu a.active {
+  text-decoration: underline;
+  font-weight: bold; /* Optional: Make the active link bold */
+}
+
 .leaderboard {
   font-size: 1.6rem;
 }
@@ -68,9 +73,4 @@ img {
 
 .leaderboard button {
   margin: 3rem 0 0 18rem;
-}
-
-.menu a.active {
-  /* Target links with the "active" class */
-  text-decoration: underline;
 }

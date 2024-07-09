@@ -5,6 +5,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const url = "https://feddddd-6882.restdb.io/rest/assignment2leaderboard";
   const apikey = "65c4358c86354f3586464a0d";
 
+  const currentPage = window.location.pathname; // Get current page path
+  const arcadeButton = document.getElementById("arcade-button");
+  const freePlayButton = document.getElementById("free-play-button");
+
+  if (currentPage.includes("arcade-leaderboard.html")) {
+    arcadeButton.classList.add("active");
+  } else if (currentPage.includes("free-play-leaderboard.html")) {
+    freePlayButton.classList.add("active");
+  }
+
   getData();
 
   //retrieve high score from
