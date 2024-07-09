@@ -34,7 +34,7 @@ body {
     gap: 2px; /* Optional: space between boxes */
     width: 800px; /* Set width */
     height: 800px; /* Set height */
-    
+    margin-top: 8vh
 }
 
 .grid-box {
@@ -1107,9 +1107,9 @@ body {
       overflow: auto;
   }
   
-  .turn-counter {
+  #turn {
       position: absolute;
-      top: 50px;
+      top: 30px;
       left: 50%;
       transform: translateX(-50%);
       background-color: rgba(0, 0, 0, 0.7);
