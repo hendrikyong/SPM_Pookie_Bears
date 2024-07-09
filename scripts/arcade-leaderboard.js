@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let count = 1;
         for (let i = 0; i < uniqueUserScores.length && i < limit; i++) {
           content += `<tr class="leaderboard-row" style="color: black; background-color:white;"> 
-              <td class="rank">${count++}</td> 
+              <td class="rank">${count++}.</td> 
               <td class="name">${uniqueUserScores[i].name}</td> 
               <td class="score">${uniqueUserScores[i].score}</td> 
               </tr>`;

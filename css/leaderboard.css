@@ -25,31 +25,31 @@ img {
 }
 
 .container {
-  /* border: red dotted 5px; */
   display: flex;
+  margin-top: -2.5rem;
 }
 
 .menu {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 0 0 0 4rem;
+  margin: 0 4rem 0 1.8rem;
+  padding-left: 5rem;
+  width: 10rem;
 }
 
 .menu a {
-  /* Target all links within the .menu div */
-  color: inherit; /* Inherit the color from the parent element (likely black) */
-  text-decoration: none; /* Remove the underline */
-}
-
-#Leaderboard {
-  /* border: black dotted 5px; */
-  margin-left: -6rem;
+  color: inherit;
+  text-decoration: none;
 }
 
 .leaderboard {
-  margin-left: 5rem;
+  font-size: 1.6rem;
 }
+#Leaderboard {
+  margin-left: -6rem;
+}
+
 .leaderboard-row .rank {
   width: 4rem;
 }
@@ -59,8 +59,18 @@ img {
 .leaderboard-row .score {
   width: 6rem;
 }
+
 .leaderboard-header th {
   background-color: #00468b;
-  padding: 0; /* Remove default padding */
+  padding: 0;
   color: #d0f6fb;
+}
+
+.leaderboard button {
+  margin: 3rem 0 0 18rem;
+}
+
+.menu a.active {
+  /* Target links with the "active" class */
+  text-decoration: underline;
 }

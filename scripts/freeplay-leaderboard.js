@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM loaded");
-  const url = "https://pookiebears-04f9.restdb.io/rest/freeplayleaderboard";
-  const apikey = "6686c097e0ddd887ed0940e1";
+  //const url = "https://pookiebears-04f9.restdb.io/rest/freeplayleaderboard";
+  //const apikey = "6686c097e0ddd887ed0940e1";
   //const url = "https://feddddd-6882.restdb.io/rest/assignment2leaderboard";
   //const apikey = "65c4358c86354f3586464a0d";
 
