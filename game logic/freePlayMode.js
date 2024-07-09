@@ -472,14 +472,14 @@ function saveGame() {
 
     const username = document.getElementById('username-input').value;
 
-    const jsondata = {
+    const savegameData = {
         username: username,
         datetimeCreated: singaporeISOString,
         gamestate: jsonGameState
     };
 
     const apikey = '6686c097e0ddd887ed0940e1'
-    const settings = {
+    const postSaveData = {
         "async": true,
         "crossDomain": true,
         "url": "https://pookiebears-04f9.restdb.io/rest/freeplay-saves",
@@ -490,10 +490,34 @@ function saveGame() {
             "cache-control": "no-cache"
         },
         "processData": false,
-        "data": JSON.stringify(jsondata)
+        "data": JSON.stringify(savegameData)
     };
 
-    $.ajax(settings).done(function(response) {
+    const leaderboardData = {
+        name: username,
+        score: points
+    }
+
+    var postLeaderboard = {
+        "async": true,
+        "crossDomain": true,
+        "url": "https://pookiebears-04f9.restdb.io/rest/freeplayleaderboard",
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "x-apikey": apikey,
+          "cache-control": "no-cache"
+        },
+        "processData": false,
+        "data": JSON.stringify(leaderboardData)
+    };
+      
+    $.ajax(postLeaderboard).done(function (response) {
+    console.log(response);
+    });
+
+
+    $.ajax(postSaveData).done(function(response) {
         console.log(response);
         alert("Game saved successfully!");
     }).fail(function(jqXHR, textStatus, errorThrown) {
