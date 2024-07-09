@@ -763,7 +763,7 @@ display: flex;
 
 /* zoom */
 #zoom-in, #zoom-out,
-.building,
+.building, .pause,
 #build-btn, #demolish-btn,
 #save-btn, #legend-btn, #htp-btn {
     margin: 10px;
@@ -776,6 +776,15 @@ display: flex;
     align-items: center; /* Center align the content inside the button */
     justify-content: center; /* Center align the content inside the button */
     cursor: pointer; /* Change cursor to pointer for better UX */
+}
+
+.pause {
+    position: fixed;
+    z-index: 1;
+    top: 2rem;
+    right: 1.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
 }
 
 #zoom-in {
@@ -1073,7 +1082,7 @@ hr {
     object-fit: contain;
 }
 
-.buildings-btn img {
+.buildings-btn img, .pause img {
     width: 30px;
     height: 30px;
     margin-left: 10px;
@@ -1237,11 +1246,15 @@ li strong {
     margin-right: 10px;
 }
 
-.point-calc, .coins-calc ul {
+.point-calc, .coins-calc {
+    display: flex;
+    flex-direction: column;
+}
+
+.point-calc, .coins-calc li {
     list-style: none;
-    margin: 0;
+    margin-bottom: 15px;
     padding: 0;
-    gap: 40px;
 }
 
 .modal-content {
