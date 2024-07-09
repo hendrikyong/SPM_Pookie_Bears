@@ -10,6 +10,22 @@ navTrigger.addEventListener('click', function() {
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('grid');
     createGrid(gridSize); // start at 5x5 grid
+    let zoomLevel = 1;
+    document.getElementById('zoom-in').addEventListener('click', () => {
+        zoomLevel = Math.min(0.9, zoomLevel + 0.1); // Prevent zooming out too much
+        // zoomLevel += 0.1;
+        console.log(zoomLevel);
+        grid.style.transform = `scale(${zoomLevel})`;
+        //grid.style.transformOrigin = '0 0';
+    });
+
+    document.getElementById('zoom-out').addEventListener('click', () => {
+        console.log(zoomLevel);
+        zoomLevel = Math.max(0.4, zoomLevel - 0.1); // Prevent zooming out too much
+        grid.style.transform = `scale(${zoomLevel})`;
+
+        //grid.style.transformOrigin = '0 0';
+    });
 
     // Show username modal
     const usernameModal = document.getElementById('username-modal');
@@ -152,7 +168,8 @@ function selectBuilding(buildingType) {
 }
 
 function toggleBuildMode() {
-
+    removeDemolishHighlights();
+    demolishMode = false;
     if (buildingSelected) {
         highlightValidPlacement();
         buildMode = true;

@@ -32,8 +32,8 @@ body {
     grid-template-columns: repeat(5, 1fr); /* 5 columns */
     grid-template-rows: repeat(5, 1fr);    /* 5 rows */
     gap: 2px; /* Optional: space between boxes */
-    width: 700px; /* Set width */
-    height: 700px; /* Set height */
+    width: 800px; /* Set width */
+    height: 800px; /* Set height */
     
 }
 
