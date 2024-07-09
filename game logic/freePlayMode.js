@@ -224,9 +224,11 @@ function calculateScore() {
 function scoreResidential(grid, row, col) {
     const adjacents = getAdjacents(grid, row, col);
     let score = 0;
+    console.log(`Scoring residential at (${row}, ${col}) with adjacents:`, adjacents);
     // check if adjacent to industry
     if (adjacents.some(b => b && b.type === 'industry')) {
         score = 1
+        console.log(`Found industry adjacent to residential at (${row}, ${col}). Score: ${score}`);
 
         adjacents.forEach(b => {
             if (b) {
@@ -315,9 +317,47 @@ function scoreRoad(grid, row) {
 
 function getAdjacents(grid, row, col) {
     const adjacents = [];
-    if (row > 0) adjacents.push(grid[row - 1][col]);
-    if (row < gridSize - 1) adjacents.push(grid[row + 1][col]);
-    if (col > 0) adjacents.push(grid[row][col - 1]);
-    if (col < gridSize - 1) adjacents.push(grid[row][col + 1]);
+    const visited = new Set();
+    const queue = [{ row, col }];
+
+    // Directions for moving in the grid
+    const directions = [
+        { row: -1, col: 0 }, // up
+        { row: 1, col: 0 },  // down
+        { row: 0, col: -1 }, // left
+        { row: 0, col: 1 }   // right
+    ];
+
+    visited.add(`${row},${col}`); // Mark the starting cell as visited to skip itself
+
+    while (queue.length > 0) {
+        const { row: currentRow, col: currentCol } = queue.shift();
+
+        // Check all 4 directions
+        for (const direction of directions) {
+            const newRow = currentRow + direction.row;
+            const newCol = currentCol + direction.col;
+
+            // Check if the new cell is within bounds and not visited
+            if (newRow >= 0 && newRow < grid.length && newCol >= 0 && newCol < grid[0].length && !visited.has(`${newRow},${newCol}`)) {
+                const adjacent = grid[newRow][newCol];
+
+                if (adjacent) {
+                    visited.add(`${newRow},${newCol}`);
+                    adjacents.push(adjacent);
+
+                    // Only continue if it's a road
+                    if (adjacent.type === 'road') {
+                        queue.push({ row: newRow, col: newCol });
+                    }
+                }
+            }
+        }
+    }
+
     return adjacents;
 }
+
+
+
+
