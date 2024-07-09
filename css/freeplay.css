@@ -1107,7 +1107,7 @@ body {
       overflow: auto;
   }
   
-  #turn {
+  #turn, .turn-counter {
       position: absolute;
       top: 30px;
       left: 50%;
