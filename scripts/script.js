@@ -228,6 +228,7 @@ function selectBuilding(buildingType) {
 }
 
 function getRandomBuilding(exclude) {
+<<<<<<< HEAD
   console.log(buildings);
   const buildingKeys = Object.keys(buildings).filter(
     (key) => key !== exclude && !selectedBuildings.includes(key)
@@ -241,6 +242,19 @@ function initializeGame() {
   selectedBuildings = [getRandomBuilding(null), getRandomBuilding(null)];
   updateSelectedBuildingsUI();
   updateScoreboard();
+=======
+    const buildingKeys = Object.keys(buildings).filter(key => key !== exclude && !selectedBuildings.includes(key));
+    const randomIndex = Math.floor(Math.random() * buildingKeys.length);
+    return buildingKeys[randomIndex];
+}
+
+function initializeGame() {
+    updateTurnCounter();
+    const firstRandomBuilding = getRandomBuilding(null)
+    selectedBuildings = [firstRandomBuilding, getRandomBuilding(firstRandomBuilding)];
+    updateSelectedBuildingsUI();
+    updateScoreboard();
+>>>>>>> ea3b5a39b1a6d35b5b22cb2dcf63e31e71ae20c0
 }
 
 function updateSelectedBuildingsUI() {
@@ -262,6 +276,7 @@ function highlightValidCells() {
 
   console.log("First building placed: ", firstBuildingPlaced);
 
+<<<<<<< HEAD
   gridSquares.forEach((square) => {
     square.classList.remove("highlight");
     if (firstBuildingPlaced) {
@@ -273,6 +288,22 @@ function highlightValidCells() {
       square.classList.add("highlight");
     }
   });
+=======
+    for (let i = 0; i < gridSquares.length; i++) {
+        const square = gridSquares[i];
+        if (square.classList.contains('built')) continue;
+
+        square.classList.remove('highlight');
+        if (firstBuildingPlaced) {
+            const neighbors = getNeighbors(square);
+            if (neighbors.some(neighbor => neighbor.classList.contains('built'))) {
+                square.classList.add('highlight');
+            }
+        } else {
+            square.classList.add('highlight');
+        }
+    }
+>>>>>>> ea3b5a39b1a6d35b5b22cb2dcf63e31e71ae20c0
 }
 
 function buildStructure() {
@@ -290,6 +321,7 @@ function buildStructure() {
 }
 
 function placeBuilding(square) {
+<<<<<<< HEAD
   if (square.classList.contains("highlight") && coins > 0) {
     const img = document.createElement("img");
     img.src = buildings[selectedBuilding].image;
@@ -304,6 +336,45 @@ function placeBuilding(square) {
 
     if (!firstBuildingPlaced) {
       firstBuildingPlaced = true;
+=======
+    if (square.classList.contains('highlight') && coins > 0) {
+        const img = document.createElement('img');
+        img.src = buildings[selectedBuilding].image;
+        img.alt = buildings[selectedBuilding].icon;
+        square.innerHTML = '';
+        square.appendChild(img);
+        square.classList.add('built');
+        square.classList.remove('highlight');
+        square.icon = img.alt;
+        square.turnNumber = turnNumber; // Store the turn number when the building was placed
+
+        coins -= 1;
+
+        // if commercial or industrial building is added
+        if (square.icon == 'I' || square.icon == 'C') {
+            addCoin();
+        }
+
+        if (!firstBuildingPlaced) {
+            firstBuildingPlaced = true;
+        }
+
+        // Remove highlight from all cells
+        document.querySelectorAll('.grid-square').forEach(square => {
+            square.classList.remove('highlight');
+        });
+
+        // Update selected buildings for next turn
+        const newBuilding = getRandomBuilding(null);
+        const secondNewBuilding = getRandomBuilding(newBuilding);
+        selectedBuildings = [newBuilding, secondNewBuilding];
+
+        // Update the UI for new buildings
+        updateSelectedBuildingsUI();
+
+        // End the turn and update coins, counter, points 
+        endTurn();
+>>>>>>> ea3b5a39b1a6d35b5b22cb2dcf63e31e71ae20c0
     }
 
     // Remove highlight from all cells
@@ -357,6 +428,7 @@ function isOuterLayer(square) {
 
 // Demolish a building
 function demolishBuilding(square) {
+<<<<<<< HEAD
   if (
     coins > 0 &&
     demolishMode &&
@@ -366,6 +438,14 @@ function demolishBuilding(square) {
     // Remove building
     square.innerText = "";
     square.classList.remove("built", "highlight-demolish");
+=======
+    if (coins > 0 && demolishMode && square.classList.contains('built') && isOuterLayer(square)) {
+        // Remove building
+        square.innerText = '';
+        square.classList.remove('built', 'highlight-demolish');
+        square.icon = null;
+        square.turnNumber = null;
+>>>>>>> ea3b5a39b1a6d35b5b22cb2dcf63e31e71ae20c0
 
     const builtSquaresCount =
       document.querySelectorAll(".grid-square.built").length;
@@ -406,6 +486,7 @@ function removeBuildHighlights() {
 }
 
 function endTurn() {
+<<<<<<< HEAD
   updateProfitAndUpkeep();
   updatePoints();
   turnNumber += 1;
@@ -449,11 +530,55 @@ function updateProfitAndUpkeep() {
             (neighbor) => neighbor.innerText === "R"
           );
           profit += neighbors.length; // Each adjacent residential building generates 1 coin
+=======
+    // updateProfitAndUpkeep();
+    updatePoints();
+
+    turnNumber += 1;
+    updateTurnCounter();
+    // Check if all squares are used
+    const allSquaresUsed = Array.from(document.querySelectorAll('.grid-square')).every(square => square.classList.contains('built'));
+
+    updateScoreboard();
+
+    if (allSquaresUsed) {
+        // Perform actions to end the game
+        alert(`All squares are used. Game Over! Your final score is: ${points}!`);
+        window.location.href = '../index.html';
+    }
+    else if (coins <= 0) {
+        alert(`You ran out of coins. Game Over! Your final score is: ${points}!`);
+        window.location.href = '../index.html';
+    }
+}
+
+function updatePoints() {
+    oldPoints = points;
+    points = 0;
+
+    const gridSquares = document.querySelectorAll('.grid-square');
+
+    gridSquares.forEach(square => {
+        if (square.classList.contains('built')) {
+
+            if (square.icon == 'R') {
+                points += residentialScoringSystem(square);
+            } else if (square.icon == 'I') {
+                points += industryScoringSystem();
+            } else if (square.icon == 'C') {
+                points += commercialScoringSystem(square);
+            } else if (square.icon == 'O') {
+                points += parkScoringSystem(square);
+            } else if (square.icon == '*') {
+                points += roadScoringSystem(square);
+            }
+>>>>>>> ea3b5a39b1a6d35b5b22cb2dcf63e31e71ae20c0
         }
       }
     }
   });
 
+<<<<<<< HEAD
   const residentialClusters = [];
   const visited = new Set();
 
@@ -519,6 +644,38 @@ function updatePoints() {
               points += 2;
             }
           });
+=======
+    if (oldPoints > points) {
+        points = oldPoints; // If the points are reduced, revert back to the old points
+    }
+}
+
+function residentialScoringSystem(square) {
+    let score = 0;
+
+    const neighbors = getNeighbors(square);
+
+    // // no score to be added if industry is placed before this new adjacent building
+    // if (square.adjacentIndustryPlaced) {
+    //     return score; 
+    // }
+
+    let earliestIndustryTurnNumber = 99999; // hardcoding but whatever LOL
+
+    // Filter squares with buildings and sort by turn number
+    const neighborBuildings = neighbors.filter(square => square.icon).sort((a, b) => a.turnNumber - b.turnNumber);
+
+    // check if any adjacent industry is placed
+    neighborBuildings.forEach(neighbor => {
+
+        if (neighbor.icon == 'I') {
+            earliestIndustryTurnNumber = neighbor.turnNumber;
+            score += 1; // only 1 point given if industry is placed  
+        } else if ((neighbor.icon == 'R' || neighbor.icon == 'C') && neighbor.turnNumber < earliestIndustryTurnNumber) { 
+            score += 1;
+        } else if (neighbor.icon == 'O' && neighbor.turnNumber < earliestIndustryTurnNumber) {
+            score += 2;
+>>>>>>> ea3b5a39b1a6d35b5b22cb2dcf63e31e71ae20c0
         }
       } else if (buildingType === "industry" && !industryCalculated) {
         points += document.querySelectorAll(".grid-square.built").length;
@@ -551,6 +708,7 @@ function updatePoints() {
           return acc;
         }, []);
 
+<<<<<<< HEAD
         let pairs = 0;
         for (let i = 0; i < roadIndices.length - 1; i++) {
           // Check if the current road square and the next one form a pair (consecutive indices)
@@ -566,6 +724,74 @@ function updatePoints() {
   });
 
   updateScoreboard();
+=======
+    console.log(earliestIndustryTurnNumber);
+    console.log(score);
+    
+    return score;
+}
+
+// 1 point per industry building
+function industryScoringSystem() {
+    return score = 1;
+}
+
+function commercialScoringSystem(square) {
+    let score = 0;
+    const neighbors = getNeighbors(square);
+
+    neighbors.forEach(neighbor => {
+        if (neighbor.icon == 'C') {
+            score += 1; // each adjacent commercial building scores 1 point
+        }
+    });
+
+    return score;
+}
+
+function parkScoringSystem(square) {
+    let score = 0;
+    const neighbors = getNeighbors(square);
+
+    neighbors.forEach(neighbor => {
+        if (neighbor.icon == 'O') {
+            score += 1; // each adjacent park building scores 1 point
+        }
+    });
+
+    return score;
+}
+
+function roadScoringSystem(square) {
+    let score = 0;
+    const neighbors = [];
+
+    const grid = document.getElementById('grid');
+    const squares = Array.from(grid.children);
+    const index = squares.indexOf(square);
+    const rowSize = Math.sqrt(squares.length);
+
+    // Check if the square is not in the first column (left edge)
+    if (index % rowSize !== 0) { // left neighbor
+        neighbors.push(squares[index - 1]);
+    }
+    // Check if the square is not in the last column (right edge)
+    if (index % rowSize !== rowSize - 1) { // right neighbor
+        neighbors.push(squares[index + 1]);
+    }
+
+    neighbors.forEach(neighbor => {
+        if (neighbor.icon == '*') {
+            score += 1; // each adjacent road connected scores 1 point
+        }
+    });
+
+    return score;
+}
+
+function addCoin() {
+    coins += 1;
+>>>>>>> ea3b5a39b1a6d35b5b22cb2dcf63e31e71ae20c0
 }
 
 function saveGame() {
@@ -579,6 +805,7 @@ function exitGame() {
 }
 
 function getNeighbors(square) {
+<<<<<<< HEAD
   const grid = document.getElementById("grid");
   console.log(grid);
 
@@ -586,9 +813,17 @@ function getNeighbors(square) {
   console.log(squares);
   const index = squares.indexOf(square);
   const rowSize = Math.sqrt(squares.length);
+=======
+    const grid = document.getElementById('grid');
+
+    const squares = Array.from(grid.children);
+    const index = squares.indexOf(square);
+    const rowSize = Math.sqrt(squares.length);
+>>>>>>> ea3b5a39b1a6d35b5b22cb2dcf63e31e71ae20c0
 
   const neighbors = [];
 
+<<<<<<< HEAD
   if (index % rowSize !== 0) {
     // left neighbor
     neighbors.push(squares[index - 1]);
@@ -608,6 +843,26 @@ function getNeighbors(square) {
 
   console.log(neighbors);
   return neighbors;
+=======
+    // Check if the square is not in the first column (left edge)
+    if (index % rowSize !== 0) { // left neighbor
+        neighbors.push(squares[index - 1]);
+    }
+    // Check if the square is not in the last column (right edge)
+    if (index % rowSize !== rowSize - 1) { // right neighbor
+        neighbors.push(squares[index + 1]);
+    }
+    // Check if the square is not in the first row (top edge)
+    if (index >= rowSize) { // top neighbor
+        neighbors.push(squares[index - rowSize]);
+    }
+    // Check if the square is not in the last row (bottom edge)
+    if (index < squares.length - rowSize) { // bottom neighbor
+        neighbors.push(squares[index + rowSize]);
+    }
+
+    return neighbors;
+>>>>>>> ea3b5a39b1a6d35b5b22cb2dcf63e31e71ae20c0
 }
 
 // Show the modal
