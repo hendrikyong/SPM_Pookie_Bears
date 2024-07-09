@@ -37,15 +37,16 @@ function createGrid(size) {
         // append this grid box to the html
         grid.appendChild(box);
     }
-
-    if (size == 25) {
-        alert("Reached max grid size!")
-    }
 }
 
 function expandGrid(newSize) {
     // MAX the grid size to 25x25
     newSize = Math.min(newSize, 25);
+
+    if (newSize === 25 && !maxSizeAlerted) {
+        alert("Reached max grid size!");
+        maxSizeAlerted = true;
+    }
 
     // make new array for expanded grid
     const newGridState = new Array(newSize * newSize).fill(null);
@@ -56,10 +57,11 @@ function expandGrid(newSize) {
             newGridState[i * newSize + j] = gridState[i * gridSize + j];
         }
     }
-    
+
     gridSize = newSize;
     gridState = newGridState; // update the grid state to this new expanded grid state
     createGrid(gridSize);
+
 }
 
 const buildings = {
@@ -102,6 +104,8 @@ let turnNumber = 1;
 let demolishMode = false;
 let buildingPlacedThisTurn = false;
 let expandedThisTurn = false;
+let maxSizeAlerted = false;
+
 
 function selectBuilding(buildingType) {
     
@@ -178,7 +182,7 @@ function placeBuilding(box, index) {
             updateUI();
             buildingPlacedThisTurn = true;
             selectedBuilding = null;
-            
+
             return;
         }
         // place the perimeter after expansion if there is an expansion
@@ -419,10 +423,78 @@ function getAdjacents(grid, row, col) {
     return adjacents;
 }
 
-function saveGame(){
-    
+function saveGame() {
+    // Gather game state
+    const gameState = {
+        gridSize: gridSize,
+        gridState: gridState,
+        selectedBuilding: selectedBuilding,
+        points: points,
+        turnNumber: turnNumber,
+        demolishMode: demolishMode,
+        buildingPlacedThisTurn: buildingPlacedThisTurn,
+        expandedThisTurn: expandedThisTurn
+    };
+
+    // Convert game state to JSON string
+    const jsonGameState = JSON.stringify(gameState, null, 2);
+
+    // Create a Blob with the JSON string
+    const blob = new Blob([jsonGameState], { type: 'application/json' });
+
+    // Create a URL for the Blob
+    const url = URL.createObjectURL(blob);
+
+    // Create a download link
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'game_state.json';
+    a.textContent = 'Download JSON';
+
+    // Append the link to the body
+    document.body.appendChild(a);
+
+    // Trigger a click event to initiate download
+    a.click();
+
+    // Clean up: remove the link and revoke the URL
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 
+// Function to load game state from a JSON file input
+function loadGameState(event) {
+    const input = event.target;
+    const file = input.files[0];
+
+    const reader = new FileReader();
+    reader.onload = function() {
+        const jsonGameState = reader.result;
+        const gameState = JSON.parse(jsonGameState);
+
+        // Update game variables from loaded state
+        gridSize = gameState.gridSize;
+        gridState = gameState.gridState;
+        selectedBuilding = gameState.selectedBuilding;
+        points = gameState.points;
+        turnNumber = gameState.turnNumber;
+        demolishMode = gameState.demolishMode;
+        buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
+        expandedThisTurn = gameState.expandedThisTurn;
+
+        // Recreate the grid with the loaded state
+        createGrid(gridSize);
+        updateUI();
+
+        document.getElementById('turn').textContent = turnNumber;
+        document.getElementById('score').textContent = points;
+    };
+
+    reader.readAsText(file);
+}
+
+// Attach event listener to input element for loading game state from file
+document.getElementById('load-game').addEventListener('change', loadGameState);
 
 
