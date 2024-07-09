@@ -106,3 +106,7 @@ body {
     background-color: red;
 }
 
+.grid-box.highlight {
+    background-color: lightgreen; /* Color for valid placement spots */
+}
+

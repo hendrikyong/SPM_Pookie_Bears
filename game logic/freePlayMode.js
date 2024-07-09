@@ -111,10 +111,64 @@ function selectBuilding(buildingType) {
 
     selectedBuilding = buildingType;
     document.getElementById(selectedBuilding).classList.add('selected');
+    highlightValidPlacement()
 }
 
+function highlightValidPlacement() {
+    clearHighlights();
+
+    const boxes = document.querySelectorAll('.grid-box');
+    const validIndices = new Set();
+
+    // If the grid is empty, highlight all boxes
+    if (gridState.every(cell => cell === null)) {
+        boxes.forEach((box, index) => {
+            box.classList.add('highlight');
+        });
+        return;
+    }
+
+    // Collect all indices of empty boxes adjacent to existing buildings
+    gridState.forEach((cell, index) => {
+        if (cell !== null) {
+            const adjacents = getAdjacentsByIndex(index);
+            adjacents.forEach(adj => {
+                if (gridState[adj] === null) {
+                    validIndices.add(adj);
+                }
+            });
+        }
+    });
+
+    // Highlight only valid indices
+    validIndices.forEach(index => {
+        boxes[index].classList.add('highlight');
+    });
+}
+
+function getAdjacentsByIndex(index) {
+    const adjacents = [];
+    const row = Math.floor(index / gridSize);
+    const col = index % gridSize;
+
+    if (row > 0) adjacents.push(index - gridSize); // Up
+    if (row < gridSize - 1) adjacents.push(index + gridSize); // Down
+    if (col > 0) adjacents.push(index - 1); // Left
+    if (col < gridSize - 1) adjacents.push(index + 1); // Right
+
+    return adjacents;
+}
+
+function clearHighlights() {
+    const boxes = document.querySelectorAll('.grid-box');
+    boxes.forEach(box => {
+        box.classList.remove('highlight');
+    });
+}
+
+
 function placeBuilding(box, index) {
-    if (!buildingPlacedThisTurn && selectedBuilding) {
+    if (!buildingPlacedThisTurn && selectedBuilding && box.classList.contains('highlight')) {
         
         // check if placed building is on the perimeter and expand the grid
         if (isOnPerimeter(index) && !expandedThisTurn) {
@@ -138,9 +192,15 @@ function placeBuilding(box, index) {
             buildingPlacedThisTurn = true;
             selectedBuilding = null;
         }
+
+        clearHighlights(); // Clear previous highlights
     } else if (!selectedBuilding) {
         alert("No building selected");
-    } else {
+    } else if (!box.classList.contains('highlight')) {
+        alert('You can only place a building in the highlighted boxes')
+    } 
+    
+    else {
         alert("You have already placed a building in this turn. End your turn first");
         updateUI();
     }
@@ -358,6 +418,11 @@ function getAdjacents(grid, row, col) {
 
     return adjacents;
 }
+
+function saveGame(){
+    
+}
+
 
 
 
