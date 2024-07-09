@@ -455,30 +455,51 @@ function saveGame() {
 
     // Convert game state to JSON string
     const jsonGameState = JSON.stringify(gameState, null, 2);
-    username 
-
     
-    // Create a Blob with the JSON string
-    const blob = new Blob([jsonGameState], { type: 'application/json' });
+    let now = new Date();
 
-    // Create a URL for the Blob
-    const url = URL.createObjectURL(blob);
+    // Get the current time in milliseconds since the epoch
+    let timeInMs = now.getTime();
 
-    // Create a download link
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'game_state.json';
-    a.textContent = 'Download JSON';
+    // Get the timezone offset in milliseconds for Singapore (UTC+8)
+    let singaporeOffset = 8 * 60 * 60 * 1000;
 
-    // Append the link to the body
-    document.body.appendChild(a);
+    // Create a new Date object with the adjusted time
+    let singaporeTime = new Date(timeInMs + singaporeOffset);
 
-    // Trigger a click event to initiate download
-    a.click();
+    // Format the date and time in ISO 8601 format
+    let singaporeISOString = singaporeTime.toISOString().replace('Z', '+08:00');
 
-    // Clean up: remove the link and revoke the URL
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const username = document.getElementById('username-input').value;
+
+    const jsondata = {
+        username: username,
+        datetimeCreated: singaporeISOString,
+        gamestate: jsonGameState
+    };
+
+    const apikey = '6686c097e0ddd887ed0940e1'
+    const settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": "https://pookiebears-04f9.restdb.io/rest/freeplay-saves",
+        "method": "POST",
+        "headers": {
+            "content-type": "application/json",
+            "x-apikey": apikey,
+            "cache-control": "no-cache"
+        },
+        "processData": false,
+        "data": JSON.stringify(jsondata)
+    };
+
+    $.ajax(settings).done(function(response) {
+        console.log(response);
+        alert("Game saved successfully!");
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        console.error("Error saving game:", textStatus, errorThrown);
+        alert("Failed to save game. Please try again.");
+    });
 }
 
 
