@@ -223,13 +223,25 @@ function calculateScore() {
 
 function scoreResidential(grid, row, col) {
     const adjacents = getAdjacents(grid, row, col);
-
+    let score = 0;
     // check if adjacent to industry
     if (adjacents.some(b => b && b.type === 'industry')) {
-        return 1;
+        score = 1
+
+        adjacents.forEach(b => {
+            if (b) {
+                if (b.type === 'residential' || b.type === 'commercial') {
+                    score = 1;
+                } else if (b.type === 'park') {
+                    score = 1;
+                }
+            }
+        });
+        return score;
+
+        
     }
 
-    let score = 0;
     adjacents.forEach(b => {
         if (b) {
             if (b.type === 'residential' || b.type === 'commercial') {
