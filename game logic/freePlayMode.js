@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.getElementById('load-game').addEventListener('change', loadGameState);
+    document.getElementById('load-game-button').addEventListener('click', fetchGameStateFromDB);
 });
 
 let gridSize = 5; // Initial grid size
@@ -440,6 +440,9 @@ function getAdjacents(grid, row, col) {
     return adjacents;
 }
 
+const apikey = '6686c097e0ddd887ed0940e1'
+
+
 function saveGame() {
     // Gather game state
     const gameState = {
@@ -478,7 +481,6 @@ function saveGame() {
         gamestate: jsonGameState
     };
 
-    const apikey = '6686c097e0ddd887ed0940e1'
     const postSaveData = {
         "async": true,
         "crossDomain": true,
@@ -527,40 +529,65 @@ function saveGame() {
 }
 
 
-// Function to load game state from a JSON file input
-function loadGameState(event) {
-    const input = event.target;
-    const file = input.files[0];
+function fetchGameStateFromDB() {
+    const username = document.getElementById('username-input').value;
 
-    const reader = new FileReader();
-    reader.onload = function() {
-        const jsonGameState = reader.result;
-        const gameState = JSON.parse(jsonGameState);
+    if (!username) {
+        alert("Please enter a username first.");
+        return;
+    }
 
-        // Update game variables from loaded state
-        gridSize = gameState.gridSize;
-        gridState = gameState.gridState;
-        selectedBuilding = gameState.selectedBuilding;
-        points = gameState.points;
-        turnNumber = gameState.turnNumber;
-        demolishMode = gameState.demolishMode;
-        buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
-        expandedThisTurn = gameState.expandedThisTurn;
+    $.ajax({
+        "async": true,
+        "crossDomain": true,
+        "url": `https://pookiebears-04f9.restdb.io/rest/freeplay-saves?q={%22username%22:%22${username}%22}`,
+        "method": "GET",
+        "headers": {
+            "content-type": "application/json",
+            "x-apikey": apikey,
+            "cache-control": "no-cache"
+        },
+        success: function(response) {
+            if (response.length === 0) {
+                alert("No save data found for this username.");
+                return;
+            }
+        
+            // The response[0].gamestate might already be a JavaScript object
+            let gameState;
+            try {
+                gameState = typeof response[0].gamestate === "string" ? JSON.parse(response[0].gamestate) : response[0].gamestate;
+            } catch (error) {
+                console.error("Error parsing game state:", error);
+                alert("Failed to parse game state. Please try again.");
+                return;
+            }
 
-        // Recreate the grid with the loaded state
-        createGrid(gridSize);
-        updateUI();
-
-        document.getElementById('turn').textContent = turnNumber;
-        document.getElementById('score').textContent = points;
-
-        document.getElementById('username-modal').style.display = 'none';
-    };
-
-    reader.readAsText(file);
+            console.log
+        
+            // Update game variables from loaded state
+            gridSize = gameState.gridSize;
+            gridState = gameState.gridState;
+            selectedBuilding = gameState.selectedBuilding;
+            points = gameState.points;
+            turnNumber = gameState.turnNumber;
+            demolishMode = gameState.demolishMode;
+            buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
+            expandedThisTurn = gameState.expandedThisTurn;
+        
+            // Recreate the grid with the loaded state
+            createGrid(gridSize);
+            updateUI();
+        
+            document.getElementById('turn').textContent = turnNumber;
+            document.getElementById('score').textContent = points;
+        
+            document.getElementById('username-modal').style.display = 'none';
+        },
+        
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("Error fetching game state:", textStatus, errorThrown);
+            alert("Failed to load game. Please try again.");
+        }
+    });
 }
-
-// Attach event listener to input element for loading game state from file
-document.getElementById('load-game').addEventListener('change', loadGameState);
-
-

@@ -139,7 +139,7 @@ body {
     box-sizing: border-box;
 }
 
-#start-game-button {
+#start-game-button, #load-game-button {
     padding: 10px 20px;
     cursor: pointer;
 }
@@ -148,7 +148,7 @@ input[type="file"] {
   display: none;
 }
 
-.load-save-upload {
+# {
   border: 1px solid #ccc;
   display: inline-block;
   padding: 6px 12px;
