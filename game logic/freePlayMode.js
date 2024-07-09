@@ -104,6 +104,11 @@ let buildingPlacedThisTurn = false;
 let expandedThisTurn = false;
 
 function selectBuilding(buildingType) {
+    
+    document.querySelectorAll('.building').forEach(building => {
+        building.classList.remove('selected');
+    });
+
     selectedBuilding = buildingType;
     document.getElementById(selectedBuilding).classList.add('selected');
 }
