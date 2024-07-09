@@ -671,3 +671,53 @@ function fetchGameStateFromDB() {
         }
     });
 }
+
+// Show the modal
+function showModal() {
+    document.getElementById("legendModal").style.display = "block";
+}
+
+function showHelpModal() {
+    document.getElementById("htpModal").style.display = "block";
+    showContent('general'); // Show the general tab by default
+}
+
+// Close the modal
+function closeModal() {
+    document.getElementById("legendModal").style.display = "none";
+}
+
+function closeHelpModal() {
+    document.getElementById("htpModal").style.display = "none";
+}
+
+function showContent(tabName) {
+    var i;
+    var tabContent = document.getElementsByClassName("tab-content");
+    var tabButtons = document.getElementsByClassName("tab-button");
+
+    // Hide all tab content
+    for (i = 0; i < tabContent.length; i++) {
+        tabContent[i].classList.remove("active");
+        tabContent[i].style.display = "none"; // Hide the content
+    }
+
+    // Remove active class from all tab buttons
+    for (i = 0; i < tabButtons.length; i++) {
+        tabButtons[i].classList.remove("active");
+    }
+
+    // Show the selected tab content
+    document.getElementById(tabName).classList.add("active");
+    document.getElementById(tabName).style.display = "block"; // Display the content
+    document.querySelector(`[onclick="showContent('${tabName}')"]`).classList.add("active");
+}
+
+// Close the modal when clicking outside of it
+window.onclick = function(event) {
+    var modal = document.getElementById("legendModal");
+    if (event.target == modal || event.target == document.getElementById("htpModal")) {
+        modal.style.display = "none";
+        document.getElementById("htpModal").style.display = "none";
+    }
+}

@@ -147,7 +147,7 @@ body {
 
 
 /* Modal styles */
-.modal {
+.username-modal {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -160,7 +160,7 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.modal-content {
+.username-modal-content {
     background-color: #fff;
     padding: 20px;
     border: 1px solid #888;

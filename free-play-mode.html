@@ -12,15 +12,15 @@
 
 <body>
 
-    <!--
-    <div id="username-modal" class="modal">
-        <div class="modal-content">
+    
+    <div id="username-modal" class="username-modal">
+        <div class="username-modal-content">
             <h2>Enter your Username</h2>
             <input type="text" id="username-input" placeholder="Username">
             <button id="load-game-button">Load Game from Database</button>
             <button id="start-game-button">Start New Game</button>
         </div>
-    </div> -->
+    </div> 
 
     <a href="#navigation" class="nav-trigger">
         <span></span>
@@ -75,7 +75,7 @@
         <button id="endTurn-btn" onclick="endTurn()">End Turn</button>
 
         <!-- 3 btns -->
-        <button id="save-btn">
+        <button id="save-btn" onclick="saveGame()">
             <img src="./images/save_game_icon.png" alt="Residential">
         </button>
 
@@ -87,6 +87,159 @@
             <img src="./images/question_mark_icon.jpg" alt="Residential">
         </button>
 
+
+
+        <div id="legendModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Legends</h2>
+                <div class="legend-items">
+                    <div class="buildings-legends">
+                        <div class="legend-item">
+                            <img src="./images/house.png" alt="Residential">
+                            <span>Residential</span>
+                        </div> 
+                        <div class="legend-item">
+                            <img src="./images/industry.png" alt="Industry">
+                            <span>Industry</span>
+                        </div> 
+                        <div class="legend-item">
+                            <img src="./images/commercial.png" alt="Commercial">
+                            <span>Commercial</span>
+                        </div> 
+                        <div class="legend-item">
+                            <img src="./images/park.png" alt="Park">
+                            <span>Park</span>
+                        </div> 
+                        <div class="legend-item">
+                            <img src="./images/road.png" alt="Road">
+                            <span>Road</span>
+                        </div> 
+                    </div>
+                    <div class="menu-legends">
+                        <div class="legend-item">
+                            <img src="./images/legend_icon.png" alt="Road">
+                            <span>Legends</span>
+                        </div>
+                        <div class="legend-item">
+                            <img src="./images/build-icon.png" alt="Road">
+                            <span>Build</span>
+                        </div>
+                        <div class="legend-item">
+                            <img src="./images/demolish_icon.png" alt="Road">
+                            <span>Demolish</span>
+                        </div>
+                        <div class="legend-item">
+                            <img src="./images/question_mark_icon.jpg" alt="Road">
+                            <span>How To Play</span>
+                        </div>
+                        <div class="legend-item">
+                            <img src="./images/save_game_icon.png" alt="Road">
+                            <span>Save Game</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Modal Structure -->
+        <div id="htpModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeHelpModal()">&times;</span>
+                <h2><b>How To Play</b></h2>
+                <div class="tabs">
+                    <button class="tab-button" onclick="showContent('general')">General</button>
+                    <button class="tab-button" onclick="showContent('points')">Points</button>
+                    <button class="tab-button" onclick="showContent('coins-tab')">Coins</button>
+                </div>
+                <div id="general" class="tab-content">
+                    <div class="introduction">
+                        <h3><b>Intro</b></h3>
+                        <p>You are the mayor of Ngee Ann City, the goal of the game is to build the happiest and most prosperous city, to do that you need to score as many points as possible!</p>
+                    </div>
+                    <div class="playing">
+                        <h3><b>Playing</b></h3>
+                        <p>You start off with 16 coins. Constructing a building cost 1 coin. The game ends when you either run out of coins, or build on all unoccupied squares. <br><br>
+                            Constructing buildings in a certain manner earns you points. Same for coins, constructing certain buildings earns you coins. For the first building, you can build anywhere in the city. For subsequent constructions, you can only build on squares that are connected to existing buildings. The other building that was not built is discarded.</p>
+                    </div>
+                </div>
+                <div id="points" class="tab-content">
+                    <h3><b>Types</b></h3>
+                    <span>There are 5 types of buildings</span>
+                    <div class="points-container">
+                        <div class="types">
+                            <div>
+                                <div>
+                                    <img src="./images/house.png" alt="Residential">
+                                </div>
+                                <span>Residential</span>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="./images/commercial.png" alt="Residential">
+                                </div>
+                                <span>Commercial</span>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="./images/industry.png" alt="Residential">
+                                </div>
+                                <span>Industry</span>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="./images/park.png" alt="Residential">
+                                </div>
+                                <span>Park</span>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="./images/road.png" alt="Residential">
+                                </div>
+                                <span>Road</span>
+                            </div>
+                        </div>
+                        <div class="point-calc">
+                            <h3><b>Point Calculation</b></h3>
+                            <ul>
+                                <li><strong><u>Residential</u> (R):</strong> If it is next to an <u>industry</u>, then it scores 1 point only. Otherwise, it scores 1 point for each adjacent <u>residential</u> or <u>commercial</u>, and 2 points for each adjacent <u>park</u>.</li>
+                                <li><strong><u>Industry</u> (I):</strong> Scores 1 point per <u>industry</u> in the city.</li>
+                                <li><strong><u>Commercial</u> (C):</strong> Scores 1 point per <u>commercial</u> adjacent to it.</li>
+                                <li><strong><u>Park</u> (O):</strong> Scores 1 point per <u>park</u> adjacent to it.</li>
+                                <li><strong><u>Road</u> (*):</strong> Scores 1 point per connected <u>road</u> in the same row.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="coins-tab" class="tab-content">
+                    <h3><b>Types</b></h3>
+                    <span>There are only 2 types of buildings that can earn coins:</span>
+                    <div class="coins-container">
+                        <div class="types">
+                            <div>
+                                <div>
+                                    <img src="./images/commercial.png" alt="Residential">
+                                </div>
+                                <span>Commercial</span>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="./images/industry.png" alt="Residential">
+                                </div>
+                                <span>Industry</span>
+                            </div>
+                        </div>
+                        <div class="coins-calc">
+                            <h3><b>Score Calculation</b></h3>
+                            <ul>
+                                <li><strong>Industry (I):</strong> Each <u>industry</u> generates 1 coin per <u>residential</u> building adjacent to it. </li>
+                                <li><strong>Commercial (C):</strong> Each <u>commercial</u> generates 1 coin per <u>residential</u> adjacent to it. </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- <button id="ind-btn">
             <img src="./images/industry.png" alt="Industry">
         </button>
@@ -129,6 +282,7 @@
         </div>            
     </div>
 
+    
     <!--
     <div id="info-container">
         
