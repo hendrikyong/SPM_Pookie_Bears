@@ -1,6 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('grid');
     createGrid(gridSize); // start at 5x5 grid
+
+    // Show username modal
+    const usernameModal = document.getElementById('username-modal');
+    const startGameButton = document.getElementById('start-game-button');
+
+    startGameButton.addEventListener('click', () => {
+        const username = document.getElementById('username-input').value;
+        if (username) {
+            // Store the username or display it in the UI if needed
+            console.log("Username:", username);
+            usernameModal.style.display = 'none'; // Hide the modal
+        } else {
+            alert("Please enter a username");
+        }
+    });
+
+    document.getElementById('load-game').addEventListener('change', loadGameState);
 });
 
 let gridSize = 5; // Initial grid size
@@ -438,7 +455,9 @@ function saveGame() {
 
     // Convert game state to JSON string
     const jsonGameState = JSON.stringify(gameState, null, 2);
+    username 
 
+    
     // Create a Blob with the JSON string
     const blob = new Blob([jsonGameState], { type: 'application/json' });
 
@@ -489,6 +508,8 @@ function loadGameState(event) {
 
         document.getElementById('turn').textContent = turnNumber;
         document.getElementById('score').textContent = points;
+
+        document.getElementById('username-modal').style.display = 'none';
     };
 
     reader.readAsText(file);

@@ -13,9 +13,20 @@
 </head>
 
 <body>
+
+    <div id="username-modal" class="modal">
+        <div class="modal-content">
+            <h2>Enter your Username</h2>
+            <input type="text" id="username-input" placeholder="Username">
+            <label for="load-game" class="load-save-upload">Load Game</label>
+            <input type="file" id="load-game">
+            <button id="start-game-button">Start Game</button>
+        </div>
+    </div>
+
+    
     <div class="buttons">
         <button id="save-button" onclick="saveGame()">Save</button>
-        <input type="file" id="load-game">
         <button id="exit-button" onclick="#">Exit Game</button>
     </div>
 
