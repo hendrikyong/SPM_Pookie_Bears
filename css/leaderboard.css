@@ -1,30 +1,76 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Open Sans", sans-serif;
+header {
+  /* border: red dotted; */
+  display: flex; /* Use flexbox for layout */
+  justify-content: space-between; /* Distribute items evenly */
+  align-items: center; /* Vertically align items in the center */
 }
 
-body {
-  overflow-y: hidden;
+.heading {
+  /* border: blue dotted; Keep the border for debugging */
+  display: flex;
+  align-items: center; /* Vertically align items in the center */
+}
+
+img {
+  /* border: black dotted 3px; Keep the border for debugging */
+  height: 6rem;
+  margin: 1.2rem 0 0 2rem; /* Push the leaderboard text to the right */
+}
+
+.leaderboard-name {
+  margin-left: auto;
+  /* border: black dotted 4px; */
+  margin: 0 0 0 26rem;
+  font-size: 2rem;
+}
+
+.container {
+  display: flex;
+  margin-top: -2.5rem;
+}
+
+.menu {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #101010;
+  justify-content: center;
+  margin: 0 4rem 0 1.8rem;
+  padding-left: 5rem;
+  width: 10rem;
 }
 
+.menu a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.menu a.active {
+  text-decoration: underline;
+  font-weight: bold; /* Optional: Make the active link bold */
+}
+
+.leaderboard {
+  font-size: 1.6rem;
+}
 #Leaderboard {
-  margin: 2rem 0 0 0;
-  font-size: 1.8rem;
+  margin-left: -6rem;
 }
 
 .leaderboard-row .rank {
-  width: 10% !important;
+  width: 4rem;
 }
 .leaderboard-row .name {
-  width: 55% !important;
+  width: 35rem;
 }
 .leaderboard-row .score {
-  width: 35% !important;
+  width: 6rem;
+}
+
+.leaderboard-header th {
+  background-color: #00468b;
+  padding: 0;
+  color: #d0f6fb;
+}
+
+.leaderboard button {
+  margin: 3rem 0 0 18rem;
 }

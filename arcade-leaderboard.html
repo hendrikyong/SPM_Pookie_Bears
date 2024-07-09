@@ -4,50 +4,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPM Pookie Bears</title>
-    <link rel="stylesheet" href="./css/overlord.css">
+    <title>Arcade Leaderboard</title>
     <link rel="stylesheet" href="./css/leaderboard.css">
-    <link href="https://fonts.cdnfonts.com/css/joystix" rel="stylesheet">
-    <link href="https://fonts.cdnfonts.com/css/super-legend-boy" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'>
-    <link href="https://fonts.cdnfonts.com/css/fff-atlantis" rel="stylesheet">
     <script src="./scripts/arcade-leaderboard.js" defer></script>
 </head>
 
 <body>
     <header>
-        <a class="logo" href="index.html">Ngee Ann City</a>
-        <!--or can put image of the NAC logo here-->
-        <div class="menu-toggle"></div>
-        <nav>
-            <ul>
-                <li>Instructions
-                </li>
-                <li>Play Now
-                    <ul>
-                        <li><a href="#">Free Play Mode</a></li>
-                        <li><a href="#">Arcade Mode</a></li>
-                    </ul>
-                </li>
-                <li>Leaderboard
-                    <ul>
-                        <li><a href="#">Free Play</a></li>
-                        <li><a href="#">Arcade</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
+        <div class="heading">
+            <img src="./images/ngeAnnLogoWithoutBG.png" alt="Ngee Ann Logo">
+            <div class="leaderboard-name">Leaderboard</div>
+        </div>
     </header>
-    <div class="container mt-5 leaderboard" style="margin: 4rem 0 0 0;">
-        <h2 class="first-tier-header">Leaderboard</h2>
-        <table class="table table-hover" id="Leaderboard">
-            <thead class="leaderboard-header">
-                <th class="text rank">#</th>
-                <th class="text name">Name</th>
-                <th class="text score">Score</th>
-            </thead>
-            <tbody id="leaderboard" class="first-tier-header" style="background-color: white;"></tbody>
-        </table>
+    <div class="container">
+        <div class="menu">
+            Select:
+            <br style="width: 10px;">
+            <a href="./arcade-leaderboard.html" id="arcade-button">Arcade</a>
+            <a href="./freeplay-leaderboard.html" id="free-play-button">Free Play</a>
+        </div>
+        <div class="leaderboard">
+            <table class="table table-hover" id="Leaderboard"
+                style="background-color: black; border: 1px black solid; margin: 3rem 20rem 0 0;">
+                <thead class="leaderboard-header">
+                    <th class="text rank">#</th>
+                    <th class="text name">Username</th>
+                    <th class="text score">Score</th>
+                </thead>
+                <tbody id="leaderboard" class="first-tier-header"></tbody>
+            </table>
+            <a href="./index.html"><button style="border-radius: none; height: 1.6rem; width: 4rem;">Back</button></a>
+        </div>
     </div>
 </body>
 

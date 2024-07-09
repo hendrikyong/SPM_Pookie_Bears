@@ -1,205 +1,53 @@
-let navTrigger = document.getElementsByClassName('nav-trigger')[0];
-body = document.getElementsByTagName('body')[0];
-
-navTrigger.addEventListener('click', function() {
-    event.preventDefault();
-    body.classList.toggle('nav-open');
-});
-
-
-
-//Grid//
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('grid');
-    const gridSize = 20; // Change this value to adjust the grid size
-    let zoomLevel = 1;
-
-    // Set the CSS grid template rows and columns dynamically
-    grid.style.gridTemplateColumns = `repeat(${gridSize}, 40px)`; // 40px is the fixed width of each square
-    grid.style.gridTemplateRows = `repeat(${gridSize}, 40px)`;   // 40px is the fixed height of each square
 
     // Create the grid squares
-    for (let m = 0; m < gridSize; m++) {
-        for (let i = 0; i < gridSize; i++) {
-            const square = document.createElement('div');
-            // square.textContent = `${i},${m}`; // Display the coordinates of the square
-            square.classList.add('grid-square');
-            square.addEventListener('click', () => {
-                if (demolishMode) {
-                    demolishBuilding(square);
-                } else {
-                    placeBuilding(square);
-                }
-            });
-            grid.appendChild(square);
-        }
+    for (let i = 0; i < 400; i++) {  // 20x20 grid
+        const square = document.createElement('div');
+        square.classList.add('grid-square');
+        square.addEventListener('click', () => {
+            if (demolishMode) {
+                demolishBuilding(square);
+            } else {
+                placeBuilding(square);
+            }
+        });
+        grid.appendChild(square);
     }
 
     initializeGame(); // Initialize the game here to ensure the initial buildings are selected
-    // Zoom In and Zoom Out functionality
-    document.getElementById('zoom-in').addEventListener('click', () => {
-        zoomLevel = Math.min(0.9, zoomLevel + 0.1); // Prevent zooming out too much
-        // zoomLevel += 0.1;
-        console.log(zoomLevel);
-        grid.style.transform = `scale(${zoomLevel})`;
-        //grid.style.transformOrigin = '0 0';
-    });
-
-    document.getElementById('zoom-out').addEventListener('click', () => {
-        console.log(zoomLevel);
-        zoomLevel = Math.max(0.4, zoomLevel - 0.1); // Prevent zooming out too much
-        grid.style.transform = `scale(${zoomLevel})`;
-        //grid.style.transformOrigin = '0 0';
-    });
-
-    // Add mouse wheel event for zooming
-    // grid.addEventListener('wheel', (event) => {
-    //     if (event.deltaY < 0) {
-    //         zoomLevel += 0.1;
-    //     } else {
-    //         zoomLevel = Math.max(0.1, zoomLevel - 0.1);
-    //     }
-    //     grid.style.transform = `scale(${zoomLevel})`;
-    //     grid.style.transformOrigin = '0 0';
-    //     event.preventDefault(); // Prevent scrolling the page
-    // });
 });
-
-
-
-
-
-
-//table
-// document.addEventListener('DOMContentLoaded', () => {
-//     const grid = document.getElementById('grid');
-//     const gridSize = 80; // Change this value to adjust the grid size
-
-//     // Create the table grid
-//     for (let row = 0; row < gridSize; row++) {
-//         const tr = document.createElement('tr');
-//         for (let col = 0; col < gridSize; col++) {
-//             const td = document.createElement('td');
-//             td.classList.add('grid-square');
-//             td.dataset.row = row;
-//             td.dataset.col = col;
-//             td.addEventListener('click', () => {
-//                 if (demolishMode) {
-//                     demolishBuilding(td);
-//                 } else {
-//                     placeBuilding(td);
-//                 }
-//             });
-//             tr.appendChild(td);
-//         }
-//         grid.appendChild(tr);
-//     }
-
-//     initializeGame(); // Initialize the game here to ensure the initial buildings are selected
-
-//     let zoomLevel = 1;
-
-//     // Zoom In and Zoom Out functionality
-//     document.getElementById('zoom-in').addEventListener('click', () => {
-//         zoomLevel += 0.1;
-//         grid.parentElement.style.transform = `scale(${zoomLevel})`;
-//     });
-
-//     document.getElementById('zoom-out').addEventListener('click', () => {
-//         zoomLevel = Math.max(0.1, zoomLevel - 0.1); // Prevent zooming out too much
-//         grid.parentElement.style.transform = `scale(${zoomLevel})`;
-//     });
-
-//     // Optional: Add mouse wheel event for zooming
-//     grid.addEventListener('wheel', (event) => {
-//         if (event.deltaY < 0) {
-//             zoomLevel += 0.1;
-//         } else {
-//             zoomLevel = Math.max(0.1, zoomLevel - 0.1);
-//         }
-//         grid.parentElement.style.transform = `scale(${zoomLevel})`;
-//         event.preventDefault(); // Prevent scrolling the page
-//     });
-// });
-
-
-
-
-
-
-
-// const grid = document.getElementById("grid");
-// let lockGame = false;
-// // Set test mode to true if you want see mines location
-// const testMode = false;
-// generateGrid();
-
-// // Generate 10 * 10 Grid
-// function generateGrid() {
-//     lockGame = false;
-//     grid.innerHTML = "";
-//     for (var i = 0; i < 10; i++) {
-//         row = grid.insertRow(i);
-//         for (var j = 0; j < 10; j++) {
-//             cell = row.insertCell(j);
-//             cell.onclick = function () { init(this); };
-//             var mine = document.createAttribute("mine");
-//             mine.value = "false";
-//             cell.setAttributeNode(mine);
-//         }
-//     }
-//     //generateMines();
-// }
-
-
-// Changing layout between construction and finances
-document.addEventListener('DOMContentLoaded', function() {
-    let financesButton = document.querySelector('#financesBtn');
-    let constructionButton = document.querySelector('#constructionBtn');
-    let finances = document.querySelector('.finances');
-    let construction = document.querySelector('#container');
-
-    financesButton.addEventListener('click', function() {
-        console.log('Finances button clicked');
-        finances.classList.remove('hidden');
-        construction.classList.add('hidden');
-    });
-
-    constructionButton.addEventListener('click', function() {
-        console.log('Construction button clicked');
-        construction.classList.remove('hidden');
-        finances.classList.add('hidden');
-    });
-});
-
-
-//code
 
 const buildings = {
     residential: {
         description: 'Residential (R): If it is next to an industry (I), then it scores 1 point only. Otherwise, it scores 1 point for each adjacent residential (R) or commercial (C), and 2 points for each adjacent park (O).',
         icon: 'R',
-        image: './images/house.png',
+        upkeep: 1,
+        profit: 1
     },
     industry: {
         description: 'Industry (I): Scores 1 point per industry in the city. Each industry generates 1 coin per residential building adjacent to it.',
         icon: 'I',
-        image: './images/industry.png',
+        upkeep: 1,
+        profit: 2
     },
     commercial: {
         description: 'Commercial (C): Scores 1 point per commercial adjacent to it. Each commercial generates 1 coin per residential adjacent to it.',
         icon: 'C',
-        image: './images/commercial.png',
+        upkeep: 2,
+        profit: 3
     },
     park: {
         description: 'Park (O): Scores 1 point per park adjacent to it.',
         icon: 'O',
-        image: './images/park.png',
+        upkeep: 1,
+        profit: 0
     },
     road: {
         description: 'Road (*): Scores 1 point per connected road (*) in the same row.',
         icon: '*',
-        image: './images/road.png',
+        upkeep: 1,
+        profit: 0
     }
 };
 
@@ -212,16 +60,15 @@ let firstBuildingPlaced = false;
 let demolishMode = false;
 
 function updateScoreboard() {
-    document.getElementById('score-counter').innerText = points;
-    document.getElementById('coins-counter').innerText = coins;
+    document.getElementById('score').innerText = points;
+    document.getElementById('coins').innerText = coins;
 }
 
 function updateTurnCounter() {
-    document.getElementById('turn-counter').innerText = `${turnNumber}`;
+    document.getElementById('turn').innerText = `Turn: ${turnNumber}`;
 }
 
 function selectBuilding(buildingType) {
-    console.log("Selected building: ", buildingType);
     if (!selectedBuildings.includes(buildingType)) return;
 
     // Remove the 'selected' class from all buildings
@@ -235,10 +82,13 @@ function selectBuilding(buildingType) {
 
     // Update the description
     document.getElementById('description-text').innerText = buildings[buildingType].description;
+
+    // Exit demolish mode when a building is selected
+    demolishMode = false;
+    removeDemolishHighlights();
 }
 
 function getRandomBuilding(exclude) {
-    console.log(buildings);
     const buildingKeys = Object.keys(buildings).filter(key => key !== exclude && !selectedBuildings.includes(key));
     const randomIndex = Math.floor(Math.random() * buildingKeys.length);
     return buildingKeys[randomIndex];
@@ -285,10 +135,6 @@ function highlightValidCells() {
 
 function buildStructure() {
     if (selectedBuilding) {
-        const btn = document.getElementById("build-btn");
-        btn.classList.add("selected");
-        const demolishbtn = document.getElementById("demolish-btn");
-        demolishbtn.classList.remove("selected");
         demolishMode = false; // Exit demolish mode
         removeDemolishHighlights(); // Clear any demolish highlights when entering build mode
         highlightValidCells();
@@ -299,11 +145,7 @@ function buildStructure() {
 
 function placeBuilding(square) {
     if (square.classList.contains('highlight') && coins > 0) {
-        const img = document.createElement('img');
-        img.src = buildings[selectedBuilding].image;
-        img.alt = buildings[selectedBuilding].icon;
-        square.innerHTML = '';
-        square.appendChild(img);
+        square.innerText = buildings[selectedBuilding].icon;
         square.classList.add('built');
         square.classList.remove('highlight');
 
@@ -320,9 +162,9 @@ function placeBuilding(square) {
         });
 
         // Update selected buildings for next turn
-        const newBuilding = getRandomBuilding(null);
-        const secondNewBuilding = getRandomBuilding(newBuilding);
-        selectedBuildings = [newBuilding, secondNewBuilding];
+        const remainingBuilding = selectedBuildings.find(b => b !== selectedBuilding);
+        const newBuilding = getRandomBuilding(remainingBuilding);
+        selectedBuildings = [selectedBuilding, newBuilding];
 
         // Update the UI for new buildings
         updateSelectedBuildingsUI();
@@ -334,10 +176,6 @@ function placeBuilding(square) {
 
 // Enter demolish mode
 function enterDemolishMode() {
-    const demolishbtn = document.getElementById("demolish-btn");
-    demolishbtn.classList.add("selected");
-    const buildbtn = document.getElementById("build-btn");
-    buildbtn.classList.remove("selected");
     demolishMode = true;
     selectedBuilding = null; // Clear selected building when entering demolish mode
     removeBuildHighlights(); // Clear any build highlights when entering demolish mode
@@ -388,9 +226,6 @@ function demolishBuilding(square) {
         endTurn();
     } else if (coins <= 0) {
         alert('Not enough coins to demolish a building.');
-        // Exit demolish mode
-        demolishMode = false;
-        removeDemolishHighlights();
     }
 }
 
@@ -553,8 +388,6 @@ function updatePoints() {
 
 function saveGame() {
     alert("Game saved!");
-
-    // TBC
 }
 
 function exitGame() {
@@ -563,10 +396,7 @@ function exitGame() {
 
 function getNeighbors(square) {
     const grid = document.getElementById('grid');
-    console.log(grid);
-
     const squares = Array.from(grid.children);
-    console.log(squares);
     const index = squares.indexOf(square);
     const rowSize = Math.sqrt(squares.length);
 
@@ -588,58 +418,5 @@ function getNeighbors(square) {
     console.log(neighbors);
     return neighbors;
 }
-
-// Show the modal
-function showModal() {
-    document.getElementById("legendModal").style.display = "block";
-}
-
-function showHelpModal() {
-    document.getElementById("htpModal").style.display = "block";
-    showContent('general'); // Show the general tab by default
-}
-
-// Close the modal
-function closeModal() {
-    document.getElementById("legendModal").style.display = "none";
-}
-
-function closeHelpModal() {
-    document.getElementById("htpModal").style.display = "none";
-}
-
-
-// Show the content based on the tab clicked
-function showContent(tabName) {
-    var i;
-    var tabContent = document.getElementsByClassName("tab-content");
-    var tabButtons = document.getElementsByClassName("tab-button");
-
-    // Hide all tab content
-    for (i = 0; i < tabContent.length; i++) {
-        tabContent[i].classList.remove("active");
-        tabContent[i].style.display = "none"; // Hide the content
-    }
-
-    // Remove active class from all tab buttons
-    for (i = 0; i < tabButtons.length; i++) {
-        tabButtons[i].classList.remove("active");
-    }
-
-    // Show the selected tab content
-    document.getElementById(tabName).classList.add("active");
-    document.getElementById(tabName).style.display = "block"; // Display the content
-    document.querySelector(`[onclick="showContent('${tabName}')"]`).classList.add("active");
-}
-
-// Close the modal when clicking outside of it
-window.onclick = function(event) {
-    var modal = document.getElementById("legendModal");
-    if (event.target == modal || event.target == document.getElementById("htpModal")) {
-        modal.style.display = "none";
-        document.getElementById("htpModal").style.display = "none";
-    }
-}
-
 
 window.onload = initializeGame;

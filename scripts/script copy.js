@@ -180,26 +180,36 @@ const buildings = {
         description: 'Residential (R): If it is next to an industry (I), then it scores 1 point only. Otherwise, it scores 1 point for each adjacent residential (R) or commercial (C), and 2 points for each adjacent park (O).',
         icon: 'R',
         image: './images/house.png',
+        upkeep: 1,
+        profit: 1
     },
     industry: {
         description: 'Industry (I): Scores 1 point per industry in the city. Each industry generates 1 coin per residential building adjacent to it.',
         icon: 'I',
         image: './images/industry.png',
+        upkeep: 1,
+        profit: 2
     },
     commercial: {
         description: 'Commercial (C): Scores 1 point per commercial adjacent to it. Each commercial generates 1 coin per residential adjacent to it.',
         icon: 'C',
         image: './images/commercial.png',
+        upkeep: 2,
+        profit: 3
     },
     park: {
         description: 'Park (O): Scores 1 point per park adjacent to it.',
         icon: 'O',
         image: './images/park.png',
+        upkeep: 1,
+        profit: 0
     },
     road: {
         description: 'Road (*): Scores 1 point per connected road (*) in the same row.',
         icon: '*',
         image: './images/road.png',
+        upkeep: 1,
+        profit: 0
     }
 };
 
@@ -235,10 +245,13 @@ function selectBuilding(buildingType) {
 
     // Update the description
     document.getElementById('description-text').innerText = buildings[buildingType].description;
+
+    // Exit demolish mode when a building is selected
+    demolishMode = false;
+    removeDemolishHighlights();
 }
 
 function getRandomBuilding(exclude) {
-    console.log(buildings);
     const buildingKeys = Object.keys(buildings).filter(key => key !== exclude && !selectedBuildings.includes(key));
     const randomIndex = Math.floor(Math.random() * buildingKeys.length);
     return buildingKeys[randomIndex];
@@ -320,9 +333,9 @@ function placeBuilding(square) {
         });
 
         // Update selected buildings for next turn
-        const newBuilding = getRandomBuilding(null);
-        const secondNewBuilding = getRandomBuilding(newBuilding);
-        selectedBuildings = [newBuilding, secondNewBuilding];
+        const remainingBuilding = selectedBuildings.find(b => b !== selectedBuilding);
+        const newBuilding = getRandomBuilding(remainingBuilding);
+        selectedBuildings = [selectedBuilding, newBuilding];
 
         // Update the UI for new buildings
         updateSelectedBuildingsUI();
@@ -388,9 +401,6 @@ function demolishBuilding(square) {
         endTurn();
     } else if (coins <= 0) {
         alert('Not enough coins to demolish a building.');
-        // Exit demolish mode
-        demolishMode = false;
-        removeDemolishHighlights();
     }
 }
 
@@ -553,8 +563,6 @@ function updatePoints() {
 
 function saveGame() {
     alert("Game saved!");
-
-    // TBC
 }
 
 function exitGame() {
@@ -563,10 +571,7 @@ function exitGame() {
 
 function getNeighbors(square) {
     const grid = document.getElementById('grid');
-    console.log(grid);
-
     const squares = Array.from(grid.children);
-    console.log(squares);
     const index = squares.indexOf(square);
     const rowSize = Math.sqrt(squares.length);
 

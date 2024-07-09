@@ -1,9 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM loaded");
-  const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
-  const apikey = "6686c097e0ddd887ed0940e1";
-  //const url = "https://feddddd-6882.restdb.io/rest/assignment2leaderboard";
-  //const apikey = "65c4358c86354f3586464a0d";
+  //const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
+  //const apikey = "6686c097e0ddd887ed0940e1";
+  const url = "https://feddddd-6882.restdb.io/rest/assignment2leaderboard";
+  const apikey = "65c4358c86354f3586464a0d";
+
+  const currentPage = window.location.pathname; // Get current page path
+  const arcadeButton = document.getElementById("arcade-button");
+  const freePlayButton = document.getElementById("free-play-button");
+
+  if (currentPage.includes("arcade-leaderboard.html")) {
+    arcadeButton.classList.add("active");
+  } else if (currentPage.includes("free-play-leaderboard.html")) {
+    freePlayButton.classList.add("active");
+  }
 
   getData();
 
@@ -90,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let count = 1;
         for (let i = 0; i < uniqueUserScores.length && i < limit; i++) {
           content += `<tr class="leaderboard-row" style="color: black; background-color:white;"> 
-              <td class="rank">${count++}</td> 
+              <td class="rank">${count++}.</td> 
               <td class="name">${uniqueUserScores[i].name}</td> 
               <td class="score">${uniqueUserScores[i].score}</td> 
               </tr>`;
