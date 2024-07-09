@@ -117,6 +117,8 @@ function placeBuilding(box, index) {
             expandGrid(gridSize + 10);
             expandedThisTurn = true;
             updateUI();
+            buildingPlacedThisTurn = true;
+            selectedBuilding = null;
             
             return;
         }
