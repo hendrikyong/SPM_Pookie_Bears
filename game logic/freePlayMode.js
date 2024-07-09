@@ -1,3 +1,12 @@
+let navTrigger = document.getElementsByClassName('nav-trigger')[0];
+body = document.getElementsByTagName('body')[0];
+
+navTrigger.addEventListener('click', function() {
+    event.preventDefault();
+    body.classList.toggle('nav-open');
+});
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('grid');
     createGrid(gridSize); // start at 5x5 grid
@@ -41,6 +50,7 @@ function createGrid(size) {
         if (gridState[i]) {
             box.textContent = gridState[i].icon;
             box.classList.add(gridState[i].type);
+            box.classList.add('built');  // Ensure previously built buildings have the 'built' class
         }
 
         // add event listener to each grid box
@@ -73,6 +83,7 @@ function expandGrid(newSize) {
         for (let j = 0; j < gridSize; j++) {
             newGridState[i * newSize + j] = gridState[i * gridSize + j];
         }
+        
     }
 
     gridSize = newSize;
@@ -122,18 +133,36 @@ let demolishMode = false;
 let buildingPlacedThisTurn = false;
 let expandedThisTurn = false;
 let maxSizeAlerted = false;
-
+let buildMode = false;
+let buildingSelected = false;
 
 function selectBuilding(buildingType) {
-    
-    document.querySelectorAll('.building').forEach(building => {
-        building.classList.remove('selected');
-    });
+    if (!buildingPlacedThisTurn) {
+        document.querySelectorAll('.building').forEach(building => {
+            building.classList.remove('selected');
+        });
 
-    selectedBuilding = buildingType;
-    document.getElementById(selectedBuilding).classList.add('selected');
-    highlightValidPlacement()
+        selectedBuilding = buildingType;
+        document.getElementById(selectedBuilding).classList.add('selected');
+        buildingSelected = true;
+
+    } else {
+        alert("You have already placed a building in this turn. End your turn first");
+    }
 }
+
+function toggleBuildMode() {
+
+    if (buildingSelected) {
+        highlightValidPlacement();
+        buildMode = true;
+
+    }
+    else {
+        alert('Building not selected.')
+    }
+}
+
 
 function highlightValidPlacement() {
     clearHighlights();
@@ -189,7 +218,8 @@ function clearHighlights() {
 
 
 function placeBuilding(box, index) {
-    if (!buildingPlacedThisTurn && selectedBuilding && box.classList.contains('highlight')) {
+    if (!buildingPlacedThisTurn && selectedBuilding && box.classList.contains('highlight') && buildMode == true) {
+        demolishMode = false;
         
         // check if placed building is on the perimeter and expand the grid
         if (isOnPerimeter(index) && !expandedThisTurn) {
@@ -206,6 +236,7 @@ function placeBuilding(box, index) {
         if (!gridState[index] || gridState[index].type !== selectedBuilding) {
             box.textContent = buildings[selectedBuilding].icon;
             box.classList.add(selectedBuilding);
+            box.classList.add('built')
             gridState[index] = { type: selectedBuilding, icon: buildings[selectedBuilding].icon };
 
             updateUI();
@@ -218,8 +249,10 @@ function placeBuilding(box, index) {
     } else if (!selectedBuilding) {
         alert("No building selected");
     } else if (!box.classList.contains('highlight')) {
-        alert('You can only place a building in the highlighted boxes')
-    } 
+        alert('Build mode is not enabled.')
+    } else if (!buildMode) {
+        alert('Build mode is not enabled.')
+    }
     
     else {
         alert("You have already placed a building in this turn. End your turn first");
@@ -233,6 +266,7 @@ function endTurn() {
     buildingPlacedThisTurn = false;
     expandedThisTurn = false;
     calculateScore();
+    clearHighlights(); // Clear previous highlights
 }
 
 function updateUI() {
@@ -241,22 +275,51 @@ function updateUI() {
     });
 }
 
-function toggleDemolishMode() {
-    demolishMode = !demolishMode;
 
-    const demolishButton = document.getElementById('demolish-button');
-    if (demolishMode) {
-        demolishButton.classList.add('active');
-    } else {
-        demolishButton.classList.remove('active');
+function toggleDemolishMode() {
+    clearHighlights(); // Clear previous highlights
+    if (!buildingPlacedThisTurn){
+        demolishMode = !demolishMode;
+        highlightDemolishableBuildings();
+        const demolishButton = document.getElementById('demolish-button');
+        if (demolishMode) {
+            demolishButton.classList.add('active');
+        } else {
+            demolishMode = false;
+            demolishButton.classList.remove('active');
+            removeDemolishHighlights();
+
+        }
     }
+    else {
+        alert('You have already moved this turn.')
+    }
+}
+
+function highlightDemolishableBuildings() {
+    const gridSquares = document.querySelectorAll('.grid-box');
+    gridSquares.forEach(box => {
+        if (box.classList.contains('built')) {
+            box.classList.add('highlight-demolish');
+        }
+    });
+}
+
+function removeDemolishHighlights() {
+    document.querySelectorAll('.grid-box').forEach(box => {
+        box.classList.remove('highlight-demolish');
+    });
 }
 
 function demolishBuilding(box, index) {
     if (gridState[index]) {
         box.textContent = '';
+        box.classList.remove('built');
         box.classList.remove(gridState[index].type);
+        removeDemolishHighlights();
+        demolishMode = false; // Exit demolish mode
         gridState[index] = null;
+        
     }
 }
 

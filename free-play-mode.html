@@ -6,14 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freeplay Mode</title>
     <link rel="stylesheet" href="./css/freeplay.css">
-    <link href="https://fonts.cdnfonts.com/css/joystix" rel="stylesheet">
-    <link href="https://fonts.cdnfonts.com/css/super-legend-boy" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Overpass Mono' rel='stylesheet'>
     <link href="https://fonts.cdnfonts.com/css/fff-atlantis" rel="stylesheet">
 </head>
 
 <body>
 
+    <!--
     <div id="username-modal" class="modal">
         <div class="modal-content">
             <h2>Enter your Username</h2>
@@ -21,61 +20,130 @@
             <button id="load-game-button">Load Game from Database</button>
             <button id="start-game-button">Start New Game</button>
         </div>
-    </div>
+    </div> -->
 
+    <a href="#navigation" class="nav-trigger">
+        <span></span>
+    </a>
+    <div class="scorebox">
+        Score: <span id="score">0</span>
+    </div>
+    <div class="coinbox">
+        Coins: <span id="coins">∞</span>
+    </div>
     
+    <!--
     <div class="buttons">
         <button id="save-button" onclick="saveGame()">Save</button>
         <button id="exit-button" onclick="#">Exit Game</button>
-    </div>
+    </div> -->
 
-    <div id="game">
+    <div class="buildings-btn">
+        <!-- <button id="res-btn">
+            <img src="./images/house.png" alt="Residential">
+        </button> -->
+        <div class="building" id="residential" onclick="selectBuilding('residential')">
+            <div class="building-type">  
+                <img src="./images/house.png" alt="Residential">
+            </div>
+        </div>
 
-    
+        <div class="building" id="industry" onclick="selectBuilding('industry')">
+            <img src="./images/industry.png" alt="Residential">
+        </div>
+
+        <div class="building" id="commercial" onclick="selectBuilding('commercial')">
+            <img src="./images/commercial.png" alt="Residential">
+        </div>
+
+        <div class="building" id="park" onclick="selectBuilding('park')">
+            <img src="./images/park.png" alt="Residential">
+        </div>
+
+        <div class="building" id="road" onclick="selectBuilding('road')">
+            <img src="./images/road.png" alt="Residential">
+        </div>
         
-        <div class="foundation">
-            <div class="grid-container">
-                <div id="turnbox">Turn: <span id="turn">1</span></div>
-                <div class="foundation">
-                    <div class="grid" id="grid"></div>
-                </div>
-            </div>            
+        <!-- build/demolish -->
+        <div id="build-btn" onclick="toggleBuildMode();">
+            <img src="./images/build-icon.png" alt="Residential">
+        </div>
+        <div id="demolish-btn" onclick="toggleDemolishMode()">
+            <img src="./images/demolish_icon.png" alt="Residential">
         </div>
 
-        <div id="info-container">
-            <div class="scoreboard">
-                <div class="scorebox">Current Score: <span id="score">0</span></div>
-                <div class="coinbox">Coins: <span id="coins">∞</span></div>
-            </div>
+        <button id="endTurn-btn" onclick="endTurn()">End Turn</button>
 
-            <div id="buildings-container">
-                <div class="building-options">
-                    <div class="building" id="residential" onclick ="selectBuilding('residential')">
-                        <div class="building-type">R</div>
-                        <div>Residential<br>Cost: 1 Coin</div>
-                    </div>
-                    <div class="building" id="industry" onclick ="selectBuilding('industry')">
-                        <div class="building-type">I</div>
-                        <div>Industry<br>Cost: 1 Coin</div>
-                    </div>
-                    <div class="building" id="commercial" onclick ="selectBuilding('commercial')">
-                        <div class="building-type">C</div>
-                        <div>Commercial<br>Cost: 1 Coin</div>
-                    </div>
-                    <div class="building" id="park" onclick ="selectBuilding('park')">
-                        <div class="building-type">O</div>
-                        <div>Park<br>Cost: 1 Coin</div>
-                    </div>
-                    <div class="building" id="road" onclick ="selectBuilding('road')">
-                        <div class="building-type">*</div>
-                        <div>Road<br>Cost: 1 Coin</div>
-                    </div>
-                </div>
-            </div>
-            <button id="demolish-button" onclick="toggleDemolishMode()">Demolish Mode</button>
-            <button id="endTurn-button" onclick="endTurn()">End Turn</button>
-        </div>
+        <!-- 3 btns -->
+        <button id="save-btn">
+            <img src="./images/save_game_icon.png" alt="Residential">
+        </button>
+
+        <button id="legend-btn" onclick="showModal()">
+            <img src="./images/legend_icon.png" alt="Residential">
+        </button>
+
+        <button id="htp-btn" onclick="showHelpModal()">
+            <img src="./images/question_mark_icon.jpg" alt="Residential">
+        </button>
+
+        <!-- <button id="ind-btn">
+            <img src="./images/industry.png" alt="Industry">
+        </button>
+    
+        <button id="com-btn">
+            <img src="./images/commercial.png" alt="Commercial">
+        </button>
+    
+        <button id="park-btn">
+            <img src="./images/park.png" alt="Park">
+        </button>
+    
+        <button id="road-btn">
+            <img src="./images/road.png" alt="Road">    
+        </button> -->
     </div>
+        
+    <div class="foundation">
+        <div class="grid-container">
+            <div id="turnbox">Turn: <span id="turn">1</span></div>
+            <div class="foundation">
+                <div class="grid" id="grid"></div>
+            </div>
+        </div>            
+    </div>
+
+    <!--
+    <div id="info-container">
+        
+
+        <div id="buildings-container">
+            <div class="building-options">
+                <div class="building" id="residential" onclick ="selectBuilding('residential')">
+                    <div class="building-type">R</div>
+                    <div>Residential<br>Cost: 1 Coin</div>
+                </div>
+                <div class="building" id="industry" onclick ="selectBuilding('industry')">
+                    <div class="building-type">I</div>
+                    <div>Industry<br>Cost: 1 Coin</div>
+                </div>
+                <div class="building" id="commercial" onclick ="selectBuilding('commercial')">
+                    <div class="building-type">C</div>
+                    <div>Commercial<br>Cost: 1 Coin</div>
+                </div>
+                <div class="building" id="park" onclick ="selectBuilding('park')">
+                    <div class="building-type">O</div>
+                    <div>Park<br>Cost: 1 Coin</div>
+                </div>
+                <div class="building" id="road" onclick ="selectBuilding('road')">
+                    <div class="building-type">*</div>
+                    <div>Road<br>Cost: 1 Coin</div>
+                </div>
+            </div>
+        </div>
+        <button id="demolish-button" onclick="toggleDemolishMode()">Demolish Mode</button>
+        <button id="endTurn-button" onclick="endTurn()">End Turn</button>
+    </div> -->
 
 
     <script src="./game logic/freePlayMode.js"></script>
