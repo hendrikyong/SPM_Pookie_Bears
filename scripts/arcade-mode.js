@@ -1,3 +1,5 @@
+const apikey = "668e26d5a7d61d10485c21a2";
+
 let navTrigger = document.getElementsByClassName("nav-trigger")[0];
 body = document.getElementsByTagName("body")[0];
 
@@ -33,6 +35,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  selectedBuilding = null;
+  selectedBuildings = [];
+  points = 0;
+  coins = 16;
+  turnNumber = 1;
+  firstBuildingPlaced = false;
+  demolishMode = false;
+
   initializeGame(); // Initialize the game here to ensure the initial buildings are selected
   // Zoom In and Zoom Out functionality
   document.getElementById("zoom-in").addEventListener("click", () => {
@@ -67,18 +77,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const usernameModal = document.getElementById('username-modal');
   const startGameButton = document.getElementById('start-game-button');
 
+  usernameModal.style.display = 'none'; // Hide the modal
+
   const submitUsernameButton = document.getElementById('submit-username-button');
 
   startGameButton.addEventListener('click', () => {
-      // const username = document.getElementById('username-input').value;
-      // if (username) {
-          // Store the username or display it in the UI if needed
-          // console.log("Username:", username);
       startLoadModal.style.display = 'none'; // Hide the modal
-      // } else {
-      //     alert("Please enter a username");
-      //}
   });
+
+  submitUsernameButton.addEventListener('click', () => {
+    const username = document.getElementById('username-input').value;
+    if (username) {
+        // Store the username or display it in the UI if needed
+        console.log("Username:", username);
+        saveScoreToLeaderboard(); // Save the score to the leaderboard database
+
+        usernameModal.style.display = 'none'; // Hide the modal
+    } else {
+        alert("Please enter a username");
+    }
+});
 
   document.getElementById('load-game-button').addEventListener('click', fetchGameStateFromDB);
 });
@@ -212,13 +230,13 @@ const buildings = {
   },
 };
 
-let selectedBuilding = null;
-let selectedBuildings = [];
-let points = 0;
-let coins = 16;
-let turnNumber = 1;
-let firstBuildingPlaced = false;
-let demolishMode = false;
+let selectedBuilding;
+let selectedBuildings;
+let points;
+let coins;
+let turnNumber;
+let firstBuildingPlaced;
+let demolishMode;
 
 function updateScoreboard() {
   document.getElementById("score-counter").innerText = points;
@@ -458,10 +476,40 @@ function endTurn() {
     if (allSquaresUsed) {
         // Perform actions to end the game
         alert(`All squares are used. Game Over! Your final score is: ${points}!`);
-        window.location.href = '../index.html';
-        // getUserScore() returns the current user's score
+
         // getLeaderboardScores() returns an array of scores sorted from highest to lowest
-        const userScore = getUserScore();
+        const userScore = points;
+        const leaderboardScores = getLeaderboardScores();
+
+        console.log(leaderboardScores);
+        
+        if (leaderboardScores.length >= 10 && userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
+            // Show the username modal
+            const usernameModal = document.getElementById('username-modal');
+            usernameModal.style.display = 'block'; // Make sure to display the modal
+
+            // const startGameButton = document.getElementById('start-game-button');
+            // startGameButton.addEventListener('click', () => {
+            //     const username = document.getElementById('username-input').value;
+            //     if (username) {
+            //         // Store the username or display it in the UI if needed
+            //         console.log("Username:", username);
+            //         usernameModal.style.display = 'none'; // Hide the modal
+            //     } else {
+            //         alert("Please enter a username");
+            //     }
+            // });
+        } else {
+            // If the user's score is not greater than the 10th place, dont ask for username
+            document.getElementById('username-modal').style.display = 'none';
+        }
+        window.location.href = './index.html';
+    }
+    else if (coins <= 0) {
+        alert(`You ran out of coins. Game Over! Your final score is: ${points}!`);
+
+        // getLeaderboardScores() returns an array of scores sorted from highest to lowest
+        const userScore = points;
         const leaderboardScores = getLeaderboardScores();
 
         if (leaderboardScores.length >= 10 && userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
@@ -469,33 +517,27 @@ function endTurn() {
             const usernameModal = document.getElementById('username-modal');
             usernameModal.style.display = 'block'; // Make sure to display the modal
 
-            const startGameButton = document.getElementById('start-game-button');
-            startGameButton.addEventListener('click', () => {
-                const username = document.getElementById('username-input').value;
-                if (username) {
-                    // Store the username or display it in the UI if needed
-                    console.log("Username:", username);
-                    usernameModal.style.display = 'none'; // Hide the modal
-                } else {
-                    alert("Please enter a username");
-                }
-            });
+            // const startGameButton = document.getElementById('start-game-button');
+            // startGameButton.addEventListener('click', () => {
+            //     const username = document.getElementById('username-input').value;
+            //     if (username) {
+            //         // Store the username or display it in the UI if needed
+            //         console.log("Username:", username);
+            //         usernameModal.style.display = 'none'; // Hide the modal
+            //     } else {
+            //         alert("Please enter a username");
+            //     }
+            // });
         } else {
-            // If the user's score is not greater than the 10th place, you might want to hide the modal or take some other action
+            // If the user's score is not greater than the 10th place, dont ask for username
             document.getElementById('username-modal').style.display = 'none';
         }
-
-        document.getElementById('load-game-button').addEventListener('click', fetchGameStateFromDB);
-    }
-    else if (coins <= 0) {
-        alert(`You ran out of coins. Game Over! Your final score is: ${points}!`);
-        window.location.href = '../index.html';
+        window.location.href = './index.html';
     }
 }
 
-function saveScore(username, score) {
+async function saveScoreToLeaderboard(username, score) {
   const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
-  const apikey = "6686c097e0ddd887ed0940e1";
 
   const data = {
     name: username,
@@ -512,7 +554,7 @@ function saveScore(username, score) {
     body: JSON.stringify(data),
   };
 
-  fetch(url, settings)
+  await fetch(url, settings)
     .then((response) => {
       if (response.ok) {
         return response.json();
@@ -528,9 +570,8 @@ function saveScore(username, score) {
     });
 }
 
-function getLeaderboardScores() {
+async function getLeaderboardScores() {
   const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
-  const apikey = "6686c097e0ddd887ed0940e1";
   let settings = {
     method: "GET",
     headers: {
@@ -540,7 +581,7 @@ function getLeaderboardScores() {
     },
   };
 
-  return fetch(url, settings)
+  return await fetch(url, settings)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -569,6 +610,69 @@ function getLeaderboardScores() {
       console.error('There has been a problem with your fetch operation:', error);
       return []; // Return an empty array in case of error
     });
+}
+
+function fetchGameStateFromDB() {
+  const username = localStorage.getItem('username');
+
+  if (!username) {
+      alert("You have not saved any game data.");
+      return;
+  }
+
+  $.ajax({
+      "async": true,
+      "crossDomain": true,
+      "url": `https://pookiebears-04f9.restdb.io/rest/arcademode-saves?q={%22username%22:%22${username}%22}`,
+      "method": "GET",
+      "headers": {
+          "content-type": "application/json",
+          "x-apikey": apikey,
+          "cache-control": "no-cache"
+      },
+      success: function(response) {
+          if (response.length === 0) {
+              alert("No save data found for this username.");
+              return;
+          }
+      
+          // The response[0].gamestate might already be a JavaScript object
+          let gameState;
+          try {
+              gameState = typeof response[0].gamestate === "string" ? JSON.parse(response[0].gamestate) : response[0].gamestate;
+          } catch (error) {
+              console.error("Error parsing game state:", error);
+              alert("Failed to parse game state. Please try again.");
+              return; 
+          }
+
+          console.log
+      
+          // Update game variables from loaded state
+          gridSize = gameState.gridSize;
+          gridState = gameState.gridState;
+          selectedBuilding = gameState.selectedBuilding;
+          points = gameState.points;
+          turnNumber = gameState.turnNumber;
+          demolishMode = gameState.demolishMode;
+          buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
+          expandedThisTurn = gameState.expandedThisTurn;
+      
+          // Recreate the grid with the loaded state
+          createGrid(gridSize);
+          updateUI();
+      
+          document.getElementById('turn').textContent = turnNumber;
+          document.getElementById('score').textContent = points;
+      
+          document.getElementById('username-modal').style.display = 'none';
+      },
+      
+      error: function(jqXHR, textStatus, errorThrown) {
+          console.error("Error fetching game state:", textStatus, errorThrown);
+          alert("Failed to load game. Please try again.");
+      }
+  });
 }
 
 function updatePoints() {
@@ -696,13 +800,98 @@ function addCoin() {
 }
 
 function saveGame() {
-  alert("Game saved!");
 
-  // TBC
+
+  const grid = document.getElementById('grid');
+
+  const squares = Array.from(grid.children);
+  const rowSize = Math.sqrt(squares.length);
+
+      // Gather game state
+      const gameState = {
+        gridSize: rowSize,
+        gridState: squares,
+        selectedBuilding: selectedBuilding,
+        points: points,
+        coins: coins,
+        turnNumber: turnNumber,
+        demolishMode: demolishMode,
+    };
+
+    // Convert game state to JSON string
+    const jsonGameState = JSON.stringify(gameState, null, 2);
+    
+    let now = new Date();
+
+    // Get the current time in milliseconds since the epoch
+    let timeInMs = now.getTime();
+
+    // Get the timezone offset in milliseconds for Singapore (UTC+8)
+    let singaporeOffset = 8 * 60 * 60 * 1000;
+
+    // Create a new Date object with the adjusted time
+    let singaporeTime = new Date(timeInMs + singaporeOffset);
+
+    // Format the date and time in ISO 8601 format
+    let singaporeISOString = singaporeTime.toISOString().replace('Z', '+08:00');
+
+    const username = document.getElementById('username-input').value;
+
+    const savegameData = {
+        username: username,
+        datetimeCreated: singaporeISOString,
+        gamestate: jsonGameState
+    };
+
+    const postSaveData = {
+        "async": true,
+        "crossDomain": true,
+        "url": "https://pookiebears-04f9.restdb.io/rest/arcademode-saves",
+        "method": "POST",
+        "headers": {
+            "content-type": "application/json",
+            "x-apikey": apikey,
+            "cache-control": "no-cache"
+        },
+        "processData": false,
+        "data": JSON.stringify(savegameData)
+    };
+
+    // const leaderboardData = {
+    //     name: username,
+    //     score: points
+    // }
+
+    // var postLeaderboard = {
+    //     "async": true,
+    //     "crossDomain": true,
+    //     "url": "https://pookiebears-04f9.restdb.io/rest/freeplayleaderboard",
+    //     "method": "POST",
+    //     "headers": {
+    //       "content-type": "application/json",
+    //       "x-apikey": apikey,
+    //       "cache-control": "no-cache"
+    //     },
+    //     "processData": false,
+    //     "data": JSON.stringify(leaderboardData)
+    // };
+      
+    // $.ajax(postLeaderboard).done(function (response) {
+    // console.log(response);
+    // });
+
+
+    $.ajax(postSaveData).done(function(response) {
+        console.log(response);
+        alert("Game saved successfully!");
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        console.error("Error saving game:", textStatus, errorThrown);
+        alert("Failed to save game. Please try again.");
+    });
 }
 
 function exitGame() {
-  window.location.href = "../index.html";
+  window.location.href = "./index.html";
 }
 
 function getNeighbors(square) {
