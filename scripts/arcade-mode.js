@@ -293,6 +293,7 @@ function buildStructure() {
 function placeBuilding(square) {
   if (square.classList.contains('highlight') && coins > 0) {
       const img = document.createElement('img');
+      const icon = buildings[selectedBuilding].icon;
       img.src = buildings[selectedBuilding].image;
       img.alt = buildings[selectedBuilding].icon;
       square.innerHTML = '';
@@ -301,8 +302,22 @@ function placeBuilding(square) {
       square.classList.remove('highlight');
       square.icon = img.alt;
       square.turnNumber = turnNumber; // Store the turn number when the building was placed
+      square.classList.remove('built-a', 'built-b', 'built-c', 'built-d', 'built-e');
 
       coins -= 1;
+
+      // Add the corresponding built-* class
+      if (icon === 'R') {
+        square.classList.add('built-a');
+      } else if (icon === 'I') {
+          square.classList.add('built-b');
+      } else if (icon === 'C') {
+          square.classList.add('built-c');
+      } else if (icon === 'O') {
+          square.classList.add('built-d');
+      } else {
+          square.classList.add('built-e');
+      }
 
       // if commercial or industrial building is added
       if (square.icon == 'I' || square.icon == 'C') {
@@ -367,7 +382,8 @@ function demolishBuilding(square) {
   if (coins > 0 && demolishMode && square.classList.contains('built') && isOuterLayer(square)) {
       // Remove building
       square.innerText = '';
-      square.classList.remove('built', 'highlight-demolish');
+      // square.classList.remove('built', 'highlight-demolish');
+      square.classList.remove('built', 'built-a', 'built-b', 'built-c', 'built-d', 'built-e', 'highlight', 'highlight-demolish');
       square.icon = null;
       square.turnNumber = null;
 
@@ -649,4 +665,33 @@ window.onclick = function (event) {
   }
 };
 
+// Example highlight functionality
+function highlightSquare(square) {
+  square.classList.add('highlight');
+}
+
+function removeHighlight(square) {
+  square.classList.remove('highlight');
+}
+
+// Event listeners to handle building and demolishing
+document.querySelectorAll('.grid-square').forEach(square => {
+  square.addEventListener('click', () => {
+      if (demolishMode) {
+          demolishBuilding(square);
+      } else {
+          placeBuilding(square);
+      }
+  });
+
+  square.addEventListener('mouseover', () => {
+      if (!square.classList.contains('built')) {
+          highlightSquare(square);
+      }
+  });
+
+  square.addEventListener('mouseout', () => {
+      removeHighlight(square);
+  });
+});
 window.onload = initializeGame;
