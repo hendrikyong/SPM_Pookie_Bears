@@ -90,8 +90,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (username) {
         // Store the username or display it in the UI if needed
         console.log("Username:", username);
-        saveScoreToLeaderboard(username,points); // Save the score to the leaderboard database
-
+        localStorage.setItem('username', username);
+        if (savingScoreToLeaderboard) {
+          saveScoreToLeaderboard(username,points); // Save the score to the leaderboard database
+        }
         usernameModal.style.display = 'none'; // Hide the modal
     } else {
         alert("Please enter a username");
@@ -203,30 +205,30 @@ const buildings = {
     description:
       "Residential (R): If it is next to an industry (I), then it scores 1 point only. Otherwise, it scores 1 point for each adjacent residential (R) or commercial (C), and 2 points for each adjacent park (O).",
     icon: "R",
-    image: "./images/house.png",
+    image: "../images/house.png",
   },
   industry: {
     description:
       "Industry (I): Scores 1 point per industry in the city. Each industry generates 1 coin per residential building adjacent to it.",
     icon: "I",
-    image: "./images/industry.png",
+    image: "../images/industry.png",
   },
   commercial: {
     description:
       "Commercial (C): Scores 1 point per commercial adjacent to it. Each commercial generates 1 coin per residential adjacent to it.",
     icon: "C",
-    image: "./images/commercial.png",
+    image: "../images/commercial.png",
   },
   park: {
     description: "Park (O): Scores 1 point per park adjacent to it.",
     icon: "O",
-    image: "./images/park.png",
+    image: "../images/park.png",
   },
   road: {
     description:
       "Road (*): Scores 1 point per connected road (*) in the same row.",
     icon: "*",
-    image: "./images/road.png",
+    image: "..  /images/road.png",
   },
 };
 
@@ -237,6 +239,7 @@ let coins;
 let turnNumber;
 let firstBuildingPlaced;
 let demolishMode;
+let savingScoreToLeaderboard = false;
 
 function updateScoreboard() {
   document.getElementById("score-counter").innerText = points;
@@ -411,10 +414,10 @@ function highlightDemolishableBuildings() {
 
 // useless function currently!
 // Check if the building is on the outer layer
-function isOuterLayer(square) {
-  const neighbors = getNeighbors(square);
-  return neighbors.some((neighbor) => !neighbor.classList.contains("built"));
-}
+// function isOuterLayer(square) {
+//   const neighbors = getNeighbors(square);
+//   return neighbors.some((neighbor) => !neighbor.classList.contains("built"));
+// }
 
 // Demolish a building
 function demolishBuilding(square) {
@@ -475,7 +478,7 @@ async function endTurn() {
 
     updateScoreboard();
 
-    console.log(coins + "CHECKING");
+    console.log(coins + " total coins");
     if (allSquaresUsed) {
         // Perform actions to end the game
 
@@ -598,144 +601,68 @@ async function endTurn() {
     }
 }
 
-async function saveScoreToLeaderboard(username, score) {
-  const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
+// function fetchGameStateFromDB() {
+//   const username = localStorage.getItem('username');
 
-  const data = {
-    name: username,
-    score: score,
-  };
+//   if (!username) {
+//       alert("You have not saved any game data.");
+//       return;
+//   }
 
-  const settings = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-apikey": apikey,
-      "cache-control": "no-cache",
-    },
-    body: JSON.stringify(data),
-  };
-
-  await fetch(url, settings)
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Network response was not ok");
-      }
-    })
-    .then((data) => {
-      console.log("Score saved successfully:", data);
-    })
-    .catch((error) => {
-      console.error("There was a problem with the fetch operation:", error);
-    });
-}
-
-async function getLeaderboardScores() {
-  const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
-  let settings = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "x-apikey": apikey,
-      "cache-control": "no-cache",
-    },
-  };
-
-  return await fetch(url, settings)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then((data) => {
-      let userScoresMap = new Map();
-
-      // Process the data to ensure each user's highest score is considered
-      data.forEach((user) => {
-        if (!userScoresMap.has(user.name) || userScoresMap.get(user.name) < user.score) {
-          userScoresMap.set(user.name, user.score);
-        }
-      });
-
-      // Convert the map to an array of scores
-      let scores = Array.from(userScoresMap.values());
-
-      // Sort the scores in descending order
-      scores.sort((a, b) => b - a);
-
-      return scores;
-    })
-    .catch((error) => {
-      console.error('There has been a problem with your fetch operation:', error);
-      return []; // Return an empty array in case of error
-    });
-}
-
-function fetchGameStateFromDB() {
-  const username = localStorage.getItem('username');
-
-  if (!username) {
-      alert("You have not saved any game data.");
-      return;
-  }
-
-  $.ajax({
-      "async": true,
-      "crossDomain": true,
-      "url": `https://pookiebears-8bfa.restdb.io/rest/arcademode-saves?q={%22username%22:%22${username}%22}`,
-      "method": "GET",
-      "headers": {
-          "content-type": "application/json",
-          "x-apikey": apikey,
-          "cache-control": "no-cache"
-      },
-      success: function(response) {
-          if (response.length === 0) {
-              alert("No save data found for this username.");
-              return;
-          }
+//   $.ajax({
+//       "async": true,
+//       "crossDomain": true,
+//       "url": `https://pookiebears-8bfa.restdb.io/rest/arcademode-saves?q={%22username%22:%22${username}%22}`,
+//       "method": "GET",
+//       "headers": {
+//           "content-type": "application/json",
+//           "x-apikey": apikey,
+//           "cache-control": "no-cache"
+//       },
+//       success: function(response) {
+//           if (response.length === 0) {
+//               alert("No save data found for this username.");
+//               return;
+//           }
       
-          // The response[0].gamestate might already be a JavaScript object
-          let gameState;
-          try {
-              gameState = typeof response[0].gamestate === "string" ? JSON.parse(response[0].gamestate) : response[0].gamestate;
-          } catch (error) {
-              console.error("Error parsing game state:", error);
-              alert("Failed to parse game state. Please try again.");
-              return; 
-          }
+//           // The response[0].gamestate might already be a JavaScript object
+//           let gameState;
+//           try {
+//               gameState = typeof response[0].gamestate === "string" ? JSON.parse(response[0].gamestate) : response[0].gamestate;
+//           } catch (error) {
+//               console.error("Error parsing game state:", error);
+//               alert("Failed to parse game state. Please try again.");
+//               return; 
+//           }
 
-          console.log
+//           console.log
       
-          // Update game variables from loaded state
-          gridSize = gameState.gridSize;
-          gridState = gameState.gridState;
-          selectedBuilding = gameState.selectedBuilding;
-          points = gameState.points;
-          turnNumber = gameState.turnNumber;
-          demolishMode = gameState.demolishMode;
-          buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
-          expandedThisTurn = gameState.expandedThisTurn;
+//           // Update game variables from loaded state
+//           gridSize = gameState.gridSize;
+//           gridState = gameState.gridState;
+//           selectedBuilding = gameState.selectedBuilding;
+//           points = gameState.points;
+//           turnNumber = gameState.turnNumber;
+//           demolishMode = gameState.demolishMode;
+//           buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
+//           expandedThisTurn = gameState.expandedThisTurn;
       
-          // Recreate the grid with the loaded state
-          createGrid(gridSize);
-          updateUI();
+//           // Recreate the grid with the loaded state
+//           createGrid(gridSize);
+//           updateUI();
       
-          document.getElementById('turn').textContent = turnNumber;
-          document.getElementById('score').textContent = points;
+//           document.getElementById('turn').textContent = turnNumber;
+//           document.getElementById('score').textContent = points;
       
-          document.getElementById('username-modal').style.display = 'none';
-      },
+//           document.getElementById('username-modal').style.display = 'none';
+//       },
       
-      error: function(jqXHR, textStatus, errorThrown) {
-          console.error("Error fetching game state:", textStatus, errorThrown);
-          alert("Failed to load game. Please try again.");
-      }
-  });
-}
+//       error: function(jqXHR, textStatus, errorThrown) {
+//           console.error("Error fetching game state:", textStatus, errorThrown);
+//           alert("Failed to load game. Please try again.");
+//       }
+//   });
+// }
 
 async function saveScoreToLeaderboard(username, score) {
   const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
@@ -848,31 +775,26 @@ function fetchGameStateFromDB() {
           }
       
           // Update game variables from loaded state
-          gridSize = gameState.gridSize;
-          gridState = gameState.gridState;
-          selectedBuilding = gameState.selectedBuilding;
-          points = gameState.points;
-          turnNumber = gameState.turnNumber;
-          demolishMode = gameState.demolishMode;
-          buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
-          expandedThisTurn = gameState.expandedThisTurn;
-      
           gridSize = gameState.rowSize,
-          gridState = gameState.squares,
-          selectedBuildin = gameState.selectedBuilding,
+          gridMap = gameState.gridMap,
+          selectedBuildings = gameState.selectedBuildings,
           points =  gameState.points,
           coins = gameState.coins,
           turnNumber = gameState.turnNumber,
           demolishMode = gameState.demolishMode,
 
-          // Recreate the grid with the loaded state
-          createGrid(gridSize);
-          updateUI();
-      
+          // Update the grid with the loaded state
+          updateGrid();
+          updateScoreboard();
+          
           document.getElementById('turn').textContent = turnNumber;
           document.getElementById('score').textContent = points;
-      
-          document.getElementById('username-modal').style.display = 'none';
+          document.getElementById('coins').textContent = coins;
+
+          updateTurnCounter();
+          updateSelectedBuildingsUI();
+
+          document.getElementById('start-load-modal').style.display = 'none';
       },
       
       error: function(jqXHR, textStatus, errorThrown) {
@@ -880,6 +802,93 @@ function fetchGameStateFromDB() {
           alert("Failed to load game. Please try again.");
       }
   });
+}
+
+function updateGrid() {
+  const grid = document.getElementById('grid');
+
+  const squares = Array.from(grid.children);
+  const rowSize = Math.sqrt(squares.length);
+
+  for (let i = 0; i < rowSize * rowSize; i++) {
+      const square = squares[i];
+      console.log(gridMap);
+      console.log(square);
+      console.log(gridMap[i]);
+
+      if (gridMap[i].icon == null) {
+        continue;
+      }
+      const gridSquare = gridMap[i];
+      console.log(gridSquare);
+      square.innerHTML = '';
+          const img = document.createElement('img');
+          console.log(buildings['commercial'].image);
+          if (gridSquare.icon == 'R') {
+            img.src = buildings[residential].image;
+
+          } else if (gridSquare.icon == 'I') {
+            img.src = buildings[industrial].image;
+
+          } else if (gridSquare.icon == 'C') {
+            img.src = buildings['commercial'].image;
+
+          } else if (gridSquare.icon == 'O') {
+            img.src = buildings[park].image;
+
+          } else if (gridSquare.icon == '*') {
+            img.src = buildings[road].image;
+
+          }
+          img.alt = gridSquare.icon;
+          square.appendChild(img);
+          square.classList.add('built');
+          square.icon = gridSquare.icon;
+          square.turnNumber = gridSquare.turnNumber;
+          firstBuildingPlaced = true;
+          // square.classList.add(`built-${gridSquare.icon.toLowerCase()}`);
+      
+  }
+
+  // // loop to create grid boxes based on the size ( size * size = n of rows, n of column )
+  // for (let i = 0; i < size * size; i++) {
+  //     // div for each box in the grid
+  //     const box = document.createElement('div');
+  //     box.classList.add('grid-box');
+
+  //     // if theres a building at the box in the loop, display the icon and type
+  //     if (gridMap[i].classList.contains('built')) {
+  //         // box.textContent = gridState[i].icon;
+  //         box.classList.add(gridState[i].type);
+  //         const icon = gridState[i].icon;
+  //         const img = document.createElement('img');
+  //         img.src = buildings[gridState[i].type].image;
+  //         img.alt = gridState[i].icon;
+  //         box.appendChild(img);
+  //         if (icon === 'R') {
+  //             box.classList.add('built-a');
+  //         } else if (icon === 'I') {
+  //             box.classList.add('built-b');
+  //         } else if (icon === 'C') {
+  //             box.classList.add('built-c');
+  //         } else if (icon === 'O') {
+  //             box.classList.add('built-d');
+  //         } else {
+  //             box.classList.add('built-e');
+  //         }
+  //         box.classList.add('built');  // Ensure previously built buildings have the 'built' class
+  //     }
+
+      // // add event listener to each grid box
+      // box.addEventListener('click', () => {
+      //     if (demolishMode) {
+      //         demolishBuilding(box, i);
+      //     } else {
+      //         placeBuilding(box, i);
+      //     }
+      // });
+      // append this grid box to the html
+      // grid.appendChild(box);
 }
 
 function updatePoints() {
@@ -1006,8 +1015,33 @@ function addCoin() {
     coins += 1;
 }
 
-function saveGame() {
+async function saveGame() {
 
+  let usernameEntered = false;
+
+  savingScoreToLeaderboard = false;
+
+  while (!usernameEntered) {
+      const usernameModal = document.getElementById('username-modal');
+      usernameModal.style.display = 'block'; // Make sure to display the modal
+
+      // Wait for username submission
+      await new Promise((resolve) => {
+          const submitUsernameButton = document.getElementById('submit-username-button');
+          submitUsernameButton.addEventListener('click', () => {
+              const username = document.getElementById('username-input').value;
+              if (username) {
+                  // Store the username or display it in the UI if needed
+                  console.log("Username:", username);
+                  usernameModal.style.display = 'none'; // Hide the modal
+                  resolve(); // Resolve the promise to continue
+                  usernameEntered = true; // Set flag to true to exit the loop
+              } else {
+                  alert("Please enter a username");
+              }
+          });
+      });
+  }
 
   const grid = document.getElementById('grid');
 
@@ -1017,8 +1051,8 @@ function saveGame() {
       // Gather game state
       const gameState = {
         gridSize: rowSize,
-        gridState: squares,
-        selectedBuilding: selectedBuilding,
+        gridMap: squares,
+        selectedBuildings: selectedBuildings,
         points: points,
         coins: coins,
         turnNumber: turnNumber,
@@ -1098,6 +1132,7 @@ function saveGame() {
 }
 
 function exitGame() {
+  alert("Bye bye!");
   window.location.href = "./menu.html";
 }
 
