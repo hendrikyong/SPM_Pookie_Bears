@@ -61,6 +61,26 @@ document.addEventListener("DOMContentLoaded", () => {
   //     grid.style.transformOrigin = '0 0';
   //     event.preventDefault(); // Prevent scrolling the page
   // });
+
+  // Show start-load modal, hide username modal first
+  const startLoadModal = document.getElementById("start-load-modal");
+  const usernameModal = document.getElementById('username-modal');
+  const startGameButton = document.getElementById('start-game-button');
+
+  const submitUsernameButton = document.getElementById('submit-username-button');
+
+  startGameButton.addEventListener('click', () => {
+      // const username = document.getElementById('username-input').value;
+      // if (username) {
+          // Store the username or display it in the UI if needed
+          // console.log("Username:", username);
+      startLoadModal.style.display = 'none'; // Hide the modal
+      // } else {
+      //     alert("Please enter a username");
+      //}
+  });
+
+  document.getElementById('load-game-button').addEventListener('click', fetchGameStateFromDB);
 });
 
 //table
@@ -423,11 +443,116 @@ function endTurn() {
         // Perform actions to end the game
         alert(`All squares are used. Game Over! Your final score is: ${points}!`);
         window.location.href = '../index.html';
+        // getUserScore() returns the current user's score
+        // getLeaderboardScores() returns an array of scores sorted from highest to lowest
+        const userScore = getUserScore();
+        const leaderboardScores = getLeaderboardScores();
+
+        if (leaderboardScores.length >= 10 && userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
+            // Show the username modal
+            const usernameModal = document.getElementById('username-modal');
+            usernameModal.style.display = 'block'; // Make sure to display the modal
+
+            const startGameButton = document.getElementById('start-game-button');
+            startGameButton.addEventListener('click', () => {
+                const username = document.getElementById('username-input').value;
+                if (username) {
+                    // Store the username or display it in the UI if needed
+                    console.log("Username:", username);
+                    usernameModal.style.display = 'none'; // Hide the modal
+                } else {
+                    alert("Please enter a username");
+                }
+            });
+        } else {
+            // If the user's score is not greater than the 10th place, you might want to hide the modal or take some other action
+            document.getElementById('username-modal').style.display = 'none';
+        }
+
+        document.getElementById('load-game-button').addEventListener('click', fetchGameStateFromDB);
     }
     else if (coins <= 0) {
         alert(`You ran out of coins. Game Over! Your final score is: ${points}!`);
         window.location.href = '../index.html';
     }
+}
+
+function saveScore(username, score) {
+  const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
+  const apikey = "6686c097e0ddd887ed0940e1";
+
+  const data = {
+    name: username,
+    score: score,
+  };
+
+  const settings = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-apikey": apikey,
+      "cache-control": "no-cache",
+    },
+    body: JSON.stringify(data),
+  };
+
+  fetch(url, settings)
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Network response was not ok");
+      }
+    })
+    .then((data) => {
+      console.log("Score saved successfully:", data);
+    })
+    .catch((error) => {
+      console.error("There was a problem with the fetch operation:", error);
+    });
+}
+
+function getLeaderboardScores() {
+  const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
+  const apikey = "6686c097e0ddd887ed0940e1";
+  let settings = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "x-apikey": apikey,
+      "cache-control": "no-cache",
+    },
+  };
+
+  return fetch(url, settings)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      let userScoresMap = new Map();
+
+      // Process the data to ensure each user's highest score is considered
+      data.forEach((user) => {
+        if (!userScoresMap.has(user.name) || userScoresMap.get(user.name) < user.score) {
+          userScoresMap.set(user.name, user.score);
+        }
+      });
+
+      // Convert the map to an array of scores
+      let scores = Array.from(userScoresMap.values());
+
+      // Sort the scores in descending order
+      scores.sort((a, b) => b - a);
+
+      return scores;
+    })
+    .catch((error) => {
+      console.error('There has been a problem with your fetch operation:', error);
+      return []; // Return an empty array in case of error
+    });
 }
 
 function updatePoints() {
