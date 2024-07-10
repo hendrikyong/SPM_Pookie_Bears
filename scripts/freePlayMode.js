@@ -378,7 +378,7 @@ function demolishBuilding(box, index) {
     if (gridState[index] && !buildingPlacedThisTurn) {
         box.textContent = '';
         box.classList.remove('built');
-        
+        box.classList.remove('built', 'built-a', 'built-b', 'built-c', 'built-d', 'built-e', 'highlight', 'highlight-demolish');
         box.classList.remove(gridState[index].type);
         removeDemolishHighlights();
         demolishMode = false; // Exit demolish mode
