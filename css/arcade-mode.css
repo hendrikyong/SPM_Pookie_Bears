@@ -655,21 +655,15 @@
   
   /* Grid */
   .platform {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
-      width: auto;
-      padding: 20px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      background-color: #ffffff;
-      overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid black
   }
   
   .turn-counter {
       position: absolute;
-      top: 50px;
+      top: 30px;
       left: 50%;
       transform: translateX(-50%);
       background-color: rgba(0, 0, 0, 0.7);
@@ -716,7 +710,7 @@
       display: grid;
       padding: 20px;
       background-color: white;
-      gap: 10px;
+      gap: 2px;
       transform: scale(0.9);
       perspective: 800px; /* Add perspective for 3D effect */
   }
