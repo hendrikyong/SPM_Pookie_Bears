@@ -213,6 +213,7 @@ function highlightValidPlacement() {
     // If the grid is empty, highlight all boxes
     if (gridState.every(cell => cell === null)) {
         boxes.forEach((box, index) => {
+            
             box.classList.add('highlight');
         });
         return;
@@ -377,6 +378,7 @@ function demolishBuilding(box, index) {
     if (gridState[index] && !buildingPlacedThisTurn) {
         box.textContent = '';
         box.classList.remove('built');
+        
         box.classList.remove(gridState[index].type);
         removeDemolishHighlights();
         demolishMode = false; // Exit demolish mode
