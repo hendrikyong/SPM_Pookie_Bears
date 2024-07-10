@@ -569,7 +569,8 @@ function getAdjacents(grid, row, col) {
     return adjacents;
 }
 
-const apikey = '6686c097e0ddd887ed0940e1'
+const apikey = '668e26d5a7d61d10485c21a2'
+const apiurl = 'https://pookiebears-8bfa.restdb.io/rest/'
 
 
 function saveGame() {
@@ -613,7 +614,7 @@ function saveGame() {
     const postSaveData = {
         "async": true,
         "crossDomain": true,
-        "url": "https://pookiebears-04f9.restdb.io/rest/freeplay-saves",
+        "url": apiurl + "freeplay-saves",
         "method": "POST",
         "headers": {
             "content-type": "application/json",
@@ -632,7 +633,7 @@ function saveGame() {
     var postLeaderboard = {
         "async": true,
         "crossDomain": true,
-        "url": "https://pookiebears-04f9.restdb.io/rest/freeplayleaderboard",
+        "url": apiurl + "freeplayleaderboard",
         "method": "POST",
         "headers": {
           "content-type": "application/json",
@@ -669,7 +670,7 @@ function fetchGameStateFromDB() {
     $.ajax({
         "async": true,
         "crossDomain": true,
-        "url": `https://pookiebears-04f9.restdb.io/rest/freeplay-saves?q={%22username%22:%22${username}%22}`,
+        "url": apiurl + `freeplay-saves?q={%22username%22:%22${username}%22}`,
         "method": "GET",
         "headers": {
             "content-type": "application/json",
