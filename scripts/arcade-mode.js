@@ -428,7 +428,8 @@ function endTurn() {
     // updateProfitAndUpkeep();
     updatePoints();
 
-    turnNumber += 1;
+    turnNumber += 1;firstBuildingPlaced
+
     updateTurnCounter();
     // Check if all squares are used
     const allSquaresUsed = Array.from(document.querySelectorAll('.grid-square')).every(square => square.classList.contains('built'));
@@ -438,11 +439,11 @@ function endTurn() {
     if (allSquaresUsed) {
         // Perform actions to end the game
         alert(`All squares are used. Game Over! Your final score is: ${points}!`);
-        window.location.href = '../index.html';
+        window.location.href = '../start.html';
     }
     else if (coins <= 0) {
         alert(`You ran out of coins. Game Over! Your final score is: ${points}!`);
-        window.location.href = '../index.html';
+        window.location.href = '../start.html';
     }
 }
 
@@ -577,7 +578,7 @@ function saveGame() {
 }
 
 function exitGame() {
-  window.location.href = "../index.html";
+  window.location.href = "../start.html";
 }
 
 function getNeighbors(square) {
@@ -694,4 +695,17 @@ document.querySelectorAll('.grid-square').forEach(square => {
       removeHighlight(square);
   });
 });
+
+document.getElementById('pause').addEventListener('click', () => {
+  document.getElementById('exitModal').style.display = 'block';
+});
+
+document.getElementById('yesBtn').addEventListener('click', () => {
+  exitGame();
+});
+
+document.getElementById('noBtn').addEventListener('click', () => {
+  document.getElementById('exitModal').style.display = 'none';
+});
+
 window.onload = initializeGame;

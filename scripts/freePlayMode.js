@@ -793,3 +793,15 @@ document.querySelectorAll('.grid-box').forEach(square => {
         removeHighlight(square);
     });
 });
+
+document.getElementById('pause').addEventListener('click', () => {
+    document.getElementById('exitModal').style.display = 'block';
+  });
+  
+  document.getElementById('yesBtn').addEventListener('click', () => {
+    exitGame();
+  });
+  
+  document.getElementById('noBtn').addEventListener('click', () => {
+    document.getElementById('exitModal').style.display = 'none';
+  });
