@@ -466,7 +466,8 @@ function endTurn() {
     // updateProfitAndUpkeep();
     updatePoints();
 
-    turnNumber += 1;
+    turnNumber += 1;firstBuildingPlaced
+
     updateTurnCounter();
     // Check if all squares are used
     const allSquaresUsed = Array.from(document.querySelectorAll('.grid-square')).every(square => square.classList.contains('built'));
@@ -534,6 +535,145 @@ function endTurn() {
         }
         window.location.href = './index.html';
     }
+}
+
+async function saveScoreToLeaderboard(username, score) {
+  const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
+
+  const data = {
+    name: username,
+    score: score,
+  };
+
+  const settings = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-apikey": apikey,
+      "cache-control": "no-cache",
+    },
+    body: JSON.stringify(data),
+  };
+
+  await fetch(url, settings)
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Network response was not ok");
+      }
+    })
+    .then((data) => {
+      console.log("Score saved successfully:", data);
+    })
+    .catch((error) => {
+      console.error("There was a problem with the fetch operation:", error);
+    });
+}
+
+async function getLeaderboardScores() {
+  const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
+  let settings = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "x-apikey": apikey,
+      "cache-control": "no-cache",
+    },
+  };
+
+  return await fetch(url, settings)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      let userScoresMap = new Map();
+
+      // Process the data to ensure each user's highest score is considered
+      data.forEach((user) => {
+        if (!userScoresMap.has(user.name) || userScoresMap.get(user.name) < user.score) {
+          userScoresMap.set(user.name, user.score);
+        }
+      });
+
+      // Convert the map to an array of scores
+      let scores = Array.from(userScoresMap.values());
+
+      // Sort the scores in descending order
+      scores.sort((a, b) => b - a);
+
+      return scores;
+    })
+    .catch((error) => {
+      console.error('There has been a problem with your fetch operation:', error);
+      return []; // Return an empty array in case of error
+    });
+}
+
+function fetchGameStateFromDB() {
+  const username = localStorage.getItem('username');
+
+  if (!username) {
+      alert("You have not saved any game data.");
+      return;
+  }
+
+  $.ajax({
+      "async": true,
+      "crossDomain": true,
+      "url": `https://pookiebears-04f9.restdb.io/rest/arcademode-saves?q={%22username%22:%22${username}%22}`,
+      "method": "GET",
+      "headers": {
+          "content-type": "application/json",
+          "x-apikey": apikey,
+          "cache-control": "no-cache"
+      },
+      success: function(response) {
+          if (response.length === 0) {
+              alert("No save data found for this username.");
+              return;
+          }
+      
+          // The response[0].gamestate might already be a JavaScript object
+          let gameState;
+          try {
+              gameState = typeof response[0].gamestate === "string" ? JSON.parse(response[0].gamestate) : response[0].gamestate;
+          } catch (error) {
+              console.error("Error parsing game state:", error);
+              alert("Failed to parse game state. Please try again.");
+              return; 
+          }
+
+          console.log
+      
+          // Update game variables from loaded state
+          gridSize = gameState.gridSize;
+          gridState = gameState.gridState;
+          selectedBuilding = gameState.selectedBuilding;
+          points = gameState.points;
+          turnNumber = gameState.turnNumber;
+          demolishMode = gameState.demolishMode;
+          buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
+          expandedThisTurn = gameState.expandedThisTurn;
+      
+          // Recreate the grid with the loaded state
+          createGrid(gridSize);
+          updateUI();
+      
+          document.getElementById('turn').textContent = turnNumber;
+          document.getElementById('score').textContent = points;
+      
+          document.getElementById('username-modal').style.display = 'none';
+      },
+      
+      error: function(jqXHR, textStatus, errorThrown) {
+          console.error("Error fetching game state:", textStatus, errorThrown);
+          alert("Failed to load game. Please try again.");
+      }
+  });
 }
 
 async function saveScoreToLeaderboard(username, score) {
@@ -1008,4 +1148,17 @@ document.querySelectorAll('.grid-square').forEach(square => {
       removeHighlight(square);
   });
 });
+
+document.getElementById('pause').addEventListener('click', () => {
+  document.getElementById('exitModal').style.display = 'block';
+});
+
+document.getElementById('yesBtn').addEventListener('click', () => {
+  exitGame();
+});
+
+document.getElementById('noBtn').addEventListener('click', () => {
+  document.getElementById('exitModal').style.display = 'none';
+});
+
 window.onload = initializeGame;

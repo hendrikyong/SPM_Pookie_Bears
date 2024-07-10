@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGEE ANN CITY</title>
+    <link href='https://fonts.googleapis.com/css?family=Overpass Mono' rel='stylesheet'>
+    <link rel="stylesheet" href="./css/menu.css">
+    <!-- <script src="./scripts/freeplay-leaderboard.js" defer></script> -->
+</head>
+
+<body>
+    <header>
+        <div class="heading">
+            <img src="./images/ngeAnnLogoWithoutBG.png" alt="Ngee Ann Logo">
+        </div>
+    </header>
+    <div class="container">
+        <div class="buttons">
+            <div>
+                <div id="arcade-button">
+                    <span>Arcade</span>
+                </div>
+            </div>
+            <div>
+                <div id="freeplay-button">
+                    <span>Free Play</span>
+                </div>
+            </div>
+        </div>
+        <div id="back-button">
+            <span>
+                Back
+            </span>
+        </div>
+    </div>
+
+    <script>
+        const arcadeButton = document.getElementById('arcade-button');
+        const freeplayButton = document.getElementById('freeplay-button');
+        const backButton = document.getElementById('back-button');
+
+        arcadeButton.addEventListener('click', () => {
+            window.location.href = './arcade-mode.html';
+        });
+
+        freeplayButton.addEventListener('click', () => {
+            window.location.href = './free-play-mode.html';
+        });
+
+        backButton.addEventListener('click', () => {
+            window.location.href = './start.html';
+        });
+    </script>
+</body>
+
+</html>

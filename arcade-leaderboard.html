@@ -19,21 +19,24 @@
     <div class="container">
         <div class="menu">
             Select:
-            <br style="width: 10px;">
+            <br>
             <a href="./arcade-leaderboard.html" id="arcade-button">Arcade</a>
             <a href="./freeplay-leaderboard.html" id="free-play-button">Free Play</a>
         </div>
         <div class="leaderboard">
-            <table class="table table-hover" id="Leaderboard"
-                style="background-color: black; border: 1px black solid; margin: 3rem 20rem 0 0;">
+            <table class="table table-hover" id="Leaderboard">
                 <thead class="leaderboard-header">
-                    <th class="text rank">#</th>
-                    <th class="text name">Username</th>
-                    <th class="text score">Score</th>
+                    <tr>
+                        <th class="text rank">No.</th>
+                        <th class="text name">Username</th>
+                        <th class="text score">Score</th>
+                    </tr>
                 </thead>
-                <tbody id="leaderboard" class="first-tier-header"></tbody>
+                <tbody id="leaderboard" class="first-tier-header">
+                    <!-- Dynamic rows will be inserted here by JavaScript -->
+                </tbody>
             </table>
-            <a href="./index.html"><button style="border-radius: none; height: 1.6rem; width: 4rem;">Back</button></a>
+            <a href="./start.html"><button class="back-button">Back</button></a>
         </div>
     </div>
 </body>
