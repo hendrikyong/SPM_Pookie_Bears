@@ -206,7 +206,7 @@ function updateScoreboard() {
 }
 
 function updateTurnCounter() {
-  document.getElementById("turn-counter").innerText = `${turnNumber}`;
+  document.getElementById("turn").innerText = `${turnNumber}`;
 }
 
 function selectBuilding(buildingType) {
