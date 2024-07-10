@@ -809,7 +809,7 @@ document.getElementById('pause').addEventListener('click', () => {
   });
   
   document.getElementById('yesBtn').addEventListener('click', () => {
-    exitGame();
+    window.location.href = 'start.html';
   });
   
   document.getElementById('noBtn').addEventListener('click', () => {
