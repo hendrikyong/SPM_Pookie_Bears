@@ -22,9 +22,12 @@
         </div>
     </div> 
 
-    <a href="#navigation" class="nav-trigger">
+    <a href="#navigation" class="nav-trigger hidden">
         <span></span>
     </a>
+    <div class="pause" id="pause">
+        <img src="./images/pause.png">
+    </div>
     <div class="scorebox">
         Score: <span id="score">0</span>
     </div>
@@ -42,25 +45,23 @@
         <!-- <button id="res-btn">
             <img src="./images/house.png" alt="Residential">
         </button> -->
-        <div class="building" id="residential" onclick="selectBuilding('residential')">
-            <div class="building-type">  
-                <img src="./images/house.png" alt="Residential">
-            </div>
+        <div class="building resBtn" id="residential" onclick="selectBuilding('residential')">
+            <img src="./images/house.png" alt="Residential">
         </div>
 
-        <div class="building" id="industry" onclick="selectBuilding('industry')">
+        <div class="building indBtn" id="industry" onclick="selectBuilding('industry')">
             <img src="./images/industry.png" alt="Residential">
         </div>
 
-        <div class="building" id="commercial" onclick="selectBuilding('commercial')">
+        <div class="building comBtn" id="commercial" onclick="selectBuilding('commercial')">
             <img src="./images/commercial.png" alt="Residential">
         </div>
 
-        <div class="building" id="park" onclick="selectBuilding('park')">
+        <div class="building parkBtn" id="park" onclick="selectBuilding('park')">
             <img src="./images/park.png" alt="Residential">
         </div>
 
-        <div class="building" id="road" onclick="selectBuilding('road')">
+        <div class="building roadBtn" id="road" onclick="selectBuilding('road')">
             <img src="./images/road.png" alt="Residential">
         </div>
         

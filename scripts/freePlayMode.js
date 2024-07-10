@@ -64,8 +64,24 @@ function createGrid(size) {
 
         // if theres a building at the box in the loop, display the icon and type
         if (gridState[i]) {
-            box.textContent = gridState[i].icon;
+            // box.textContent = gridState[i].icon;
             box.classList.add(gridState[i].type);
+            const icon = gridState[i].icon;
+            const img = document.createElement('img');
+            img.src = buildings[gridState[i].type].image;
+            img.alt = gridState[i].icon;
+            box.appendChild(img);
+            if (icon === 'R') {
+                box.classList.add('built-a');
+            } else if (icon === 'I') {
+                box.classList.add('built-b');
+            } else if (icon === 'C') {
+                box.classList.add('built-c');
+            } else if (icon === 'O') {
+                box.classList.add('built-d');
+            } else {
+                box.classList.add('built-e');
+            }
             box.classList.add('built');  // Ensure previously built buildings have the 'built' class
         }
 
@@ -112,30 +128,35 @@ const buildings = {
     residential: {
         description: 'Each residential building generates 1 coin per turn. Each cluster of residential buildings (must be immediately next to each other) requires 1 coin per turn to upkeep.',
         icon: 'R',
+        image: './images/house.png',
         upkeep: 1,
         profit: 1
     },
     industry: {
         description: 'Each industry generates 2 coins per turn and cost 1 coin per turn to upkeep.',
         icon: 'I',
+        image: './images/industry.png',
         upkeep: 1,
         profit: 2
     },
     commercial: {
         description: 'Each commercial generates 3 coins per turn and cost 2 coins per turn to upkeep.',
         icon: 'C',
+        image: './images/commercial.png',
         upkeep: 2,
         profit: 3
     },
     park: {
         description: 'Each park costs 1 coin to upkeep',
         icon: 'O',
+        image: './images/park.png',
         upkeep: 1,
         profit: 0
     },
     road: {
         description: 'Each unconnected road segment costs 1 coin to upkeep.',
         icon: '*',
+        image: './images/road.png',
         upkeep: 1,
         profit: 0
     },
@@ -251,9 +272,30 @@ function placeBuilding(box, index) {
         }
         // place the perimeter after expansion if there is an expansion
         if (!gridState[index] || gridState[index].type !== selectedBuilding) {
-            box.textContent = buildings[selectedBuilding].icon;
+            // box.textContent = buildings[selectedBuilding].icon;
+            const img = document.createElement('img');
+            const icon = buildings[selectedBuilding].icon;
+            img.src = buildings[selectedBuilding].image;
+            img.alt = buildings[selectedBuilding].icon;
+            box.innerHTML = '';
+            box.appendChild(img);
             box.classList.add(selectedBuilding);
             box.classList.add('built')
+            box.classList.remove('built-a', 'built-b', 'built-c', 'built-d', 'built-e');
+
+            // Add the corresponding built-* class
+            if (icon === 'R') {
+                box.classList.add('built-a');
+            } else if (icon === 'I') {
+                box.classList.add('built-b');
+            } else if (icon === 'C') {
+                box.classList.add('built-c');
+            } else if (icon === 'O') {
+                box.classList.add('built-d');
+            } else {
+                box.classList.add('built-e');
+            }
+
             gridState[index] = { type: selectedBuilding, icon: buildings[selectedBuilding].icon };
 
             updateUI();
@@ -298,7 +340,7 @@ function toggleDemolishMode() {
     if (!buildingPlacedThisTurn){
         demolishMode = !demolishMode;
         highlightDemolishableBuildings();
-        const demolishButton = document.getElementById('demolish-button');
+        const demolishButton = document.getElementById('demolish-btn');
         if (demolishMode) {
             demolishButton.classList.add('active');
         } else {
@@ -331,7 +373,7 @@ function removeDemolishHighlights() {
 function demolishBuilding(box, index) {
     if (gridState[index]) {
         box.textContent = '';
-        box.classList.remove('built');
+        box.classList.remove('built', 'built-a', 'built-b', 'built-c', 'built-d', 'built-e', 'highlight', 'highlight-demolish');
         box.classList.remove(gridState[index].type);
         removeDemolishHighlights();
         demolishMode = false; // Exit demolish mode
@@ -721,3 +763,33 @@ window.onclick = function(event) {
         document.getElementById("htpModal").style.display = "none";
     }
 }
+
+// Example highlight functionality
+function highlightSquare(square) {
+    square.classList.add('highlight');
+}
+
+function removeHighlight(square) {
+    square.classList.remove('highlight');
+}
+
+// Event listeners to handle building and demolishing
+document.querySelectorAll('.grid-box').forEach(square => {
+    square.addEventListener('click', () => {
+        if (demolishMode) {
+            demolishBuilding(square);
+        } else {
+            placeBuilding(square);
+        }
+    });
+
+    square.addEventListener('mouseover', () => {
+        if (!square.classList.contains('built')) {
+            highlightSquare(square);
+        }
+    });
+
+    square.addEventListener('mouseout', () => {
+        removeHighlight(square);
+    });
+});
