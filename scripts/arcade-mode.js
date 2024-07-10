@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (username) {
         // Store the username or display it in the UI if needed
         console.log("Username:", username);
-        saveScoreToLeaderboard(); // Save the score to the leaderboard database
+        saveScoreToLeaderboard(username,points); // Save the score to the leaderboard database
 
         usernameModal.style.display = 'none'; // Hide the modal
     } else {
