@@ -191,10 +191,13 @@ function selectBuilding(buildingType) {
 function toggleBuildMode() {
     removeDemolishHighlights();
     demolishMode = false;
-    if (buildingSelected) {
+    if (buildingSelected && !buildingPlacedThisTurn) {
         highlightValidPlacement();
         buildMode = true;
 
+    }
+    else if (buildingPlacedThisTurn) {
+        alert('You have alredy moved this turn.')
     }
     else {
         alert('Building not selected.')
@@ -204,7 +207,6 @@ function toggleBuildMode() {
 
 function highlightValidPlacement() {
     clearHighlights();
-
     const boxes = document.querySelectorAll('.grid-box');
     const validIndices = new Set();
 
@@ -326,6 +328,7 @@ function endTurn() {
     expandedThisTurn = false;
     calculateScore();
     clearHighlights(); // Clear previous highlights
+    console.log('end turn')
 }
 
 function updateUI() {
@@ -371,14 +374,18 @@ function removeDemolishHighlights() {
 }
 
 function demolishBuilding(box, index) {
-    if (gridState[index]) {
+    if (gridState[index] && !buildingPlacedThisTurn) {
         box.textContent = '';
-        box.classList.remove('built', 'built-a', 'built-b', 'built-c', 'built-d', 'built-e', 'highlight', 'highlight-demolish');
+        box.classList.remove('built');
         box.classList.remove(gridState[index].type);
         removeDemolishHighlights();
         demolishMode = false; // Exit demolish mode
         gridState[index] = null;
+        buildingPlacedThisTurn = true;
         
+    }
+    else if (buildingPlacedThisTurn) {
+        alert('You have already moved this turn. End a turn.')
     }
 }
 
