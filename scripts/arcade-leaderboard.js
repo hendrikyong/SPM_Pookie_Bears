@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // const apikey = "6686c097e0ddd887ed0940e1";
   // const url = "https://feddddd-6882.restdb.io/rest/assignment2leaderboard";
   // const apikey = "65c4358c86354f3586464a0d";
-
+  const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
+  const apikey = "668e26d5a7d61d10485c21a2";
   const currentPage = window.location.pathname; // Get current page path
   const arcadeButton = document.getElementById("arcade-button");
   const freePlayButton = document.getElementById("free-play-button");
