@@ -999,7 +999,7 @@
   .building.selected {
       opacity: 1;
       /* background-color: #78c678; Darker shade for selected building */
-      border-color: black; /* Black border for selected building */
+      border-color: white; /* Black border for selected building */
   }
   
   .building::after {
