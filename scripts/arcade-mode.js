@@ -403,12 +403,13 @@ function enterDemolishMode() {
 function highlightDemolishableBuildings() {
   const gridSquares = document.querySelectorAll(".grid-square");
   gridSquares.forEach((square) => {
-    if (square.classList.contains("built") && isOuterLayer(square)) {
+    if (square.classList.contains("built")) {
       square.classList.add("highlight-demolish");
     }
   });
 }
 
+// useless function currently!
 // Check if the building is on the outer layer
 function isOuterLayer(square) {
   const neighbors = getNeighbors(square);
@@ -417,7 +418,7 @@ function isOuterLayer(square) {
 
 // Demolish a building
 function demolishBuilding(square) {
-  if (coins > 0 && demolishMode && square.classList.contains('built') && isOuterLayer(square)) {
+  if (coins > 0 && demolishMode && square.classList.contains('built')) {
       // Remove building
       square.innerText = '';
       // square.classList.remove('built', 'highlight-demolish');
@@ -462,7 +463,7 @@ function removeBuildHighlights() {
   });
 }
 
-function endTurn() {
+async function endTurn() {
     // updateProfitAndUpkeep();
     updatePoints();
 
@@ -474,16 +475,20 @@ function endTurn() {
 
     updateScoreboard();
 
+    console.log(coins + "CHECKING");
     if (allSquaresUsed) {
         // Perform actions to end the game
-        alert(`All squares are used. Game Over! Your final score is: ${points}!`);
+
 
         // getLeaderboardScores() returns an array of scores sorted from highest to lowest
         const userScore = points;
-        const leaderboardScores = getLeaderboardScores();
+        const leaderboardScores = await getLeaderboardScores();
 
-        console.log(leaderboardScores);
+        console.log(leaderboardScores[9]);
         
+        console.log(leaderboardScores.length);
+        console.log(userScore);
+
         if (leaderboardScores.length >= 10 && userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
             // Show the username modal
             const usernameModal = document.getElementById('username-modal');
@@ -500,18 +505,48 @@ function endTurn() {
             //         alert("Please enter a username");
             //     }
             // });
+
+            let usernameEntered = false;
+
+            while (!usernameEntered) {
+                const usernameModal = document.getElementById('username-modal');
+                usernameModal.style.display = 'block'; // Make sure to display the modal
+    
+                // Wait for username submission
+                await new Promise((resolve) => {
+                    const submitUsernameButton = document.getElementById('submit-username-button');
+                    submitUsernameButton.addEventListener('click', () => {
+                        const username = document.getElementById('username-input').value;
+                        if (username) {
+                            // Store the username or display it in the UI if needed
+                            console.log("Username:", username);
+                            usernameModal.style.display = 'none'; // Hide the modal
+                            resolve(); // Resolve the promise to continue
+                            usernameEntered = true; // Set flag to true to exit the loop
+                        } else {
+                            alert("Please enter a username");
+                        }
+                    });
+                });
+            }
         } else {
             // If the user's score is not greater than the 10th place, dont ask for username
             document.getElementById('username-modal').style.display = 'none';
         }
-        window.location.href = './index.html';
+        alert(`All squares are used. Game Over! Your final score is: ${points}!`);
+        window.location.href = './menu.html';
     }
     else if (coins <= 0) {
-        alert(`You ran out of coins. Game Over! Your final score is: ${points}!`);
 
         // getLeaderboardScores() returns an array of scores sorted from highest to lowest
         const userScore = points;
-        const leaderboardScores = getLeaderboardScores();
+        const leaderboardScores = await getLeaderboardScores();
+
+        console.log(leaderboardScores[9]);
+        
+        console.log(leaderboardScores.length);
+        console.log(userScore);
+
 
         if (leaderboardScores.length >= 10 && userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
             // Show the username modal
@@ -529,16 +564,42 @@ function endTurn() {
             //         alert("Please enter a username");
             //     }
             // });
+
+            let usernameEntered = false;
+
+            while (!usernameEntered) {
+                const usernameModal = document.getElementById('username-modal');
+                usernameModal.style.display = 'block'; // Make sure to display the modal
+    
+                // Wait for username submission
+                await new Promise((resolve) => {
+                    const submitUsernameButton = document.getElementById('submit-username-button');
+                    submitUsernameButton.addEventListener('click', () => {
+                        const username = document.getElementById('username-input').value;
+                        if (username) {
+                            // Store the username or display it in the UI if needed
+                            console.log("Username:", username);
+                            usernameModal.style.display = 'none'; // Hide the modal
+                            resolve(); // Resolve the promise to continue
+                            usernameEntered = true; // Set flag to true to exit the loop
+                        } else {
+                            alert("Please enter a username");
+                        }
+                    });
+                });
+            }
+
         } else {
             // If the user's score is not greater than the 10th place, dont ask for username
             document.getElementById('username-modal').style.display = 'none';
         }
-        window.location.href = './index.html';
+        alert(`You ran out of coins. Game Over! Your final score is: ${points}!`);
+        window.location.href = './menu.html';
     }
 }
 
 async function saveScoreToLeaderboard(username, score) {
-  const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
+  const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
 
   const data = {
     name: username,
@@ -572,7 +633,7 @@ async function saveScoreToLeaderboard(username, score) {
 }
 
 async function getLeaderboardScores() {
-  const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
+  const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
   let settings = {
     method: "GET",
     headers: {
@@ -624,7 +685,7 @@ function fetchGameStateFromDB() {
   $.ajax({
       "async": true,
       "crossDomain": true,
-      "url": `https://pookiebears-04f9.restdb.io/rest/arcademode-saves?q={%22username%22:%22${username}%22}`,
+      "url": `https://pookiebears-8bfa.restdb.io/rest/arcademode-saves?q={%22username%22:%22${username}%22}`,
       "method": "GET",
       "headers": {
           "content-type": "application/json",
@@ -677,7 +738,7 @@ function fetchGameStateFromDB() {
 }
 
 async function saveScoreToLeaderboard(username, score) {
-  const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
+  const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
 
   const data = {
     name: username,
@@ -711,7 +772,7 @@ async function saveScoreToLeaderboard(username, score) {
 }
 
 async function getLeaderboardScores() {
-  const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
+  const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
   let settings = {
     method: "GET",
     headers: {
@@ -763,7 +824,7 @@ function fetchGameStateFromDB() {
   $.ajax({
       "async": true,
       "crossDomain": true,
-      "url": `https://pookiebears-04f9.restdb.io/rest/arcademode-saves?q={%22username%22:%22${username}%22}`,
+      "url": `https://pookiebears-8bfa.restdb.io/rest/arcademode-saves?q={%22username%22:%22${username}%22}`,
       "method": "GET",
       "headers": {
           "content-type": "application/json",
@@ -785,8 +846,6 @@ function fetchGameStateFromDB() {
               alert("Failed to parse game state. Please try again.");
               return; 
           }
-
-          console.log
       
           // Update game variables from loaded state
           gridSize = gameState.gridSize;
@@ -798,6 +857,14 @@ function fetchGameStateFromDB() {
           buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
           expandedThisTurn = gameState.expandedThisTurn;
       
+          gridSize = gameState.rowSize,
+          gridState = gameState.squares,
+          selectedBuildin = gameState.selectedBuilding,
+          points =  gameState.points,
+          coins = gameState.coins,
+          turnNumber = gameState.turnNumber,
+          demolishMode = gameState.demolishMode,
+
           // Recreate the grid with the loaded state
           createGrid(gridSize);
           updateUI();
@@ -986,7 +1053,7 @@ function saveGame() {
     const postSaveData = {
         "async": true,
         "crossDomain": true,
-        "url": "https://pookiebears-04f9.restdb.io/rest/arcademode-saves",
+        "url": "https://pookiebears-8bfa.restdb.io/rest/arcademode-saves",
         "method": "POST",
         "headers": {
             "content-type": "application/json",
@@ -1031,7 +1098,7 @@ function saveGame() {
 }
 
 function exitGame() {
-  window.location.href = "./index.html";
+  window.location.href = "./menu.html";
 }
 
 function getNeighbors(square) {
