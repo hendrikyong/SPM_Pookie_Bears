@@ -1,76 +1,91 @@
+body {
+  background-color: #e0f7fa;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 header {
-  /* border: red dotted; */
-  display: flex; /* Use flexbox for layout */
-  justify-content: space-between; /* Distribute items evenly */
-  align-items: center; /* Vertically align items in the center */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
 }
 
 .heading {
-  /* border: blue dotted; Keep the border for debugging */
   display: flex;
-  align-items: center; /* Vertically align items in the center */
+  align-items: center;
 }
 
-img {
-  /* border: black dotted 3px; Keep the border for debugging */
+.heading img {
   height: 6rem;
-  margin: 1.2rem 0 0 2rem; /* Push the leaderboard text to the right */
+  margin-right: 20px;
 }
 
 .leaderboard-name {
-  margin-left: auto;
-  /* border: black dotted 4px; */
-  margin: 0 0 0 26rem;
   font-size: 2rem;
+  font-weight: bold;
 }
 
 .container {
   display: flex;
-  margin-top: -2.5rem;
+  justify-content: center;
+  padding: 20px;
 }
 
 .menu {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 0 4rem 0 1.8rem;
-  padding-left: 5rem;
-  width: 10rem;
+  margin-right: 40px;
 }
 
 .menu a {
-  color: inherit;
+  color: #007bff;
   text-decoration: none;
+  margin: 10px 0;
 }
 
 .menu a.active {
   text-decoration: underline;
-  font-weight: bold; /* Optional: Make the active link bold */
+  font-weight: bold;
 }
 
 .leaderboard {
-  font-size: 1.6rem;
-}
-#Leaderboard {
-  margin-left: -6rem;
-}
-
-.leaderboard-row .rank {
-  width: 4rem;
-}
-.leaderboard-row .name {
-  width: 35rem;
-}
-.leaderboard-row .score {
-  width: 6rem;
+  width: 70%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border: 1px solid #000;
 }
 
-.leaderboard-header th {
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
   background-color: #00468b;
-  padding: 0;
   color: #d0f6fb;
+  padding: 10px;
 }
 
-.leaderboard button {
-  margin: 3rem 0 0 18rem;
+tbody td {
+  text-align: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.back-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #00468b;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #003366;
 }
