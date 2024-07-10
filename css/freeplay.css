@@ -133,7 +133,8 @@ body {
 
 
 .building.selected {
-    background-color: yellow;
+    background-color: gray;
+    /* background-color: yellow; */
 }
 
 #demolish-button:hover {
@@ -406,7 +407,7 @@ body {
     top: 32rem; /* Adjusted to ensure there is space between the buttons */
     right: 2.4rem;
     height: 2.75rem;
-    width: 5rem;
+    width: 5.8rem;
 }
 
 
@@ -1107,7 +1108,7 @@ body {
       overflow: auto;
   }
   
-  #turn, .turn-counter {
+  .turn-counter {
       position: absolute;
       top: 30px;
       left: 50%;
@@ -1170,7 +1171,7 @@ body {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 50px;
+      /* font-size: 50px; */
       box-shadow: 
           0 0 0 1px rgba(0, 0, 0, 0.1), /* Outline */
           0 4px 6px rgba(0, 0, 0, 0.1), /* Light shadow */
@@ -1181,7 +1182,7 @@ body {
   
   /* zoom */
   #zoom-in, #zoom-out,
-  .building,
+  .building, .pause,
   #build-btn, #demolish-btn,
   #save-btn, #legend-btn, #htp-btn {
       margin: 10px;
@@ -1196,6 +1197,15 @@ body {
       cursor: pointer; /* Change cursor to pointer for better UX */
   }
   
+  .pause {
+    position: fixed;
+    z-index: 1;
+    top: 1.5rem;
+    right: 1.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+  }
+
   #zoom-in {
       position: fixed;
       z-index: 1;
@@ -1406,13 +1416,14 @@ body {
   }
   
   .building.disabled {
-      opacity: 0.5; /* Greyed-out state */
+      opacity: 0.3; /* Greyed-out state */
       background-color: #d3d3d3; /* Greyed-out background */
       cursor: not-allowed;
   }
   
   .building.selected {
-      background-color: #78c678; /* Darker shade for selected building */
+      opacity: 1;
+      /* background-color: #78c678; Darker shade for selected building */
       border-color: black; /* Black border for selected building */
   }
   
@@ -1480,7 +1491,7 @@ body {
   
   /*To show highlighted buildings that can be demolished*/
   .grid-box.highlight-demolish {
-      background-color: #ff6961;
+      background-color: #ff6961 !important;
       cursor: pointer;
   }
   
@@ -1491,7 +1502,7 @@ body {
       object-fit: contain;
   }
   
-  .buildings-btn img {
+  .buildings-btn img, .pause img {
       width: 30px;
       height: 30px;
       margin-left: 10px;
@@ -1666,3 +1677,42 @@ body {
       padding: 30px;
   }
   
+.grid-box.built-a {
+    background-color: orange; /* Change to your desired style */
+}
+
+.grid-box.built-b {
+    background-color: blue; /* Change to your desired style */
+}
+
+.grid-box.built-c {
+    background-color: pink; /* Change to your desired style */
+}
+
+.grid-box.built-d {
+    background-color: green; /* Change to your desired style */
+}
+
+.grid-box.built-e {
+    background-color: yellow; /* Change to your desired style */
+}
+
+.resBtn {
+    background-color: orange; /* Change to your desired style */
+}
+
+.indBtn {
+    background-color: blue; /* Change to your desired style */
+}
+
+.comBtn {
+    background-color: pink; /* Change to your desired style */
+}
+
+.parkBtn {
+    background-color: green; /* Change to your desired style */
+}
+
+.roadBtn {
+    background-color: yellow; /* Change to your desired style */
+}
