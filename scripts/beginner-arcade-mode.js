@@ -705,17 +705,16 @@ function residentialScoringSystem(square) {
   const neighborBuildings = neighbors.filter(square => square.icon).sort((a, b) => a.turnNumber - b.turnNumber);
 
   // check if any adjacent industry is placed
-  neighborBuildings.forEach(neighbor => {
-
-      if (neighbor.icon == 'I') {
-          earliestIndustryTurnNumber = neighbor.turnNumber;
-          score += 1; // only 1 point given if industry is placed  
-      } else if ((neighbor.icon == 'R' || neighbor.icon == 'C') && neighbor.turnNumber < earliestIndustryTurnNumber) { 
-          score += 1;
-      } else if (neighbor.icon == 'O' && neighbor.turnNumber < earliestIndustryTurnNumber) {
-          score += 2;
-      }
-  });
+  for (const neighbor of neighborBuildings) {
+    if (neighbor.icon == 'I') {
+        earliestIndustryTurnNumber = neighbor.turnNumber;
+        score += 1; // only 1 point given if industry is placed  
+    } else if ((neighbor.icon == 'R' || neighbor.icon == 'C') && neighbor.turnNumber < earliestIndustryTurnNumber && neighbor.turnNumber > square.turnNumber) { 
+        score += 1;
+    } else if (neighbor.icon == 'O' && neighbor.turnNumber < earliestIndustryTurnNumber  && neighbor.turnNumber > square.turnNumber) {
+        score += 2;
+    }
+  }
 
   console.log(earliestIndustryTurnNumber);
   console.log(score);

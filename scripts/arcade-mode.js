@@ -704,7 +704,6 @@ function residentialScoringSystem(square) {
   // Filter squares with buildings and sort by turn number
   const neighborBuildings = neighbors.filter(square => square.icon).sort((a, b) => a.turnNumber - b.turnNumber);
 
-  let notIndustryNeighbourBuildings = [];
   // check if any adjacent industry is placed
   for (const neighbor of neighborBuildings) {
     if (neighbor.icon == 'I') {
