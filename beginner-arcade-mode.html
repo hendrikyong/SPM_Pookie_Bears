@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>NGEE ANN CITY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Overpass Mono' rel='stylesheet'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/arcade-mode.css">
+
+</head>
+<body>
+    <!-- Your content goes here -->
+    <!-- <h1>NGEE ANN CITY</h1>
+    <h2>ARCADE MODE</h2>
+    <h3>LOAD GAME</h3>
+    <h3>NEW GAME</h3> -->
+
+    <div id="username-modal" class="username-modal">
+        <div class="username-modal-content">
+            <h2>Enter your Username</h2>
+            <input type="text" id="username-input" placeholder="Username">
+            <button id="submit-username-button">Submit</button>
+        </div>
+    </div> 
+
+    <div id="start-load-modal" class="start-load-modal">
+        <button id="load-game-button">Load Game from Database</button>
+        <button id="start-game-button">Start New Game</button>
+    </div> 
+    
+    <a href="#navigation" class="nav-trigger hidden">
+        <span></span>
+    </a>
+    <div class="pause" id="pause">
+        <img src="./images/pause.png">
+    </div>
+    <div class="score-counter">
+        Score: <span id="score-counter">1</span>
+    </div>
+    <div class="coins-counter">
+        Coins: <span id="coins-counter">1</span>
+    </div>
+
+    <!-- buildings -->
+    
+
+    <div class="buildings-btn">
+        <!-- <button id="res-btn">
+            <img src="./images/house.png" alt="Residential">
+        </button> -->
+        <div class="building resBtn" id="residential" onclick="selectBuilding('residential')">
+            <img src="./images/house.png" alt="Residential">
+        </div>
+
+        <div class="building indBtn" id="industry" onclick="selectBuilding('industry')">
+            <img src="./images/industry.png" alt="Residential">
+        </div>
+
+        <div class="building comBtn" id="commercial" onclick="selectBuilding('commercial')">
+            <img src="./images/commercial.png" alt="Residential">
+        </div>
+
+        <div class="building parkBtn" id="park" onclick="selectBuilding('park')">
+            <img src="./images/park.png" alt="Residential">
+        </div>
+
+        <div class="building roadBtn" id="road" onclick="selectBuilding('road')">
+            <img src="./images/road.png" alt="Residential">
+        </div>
+        
+        <!-- build/demolish -->
+        <div id="build-btn" onclick="buildStructure()">
+            <img src="./images/build-icon.png" alt="Residential">
+        </div>
+        <div id="demolish-btn" onclick="enterDemolishMode()">
+            <img src="./images/demolish_icon.png" alt="Residential">
+        </div>
+
+        <!-- 3 btns -->
+        <button id="save-btn" onclick="saveGame()">
+            <img src="./images/save_game_icon.png" alt="Save Game">
+        </button>
+
+        <button id="legend-btn" onclick="showModal()">
+            <img src="./images/legend_icon.png" alt="Show Legends">
+        </button>
+
+        <button id="htp-btn" onclick="showHelpModal()">
+            <img src="./images/question_mark_icon.jpg" alt="Show Help">
+        </button>
+
+        <!-- <button id="ind-btn">
+            <img src="./images/industry.png" alt="Industry">
+        </button>
+    
+        <button id="com-btn">
+            <img src="./images/commercial.png" alt="Commercial">
+        </button>
+    
+        <button id="park-btn">
+            <img src="./images/park.png" alt="Park">
+        </button>
+    
+        <button id="road-btn">
+            <img src="./images/road.png" alt="Road">    
+        </button> -->
+    </div>
+    
+
+
+    
+
+
+    <button id="zoom-in">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-zoom-in" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11M13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0"/>
+        <path d="M10.344 11.742q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1 6.5 6.5 0 0 1-1.398 1.4z"/>
+        <path fill-rule="evenodd" d="M6.5 3a.5.5 0 0 1 .5.5V6h2.5a.5.5 0 0 1 0 1H7v2.5a.5.5 0 0 1-1 0V7H3.5a.5.5 0 0 1 0-1H6V3.5a.5.5 0 0 1 .5-.5"/>
+      </svg>
+    </button>
+    <button id="zoom-out">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-zoom-out" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11M13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0"/>
+        <path d="M10.344 11.742q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1 6.5 6.5 0 0 1-1.398 1.4z"/>
+        <path fill-rule="evenodd" d="M3 6.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5"/>
+      </svg>
+    </button>
+    <!-- <main>
+        <section class="intro">
+            <h1>NGEE ANN CITY</h1>
+        </section>
+    </main> -->
+
+    <div class="platform">
+        <div class="turn-counter">
+            Moves made: <span id="turn">0</span>
+        </div>
+        <div class="grid" id="grid"></div>
+    </div>
+ 
+    <!--table -->
+    <!-- <div class="platform">
+        <button id="zoom-in">Zoom In</button>
+        <button id="zoom-out">Zoom Out</button>
+        <div class="grid-container">
+            <table class="grid" id="grid"></table>
+        </div>
+    </div> -->
+    
+    <nav class="nav-container" id="navigation">
+        <header>
+        </header>
+
+        <div class="top-half">
+            <div class="legend">
+                <h2>Legend</h2>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <img src="./images/house.png" alt="Residential">
+                        <span>Residential</span>
+                    </div> 
+                    <div class="legend-item">
+                        <img src="./images/industry.png" alt="Industry">
+                        <span>Industry</span>
+                    </div> 
+                    <div class="legend-item">
+                        <img src="./images/commercial.png" alt="Commercial">
+                        <span>Commercial</span>
+                    </div> 
+                    <div class="legend-item">
+                        <img src="./images/park.png" alt="Park">
+                        <span>Park</span>
+                    </div> 
+                    <div class="legend-item">
+                        <img src="./images/road.png" alt="Road">
+                        <span>Road</span>
+                    </div> 
+                </div>
+                
+                <!-- <ul>
+                    <li>Residential</li>
+                    <li>Industry</li>
+                    <li>Commercial</li>
+                    <li>Park</li>
+                    <li>Road</li>
+                </ul> -->
+            </div>
+            <!-- <header>
+                <h2>Navigation</h2>
+            </header> -->
+            <div class="game-stats">
+                <div class="score">
+                    <h2>Score</h2>
+                    <span id="score">0</span>
+                </div>
+                <div class="coins">
+                    <h2>Coins</h2>
+                    <span id="coins">16</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-half">
+            <!-- why got white line when button is clicked -->
+            <div class="main-tabs">
+                <button id="constructionBtn" type="button">Construction</button>
+                <button id="financesBtn" type="button">Finances</button>
+            </div>
+            <!-- <div class="construction">
+                <div class="building">
+                    <button class="button-58" role="button">
+                        <img src="./images/house.png" alt="Residential">
+                        <span class="text">Residential</span>
+                    </button>
+                    <button class="button-58" role="button">
+                        <img src="./images/industry.png" alt="Industry">
+                        <span class="text">Industry</span>
+                    </button>
+                    <button class="button-58" role="button">
+                        <img src="./images/commercial.png" alt="Commercial">
+                        <span class="text">Commercial</span>
+                    </button>
+                    <button class="button-58" role="button">
+                        <img src="./images/park.png" alt="Park">
+                        <span class="text">Park</span>
+                    </button>
+                    <button class="button-58" role="button">
+                        <img src="./images/road.png" alt="Road">
+                        <span class="text">Road</span>
+                    </button>
+                </div>
+
+    
+                <div class="game-actions">
+                    <div class="demolish">
+                        <button class="button-1" role="button">
+                            <span class="button-1-shadow"></span>
+                            <span class="button-1-edge"></span>
+                            <span class="button-1-front text">
+                            Demolish
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="next-turn">
+                        <button class="button-59" role="button">
+                            <span class="text">Next Turn</span>
+                        </button>
+                    </div>
+                </div>
+            </div> -->
+
+            <div id="container">
+                <div class="building-options">
+                    <!-- <div class="building" id="residential" onclick="selectBuilding('residential')">
+                        <div class="building-type"><strong>R</strong></div>
+                        <div>Residential (R)<br>Cost: 1</div>
+                    </div>
+                    <div class="building" id="industry" onclick="selectBuilding('industry')">
+                        <div class="building-type"><strong>I</strong></div>
+                        <div>Industry (I)<br>Cost: 1</div>
+                    </div>
+                    <div class="building" id="commercial" onclick="selectBuilding('commercial')">
+                        <div class="building-type"><strong>C</strong></div>
+                        <div>Commercial (C)<br>Cost: 1</div>
+                    </div>
+                    <div class="building" id="park" onclick="selectBuilding('park')">
+                        <div class="building-type"><strong>O</strong></div>
+                        <div>Park (O)<br>Cost: 1</div>
+                    </div>
+                    <div class="building" id="road" onclick="selectBuilding('road')">
+                        <div class="building-type"><strong>*</strong></div>
+                        <div>Road (*)<br>Cost: 1</div>
+                    </div> -->
+                    <!-- <div class="action-button" id="build-button" onclick="buildStructure()">Build</div>
+                    <div class="action-button" id="demolish-button" onclick="enterDemolishMode()">Demolish</div> -->
+                </div>
+                <hr>
+                <div class="building-description">
+                    <div class="text" id="description-text">Select a building to see its description here</div>
+                </div>
+            </div>
+            <div class="finances hidden">
+                <div class="building-info">
+                    <table class="table table-hover table-dark table-custom">
+                        <thead>
+                          <tr>
+                            <th scope="col">Buildings</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Profit</th>
+                            <th scope="col">Upkeep</th>
+                            <th scope="col">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th scope="row">Residential</th>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>1</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">Industry</th>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">Commercial</th>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">Park</th>
+                            <td>2</td>
+                            <td>N/A</td>
+                            <td>2</td>
+                            <td>2</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">Road</th>
+                            <td>2</td>
+                            <td>N/A</td>
+                            <td>2</td>
+                            <td>2</td>
+                          </tr>
+                          <tr>
+                            <th scope="row"></th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>2</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                </div>
+
+                <div class="finance-info">
+                    <div class="profit">
+                        <h2>Profit</h2>
+                        <span>16</span>
+                    </div>
+                    <div class="upkeep">
+                        <h2>Upkeep</h2>
+                        <span>16</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal Structure -->
+    <div id="legendModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Legends</h2>
+            <div class="legend-items">
+                <div class="buildings-legends">
+                    <div class="legend-item">
+                        <img src="./images/house.png" alt="Residential">
+                        <span>Residential</span>
+                    </div> 
+                    <div class="legend-item">
+                        <img src="./images/industry.png" alt="Industry">
+                        <span>Industry</span>
+                    </div> 
+                    <div class="legend-item">
+                        <img src="./images/commercial.png" alt="Commercial">
+                        <span>Commercial</span>
+                    </div> 
+                    <div class="legend-item">
+                        <img src="./images/park.png" alt="Park">
+                        <span>Park</span>
+                    </div> 
+                    <div class="legend-item">
+                        <img src="./images/road.png" alt="Road">
+                        <span>Road</span>
+                    </div> 
+                </div>
+                <div class="menu-legends">
+                    <div class="legend-item">
+                        <img src="./images/legend_icon.png" alt="Road">
+                        <span>Legends</span>
+                    </div>
+                    <div class="legend-item">
+                        <img src="./images/build-icon.png" alt="Road">
+                        <span>Build</span>
+                    </div>
+                    <div class="legend-item">
+                        <img src="./images/demolish_icon.png" alt="Road">
+                        <span>Demolish</span>
+                    </div>
+                    <div class="legend-item">
+                        <img src="./images/question_mark_icon.jpg" alt="Road">
+                        <span>How To Play</span>
+                    </div>
+                    <div class="legend-item">
+                        <img src="./images/save_game_icon.png" alt="Road">
+                        <span>Save Game</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="htpModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeHelpModal()">&times;</span>
+            <h2><b>How To Play</b></h2>
+            <div class="tabs">
+                <button class="tab-button" onclick="showContent('general')">General</button>
+                <button class="tab-button" onclick="showContent('points')">Points</button>
+                <button class="tab-button" onclick="showContent('coins-tab')">Coins</button>
+            </div>
+            <div id="general" class="tab-content">
+                <div class="introduction">
+                    <h3><b>Intro</b></h3>
+                    <p>You are the mayor of Ngee Ann City, the goal of the game is to build the happiest and most prosperous city, to do that you need to score as many points as possible!</p>
+                </div>
+                <div class="playing">
+                    <h3><b>Playing</b></h3>
+                    <p>You start off with 16 coins. Constructing a building cost 1 coin. The game ends when you either run out of coins, or build on all unoccupied squares. <br><br>
+                        Constructing buildings in a certain manner earns you points. Same for coins, constructing certain buildings earns you coins. For the first building, you can build anywhere in the city. For subsequent constructions, you can only build on squares that are connected to existing buildings. The other building that was not built is discarded.</p>
+                </div>
+            </div>
+            <div id="points" class="tab-content">
+                <h3><b>Types</b></h3>
+                <span>There are 5 types of buildings</span>
+                <div class="points-container">
+                    <div class="types">
+                        <div>
+                            <div>
+                                <img src="./images/house.png" alt="Residential">
+                            </div>
+                            <span>Residential</span>
+                        </div>
+                        <div>
+                            <div>
+                                <img src="./images/commercial.png" alt="Residential">
+                            </div>
+                            <span>Commercial</span>
+                        </div>
+                        <div>
+                            <div>
+                                <img src="./images/industry.png" alt="Residential">
+                            </div>
+                            <span>Industry</span>
+                        </div>
+                        <div>
+                            <div>
+                                <img src="./images/park.png" alt="Residential">
+                            </div>
+                            <span>Park</span>
+                        </div>
+                        <div>
+                            <div>
+                                <img src="./images/road.png" alt="Residential">
+                            </div>
+                            <span>Road</span>
+                        </div>
+                    </div>
+                    <div class="point-calc">
+                        <h3><b>Point Calculation</b></h3>
+                        <ul>
+                            <li><strong><u>Residential</u> (R):</strong> If it is next to an <u>industry</u>, then it scores 1 point only. Otherwise, it scores 1 point for each adjacent <u>residential</u> or <u>commercial</u>, and 2 points for each adjacent <u>park</u>.</li>
+                            <li><strong><u>Industry</u> (I):</strong> Scores 1 point per <u>industry</u> in the city.</li>
+                            <li><strong><u>Commercial</u> (C):</strong> Scores 1 point per <u>commercial</u> adjacent to it.</li>
+                            <li><strong><u>Park</u> (O):</strong> Scores 1 point per <u>park</u> adjacent to it.</li>
+                            <li><strong><u>Road</u> (*):</strong> Scores 1 point per connected <u>road</u> in the same row.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="coins-tab" class="tab-content">
+                <h3><b>Types</b></h3>
+                <span>There are only 2 types of buildings that can earn coins:</span>
+                <div class="coins-container">
+                    <div class="types">
+                        <div>
+                            <div>
+                                <img src="./images/commercial.png" alt="Residential">
+                            </div>
+                            <span>Commercial</span>
+                        </div>
+                        <div>
+                            <div>
+                                <img src="./images/industry.png" alt="Residential">
+                            </div>
+                            <span>Industry</span>
+                        </div>
+                    </div>
+                    <div class="coins-calc">
+                        <h3><b>Score Calculation</b></h3>
+                        <ul>
+                            <li><strong><u>Industry</u> (I):</strong> Each <u>industry</u> generates 1 coin per <u>residential</u> building adjacent to it. </li>
+                            <li><strong><u>Commercial</u> (C):</strong> Each <u>commercial</u> generates 1 coin per <u>residential</u> adjacent to it. </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="exitModal" class="exitmodal">
+        <div class="exitmodal-content">
+            <p>Are you sure you want to exit the game?</p>
+            <div class="exitmodal-buttons">
+                <button id="yesBtn">Yes</button>
+                <button id="noBtn">No</button>
+            </div>
+        </div>
+    </div>
+
+   
+
+    <div class="overlay"></div>
+    <script src="scripts/beginner-arcade-mode.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>

@@ -11,7 +11,7 @@ navTrigger.addEventListener("click", function () {
 //Grid//
 document.addEventListener("DOMContentLoaded", () => {
   const grid = document.getElementById("grid");
-  const gridSize = 20; // Change this value to adjust the grid size
+  const gridSize = 5; // Change this value to adjust the grid size
   let zoomLevel = 1;
 
   // Set the CSS grid template rows and columns dynamically
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   selectedBuilding = null;
   selectedBuildings = [];
   points = 0;
-  coins = 16;
+  coins = 8;
   turnNumber = 0;
   firstBuildingPlaced = false;
   demolishMode = false;
@@ -481,7 +481,7 @@ async function endTurn() {
 }
 
 async function saveScoreToLeaderboard(username, score) {
-  const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
+  const url = "https://pookiebears-8bfa.restdb.io/rest/beginner-arcadeleaderboard";
 
   const data = {
     name: username,
@@ -515,7 +515,7 @@ async function saveScoreToLeaderboard(username, score) {
 }
 
 async function getLeaderboardScores() {
-  const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
+  const url = "https://pookiebears-8bfa.restdb.io/rest/beginner-arcadeleaderboard";
   let settings = {
     method: "GET",
     headers: {
@@ -567,7 +567,7 @@ function fetchGameStateFromDB() {
   $.ajax({
       "async": true,
       "crossDomain": true,
-      "url": `https://pookiebears-8bfa.restdb.io/rest/arcademode-saves?q={%22username%22:%22${username}%22}`,
+      "url": `https://pookiebears-8bfa.restdb.io/rest/beginner-arcademode-saves?q={%22username%22:%22${username}%22}`,
       "method": "GET",
       "headers": {
           "content-type": "application/json",
@@ -704,18 +704,18 @@ function residentialScoringSystem(square) {
   // Filter squares with buildings and sort by turn number
   const neighborBuildings = neighbors.filter(square => square.icon).sort((a, b) => a.turnNumber - b.turnNumber);
 
-  let notIndustryNeighbourBuildings = [];
   // check if any adjacent industry is placed
-  for (const neighbor of neighborBuildings) {
-    if (neighbor.icon == 'I') {
-        earliestIndustryTurnNumber = neighbor.turnNumber;
-        score += 1; // only 1 point given if industry is placed  
-    } else if ((neighbor.icon == 'R' || neighbor.icon == 'C') && neighbor.turnNumber < earliestIndustryTurnNumber && neighbor.turnNumber > square.turnNumber) { 
-        score += 1;
-    } else if (neighbor.icon == 'O' && neighbor.turnNumber < earliestIndustryTurnNumber  && neighbor.turnNumber > square.turnNumber) {
-        score += 2;
-    }
-  }
+  neighborBuildings.forEach(neighbor => {
+
+      if (neighbor.icon == 'I') {
+          earliestIndustryTurnNumber = neighbor.turnNumber;
+          score += 1; // only 1 point given if industry is placed  
+      } else if ((neighbor.icon == 'R' || neighbor.icon == 'C') && neighbor.turnNumber < earliestIndustryTurnNumber) { 
+          score += 1;
+      } else if (neighbor.icon == 'O' && neighbor.turnNumber < earliestIndustryTurnNumber) {
+          score += 2;
+      }
+  });
 
   console.log(earliestIndustryTurnNumber);
   console.log(score);
@@ -857,7 +857,7 @@ async function saveGame() {
     const postSaveData = {
         "async": true,
         "crossDomain": true,
-        "url": "https://pookiebears-8bfa.restdb.io/rest/arcademode-saves",
+        "url": "https://pookiebears-8bfa.restdb.io/rest/beginner-arcademode-saves",
         "method": "POST",
         "headers": {
             "content-type": "application/json",
