@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   selectedBuildings = [];
   points = 0;
   coins = 16;
-  turnNumber = 1;
+  turnNumber = 0;
   firstBuildingPlaced = false;
   demolishMode = false;
 
