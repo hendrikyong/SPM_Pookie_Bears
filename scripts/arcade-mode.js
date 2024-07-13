@@ -60,18 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
     //grid.style.transformOrigin = '0 0';
   });
 
-  // Add mouse wheel event for zooming
-  // grid.addEventListener('wheel', (event) => {
-  //     if (event.deltaY < 0) {
-  //         zoomLevel += 0.1;
-  //     } else {
-  //         zoomLevel = Math.max(0.1, zoomLevel - 0.1);
-  //     }
-  //     grid.style.transform = `scale(${zoomLevel})`;
-  //     grid.style.transformOrigin = '0 0';
-  //     event.preventDefault(); // Prevent scrolling the page
-  // });
-
   // Show start-load modal, hide username modal first
   const startLoadModal = document.getElementById("start-load-modal");
   const usernameModal = document.getElementById('username-modal');
@@ -103,81 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('load-game-button').addEventListener('click', fetchGameStateFromDB);
 });
 
-//table
-// document.addEventListener('DOMContentLoaded', () => {
-//     const grid = document.getElementById('grid');
-//     const gridSize = 80; // Change this value to adjust the grid size
-
-//     // Create the table grid
-//     for (let row = 0; row < gridSize; row++) {
-//         const tr = document.createElement('tr');
-//         for (let col = 0; col < gridSize; col++) {
-//             const td = document.createElement('td');
-//             td.classList.add('grid-square');
-//             td.dataset.row = row;
-//             td.dataset.col = col;
-//             td.addEventListener('click', () => {
-//                 if (demolishMode) {
-//                     demolishBuilding(td);
-//                 } else {
-//                     placeBuilding(td);
-//                 }
-//             });
-//             tr.appendChild(td);
-//         }
-//         grid.appendChild(tr);
-//     }
-
-//     initializeGame(); // Initialize the game here to ensure the initial buildings are selected
-
-//     let zoomLevel = 1;
-
-//     // Zoom In and Zoom Out functionality
-//     document.getElementById('zoom-in').addEventListener('click', () => {
-//         zoomLevel += 0.1;
-//         grid.parentElement.style.transform = `scale(${zoomLevel})`;
-//     });
-
-//     document.getElementById('zoom-out').addEventListener('click', () => {
-//         zoomLevel = Math.max(0.1, zoomLevel - 0.1); // Prevent zooming out too much
-//         grid.parentElement.style.transform = `scale(${zoomLevel})`;
-//     });
-
-//     // Optional: Add mouse wheel event for zooming
-//     grid.addEventListener('wheel', (event) => {
-//         if (event.deltaY < 0) {
-//             zoomLevel += 0.1;
-//         } else {
-//             zoomLevel = Math.max(0.1, zoomLevel - 0.1);
-//         }
-//         grid.parentElement.style.transform = `scale(${zoomLevel})`;
-//         event.preventDefault(); // Prevent scrolling the page
-//     });
-// });
-
-// const grid = document.getElementById("grid");
-// let lockGame = false;
-// // Set test mode to true if you want see mines location
-// const testMode = false;
-// generateGrid();
-
-// // Generate 10 * 10 Grid
-// function generateGrid() {
-//     lockGame = false;
-//     grid.innerHTML = "";
-//     for (var i = 0; i < 10; i++) {
-//         row = grid.insertRow(i);
-//         for (var j = 0; j < 10; j++) {
-//             cell = row.insertCell(j);
-//             cell.onclick = function () { init(this); };
-//             var mine = document.createAttribute("mine");
-//             mine.value = "false";
-//             cell.setAttributeNode(mine);
-//         }
-//     }
-//     //generateMines();
-// }
-
 // Changing layout between construction and finances
 document.addEventListener("DOMContentLoaded", function () {
   let financesButton = document.querySelector("#financesBtn");
@@ -199,7 +112,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 //code
-
 const buildings = {
   residential: {
     description:
@@ -228,7 +140,7 @@ const buildings = {
     description:
       "Road (*): Scores 1 point per connected road (*) in the same row.",
     icon: "*",
-    image: "..  /images/road.png",
+    image: "../images/road.png",
   },
 };
 
@@ -412,13 +324,6 @@ function highlightDemolishableBuildings() {
   });
 }
 
-// useless function currently!
-// Check if the building is on the outer layer
-// function isOuterLayer(square) {
-//   const neighbors = getNeighbors(square);
-//   return neighbors.some((neighbor) => !neighbor.classList.contains("built"));
-// }
-
 // Demolish a building
 function demolishBuilding(square) {
   if (coins > 0 && demolishMode && square.classList.contains('built')) {
@@ -481,8 +386,6 @@ async function endTurn() {
     console.log(coins + " total coins");
     if (allSquaresUsed) {
         // Perform actions to end the game
-
-
         // getLeaderboardScores() returns an array of scores sorted from highest to lowest
         const userScore = points;
         const leaderboardScores = await getLeaderboardScores();
@@ -496,18 +399,6 @@ async function endTurn() {
             // Show the username modal
             const usernameModal = document.getElementById('username-modal');
             usernameModal.style.display = 'block'; // Make sure to display the modal
-
-            // const startGameButton = document.getElementById('start-game-button');
-            // startGameButton.addEventListener('click', () => {
-            //     const username = document.getElementById('username-input').value;
-            //     if (username) {
-            //         // Store the username or display it in the UI if needed
-            //         console.log("Username:", username);
-            //         usernameModal.style.display = 'none'; // Hide the modal
-            //     } else {
-            //         alert("Please enter a username");
-            //     }
-            // });
 
             let usernameEntered = false;
 
@@ -556,18 +447,6 @@ async function endTurn() {
             const usernameModal = document.getElementById('username-modal');
             usernameModal.style.display = 'block'; // Make sure to display the modal
 
-            // const startGameButton = document.getElementById('start-game-button');
-            // startGameButton.addEventListener('click', () => {
-            //     const username = document.getElementById('username-input').value;
-            //     if (username) {
-            //         // Store the username or display it in the UI if needed
-            //         console.log("Username:", username);
-            //         usernameModal.style.display = 'none'; // Hide the modal
-            //     } else {
-            //         alert("Please enter a username");
-            //     }
-            // });
-
             let usernameEntered = false;
 
             while (!usernameEntered) {
@@ -600,69 +479,6 @@ async function endTurn() {
         window.location.href = './menu.html';
     }
 }
-
-// function fetchGameStateFromDB() {
-//   const username = localStorage.getItem('username');
-
-//   if (!username) {
-//       alert("You have not saved any game data.");
-//       return;
-//   }
-
-//   $.ajax({
-//       "async": true,
-//       "crossDomain": true,
-//       "url": `https://pookiebears-8bfa.restdb.io/rest/arcademode-saves?q={%22username%22:%22${username}%22}`,
-//       "method": "GET",
-//       "headers": {
-//           "content-type": "application/json",
-//           "x-apikey": apikey,
-//           "cache-control": "no-cache"
-//       },
-//       success: function(response) {
-//           if (response.length === 0) {
-//               alert("No save data found for this username.");
-//               return;
-//           }
-      
-//           // The response[0].gamestate might already be a JavaScript object
-//           let gameState;
-//           try {
-//               gameState = typeof response[0].gamestate === "string" ? JSON.parse(response[0].gamestate) : response[0].gamestate;
-//           } catch (error) {
-//               console.error("Error parsing game state:", error);
-//               alert("Failed to parse game state. Please try again.");
-//               return; 
-//           }
-
-//           console.log
-      
-//           // Update game variables from loaded state
-//           gridSize = gameState.gridSize;
-//           gridState = gameState.gridState;
-//           selectedBuilding = gameState.selectedBuilding;
-//           points = gameState.points;
-//           turnNumber = gameState.turnNumber;
-//           demolishMode = gameState.demolishMode;
-//           buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
-//           expandedThisTurn = gameState.expandedThisTurn;
-      
-//           // Recreate the grid with the loaded state
-//           createGrid(gridSize);
-//           updateUI();
-      
-//           document.getElementById('turn').textContent = turnNumber;
-//           document.getElementById('score').textContent = points;
-      
-//           document.getElementById('username-modal').style.display = 'none';
-//       },
-      
-//       error: function(jqXHR, textStatus, errorThrown) {
-//           console.error("Error fetching game state:", textStatus, errorThrown);
-//           alert("Failed to load game. Please try again.");
-//       }
-//   });
-// }
 
 async function saveScoreToLeaderboard(username, score) {
   const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
@@ -825,19 +641,19 @@ function updateGrid() {
           const img = document.createElement('img');
           console.log(buildings['commercial'].image);
           if (gridSquare.icon == 'R') {
-            img.src = buildings[residential].image;
+            img.src = buildings['residential'].image;
 
           } else if (gridSquare.icon == 'I') {
-            img.src = buildings[industrial].image;
+            img.src = buildings['industrial'].image;
 
           } else if (gridSquare.icon == 'C') {
             img.src = buildings['commercial'].image;
 
           } else if (gridSquare.icon == 'O') {
-            img.src = buildings[park].image;
+            img.src = buildings['park'].image;
 
           } else if (gridSquare.icon == '*') {
-            img.src = buildings[road].image;
+            img.src = buildings['road'].image;
 
           }
           img.alt = gridSquare.icon;
@@ -847,48 +663,7 @@ function updateGrid() {
           square.turnNumber = gridSquare.turnNumber;
           firstBuildingPlaced = true;
           // square.classList.add(`built-${gridSquare.icon.toLowerCase()}`);
-      
   }
-
-  // // loop to create grid boxes based on the size ( size * size = n of rows, n of column )
-  // for (let i = 0; i < size * size; i++) {
-  //     // div for each box in the grid
-  //     const box = document.createElement('div');
-  //     box.classList.add('grid-box');
-
-  //     // if theres a building at the box in the loop, display the icon and type
-  //     if (gridMap[i].classList.contains('built')) {
-  //         // box.textContent = gridState[i].icon;
-  //         box.classList.add(gridState[i].type);
-  //         const icon = gridState[i].icon;
-  //         const img = document.createElement('img');
-  //         img.src = buildings[gridState[i].type].image;
-  //         img.alt = gridState[i].icon;
-  //         box.appendChild(img);
-  //         if (icon === 'R') {
-  //             box.classList.add('built-a');
-  //         } else if (icon === 'I') {
-  //             box.classList.add('built-b');
-  //         } else if (icon === 'C') {
-  //             box.classList.add('built-c');
-  //         } else if (icon === 'O') {
-  //             box.classList.add('built-d');
-  //         } else {
-  //             box.classList.add('built-e');
-  //         }
-  //         box.classList.add('built');  // Ensure previously built buildings have the 'built' class
-  //     }
-
-      // // add event listener to each grid box
-      // box.addEventListener('click', () => {
-      //     if (demolishMode) {
-      //         demolishBuilding(box, i);
-      //     } else {
-      //         placeBuilding(box, i);
-      //     }
-      // });
-      // append this grid box to the html
-      // grid.appendChild(box);
 }
 
 function updatePoints() {
@@ -923,11 +698,6 @@ function residentialScoringSystem(square) {
   let score = 0;
 
   const neighbors = getNeighbors(square);
-
-  // // no score to be added if industry is placed before this new adjacent building
-  // if (square.adjacentIndustryPlaced) {
-  //     return score; 
-  // }
 
   let earliestIndustryTurnNumber = 99999; // hardcoding but whatever LOL
 
@@ -1097,30 +867,6 @@ async function saveGame() {
         "processData": false,
         "data": JSON.stringify(savegameData)
     };
-
-    // const leaderboardData = {
-    //     name: username,
-    //     score: points
-    // }
-
-    // var postLeaderboard = {
-    //     "async": true,
-    //     "crossDomain": true,
-    //     "url": "https://pookiebears-04f9.restdb.io/rest/freeplayleaderboard",
-    //     "method": "POST",
-    //     "headers": {
-    //       "content-type": "application/json",
-    //       "x-apikey": apikey,
-    //       "cache-control": "no-cache"
-    //     },
-    //     "processData": false,
-    //     "data": JSON.stringify(leaderboardData)
-    // };
-      
-    // $.ajax(postLeaderboard).done(function (response) {
-    // console.log(response);
-    // });
-
 
     $.ajax(postSaveData).done(function(response) {
         console.log(response);
