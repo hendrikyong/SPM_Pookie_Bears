@@ -330,6 +330,7 @@ function endTurn() {
     buildingPlacedThisTurn = false;
     expandedThisTurn = false;
     calculateScore();
+    calculateCoins();
     clearHighlights(); // Clear previous highlights
     console.log('end turn')
 }
@@ -434,6 +435,99 @@ function calculateScore() {
     points = score;
     document.getElementById('score').textContent = points;
 }
+
+function calculateCoins() {
+    let totalProfit = 0;
+    let totalUpkeep = 0;
+
+    const residentialClusters = new Set();
+    const visited = new Set();
+
+    // Helper function to perform DFS and find all connected residential buildings
+    function dfs(index) {
+        const stack = [index];
+        const cluster = new Set();
+
+        while (stack.length > 0) {
+            const currentIndex = stack.pop();
+            if (visited.has(currentIndex)) continue;
+            visited.add(currentIndex);
+            cluster.add(currentIndex);
+
+            const adjacents = getAdjacentsByIndex(currentIndex);
+            for (const adjIndex of adjacents) {
+                if (gridState[adjIndex] && gridState[adjIndex].type === 'residential' && !visited.has(adjIndex)) {
+                    stack.push(adjIndex);
+                }
+            }
+        }
+
+        return cluster;
+    }
+
+    // Helper function to find all connected roads
+    function dfsRoad(index) {
+        const stack = [index];
+        const roadCluster = new Set();
+
+        while (stack.length > 0) {
+            const currentIndex = stack.pop();
+            if (visited.has(currentIndex)) continue;
+            visited.add(currentIndex);
+            roadCluster.add(currentIndex);
+
+            const adjacents = getAdjacentsByIndex(currentIndex);
+            for (const adjIndex of adjacents) {
+                if (gridState[adjIndex] && gridState[adjIndex].type === 'road' && !visited.has(adjIndex)) {
+                    stack.push(adjIndex);
+                }
+            }
+        }
+
+        return roadCluster;
+    }
+
+    // Iterate over the gridState to calculate profit and upkeep
+    for (let i = 0; i < gridState.length; i++) {
+        const building = gridState[i];
+        if (building) {
+            const buildingType = building.type;
+
+            // Calculate profit for each building type
+            totalProfit += buildings[buildingType].profit;
+
+            if (buildingType === 'residential' && !visited.has(i)) {
+                // Find all connected residential buildings to form a cluster
+                const cluster = dfs(i);
+
+                // Only add the upkeep once for each cluster if it contains more than one residential building
+                if (cluster.size > 1) {
+                    residentialClusters.add([...cluster][0]);
+                    totalUpkeep += buildings.residential.upkeep;
+                }
+            } else if (buildingType === 'road' && !visited.has(i)) {
+                // Find all connected roads to form a cluster
+                const roadCluster = dfsRoad(i);
+
+                // Only add the upkeep if it's a single unconnected road segment
+                if (roadCluster.size === 1) {
+                    totalUpkeep += buildings.road.upkeep;
+                }
+            } else if (buildingType !== 'residential' && buildingType !== 'road') {
+                totalUpkeep += buildings[buildingType].upkeep;
+            }
+        }
+    }
+
+    // Display the total profit and upkeep
+    document.getElementById('total-profit').textContent = totalProfit;
+    document.getElementById('total-upkeep').textContent = totalUpkeep;
+
+    console.log(`Total Profit: ${totalProfit}, Total Upkeep: ${totalUpkeep}`);
+}
+
+
+
 
 function scoreResidential(grid, row, col) {
     const adjacents = getAdjacents(grid, row, col);
