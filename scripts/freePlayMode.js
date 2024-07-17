@@ -271,6 +271,7 @@ function placeBuilding(box, index) {
             buildingPlacedThisTurn = true;
             selectedBuilding = null;
 
+            endTurn();
             return;
         }
         // place the perimeter after expansion if there is an expansion
@@ -304,6 +305,7 @@ function placeBuilding(box, index) {
             updateUI();
 
             buildingPlacedThisTurn = true;
+            endTurn();
             selectedBuilding = null;
         }
 
