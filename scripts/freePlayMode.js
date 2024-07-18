@@ -324,6 +324,10 @@ function placeBuilding(box, index) {
     }
 }
 
+let lossTurns = 0;
+const MAX_LOSS_TURNS = 20;
+let gameEnded = false;
+
 function endTurn() {
     turnNumber++;
     document.getElementById('turn').textContent = turnNumber;
@@ -332,8 +336,37 @@ function endTurn() {
     calculateScore();
     calculateCoins();
     clearHighlights(); // Clear previous highlights
-    console.log('end turn')
+
+    // Check if the player is making a loss
+    if (document.getElementById('income-status').textContent === "Loss") {
+        lossTurns++;
+    } else {
+        lossTurns = 0; // Reset the consecutive loss turns counter
+    }
+
+    // Check if the game should end
+    if (lossTurns >= MAX_LOSS_TURNS && !gameEnded) {
+        gameEnded = true;
+        console.log("gg")
+        showGameOver();
+    }
 }
+
+function showGameOver() {
+    // Display game over modal
+    const gameOverModal = document.getElementById('game-over-modal');
+    const usernameDisplay = document.getElementById('game-over-username');
+    const scoreDisplay = document.getElementById('game-over-score');
+
+    usernameDisplay.textContent = "Username: " + document.getElementById('username-input').value;
+    scoreDisplay.textContent = "Score: " + points;
+
+    gameOverModal.style.display = 'block';
+
+    // You can add additional logic here for any other actions needed upon game over
+}
+
+
 
 function updateUI() {
     document.querySelectorAll('.building').forEach(building => {
@@ -534,6 +567,12 @@ function endTurnWithoutScoreUpdate() {
     calculateCoins();
     clearHighlights(); // Clear previous highlights
     console.log('end turn without score update')
+
+    if (document.getElementById('income-status').textContent === "Loss") {
+        lossTurns++;
+    } else {
+        lossTurns = 0; // Reset the consecutive loss turns counter
+    }
 }
 
 function isOnPerimeter(index) {
