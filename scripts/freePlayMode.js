@@ -342,7 +342,7 @@ function updateUI() {
 }
 
 function showFinances(){
-    
+
 }
 
 
@@ -391,11 +391,21 @@ function demolishBuilding(box, index) {
         demolishMode = false; // Exit demolish mode
         gridState[index] = null;
         buildingPlacedThisTurn = true;
-        
+        endTurnWithoutScoreUpdate()        
     }
     else if (buildingPlacedThisTurn) {
         alert('You have already moved this turn. End a turn.')
     }
+}
+
+function endTurnWithoutScoreUpdate() {
+    turnNumber++;
+    document.getElementById('turn').textContent = turnNumber;
+    buildingPlacedThisTurn = false;
+    expandedThisTurn = false;
+    calculateCoins();
+    clearHighlights(); // Clear previous highlights
+    console.log('end turn without score update')
 }
 
 function isOnPerimeter(index) {
@@ -523,9 +533,10 @@ function calculateCoins() {
         }
     }
 
-    // Display the total profit and upkeep
-    document.getElementById('total-profit').textContent = totalProfit;
-    document.getElementById('total-upkeep').textContent = totalUpkeep;
+    let income = totalProfit-totalUpkeep;
+    document.getElementById('total-income').textContent = income;
+
+
 
     console.log(`Total Profit: ${totalProfit}, Total Upkeep: ${totalUpkeep}`);
 }
