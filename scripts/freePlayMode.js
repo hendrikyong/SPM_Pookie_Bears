@@ -340,10 +340,137 @@ function updateUI() {
         building.classList.remove('selected');
     });
 }
+function showFinances() {
+    let totalProfit = 0;
+    let totalUpkeep = 0;
+    let buildingCounts = {
+        residential: 0,
+        industry: 0,
+        commercial: 0,
+        park: 0,
+        road: 0
+    };
 
-function showFinances(){
+    const visited = new Set();
+    const residentialClusters = new Set();
 
+    // Helper function to perform DFS and find all connected residential buildings
+    function dfs(index, buildingType) {
+        const stack = [index];
+        const cluster = new Set();
+
+        while (stack.length > 0) {
+            const currentIndex = stack.pop();
+            if (visited.has(currentIndex)) continue;
+            visited.add(currentIndex);
+            cluster.add(currentIndex);
+
+            const adjacents = getAdjacentsByIndex(currentIndex);
+            for (const adjIndex of adjacents) {
+                if (gridState[adjIndex] && gridState[adjIndex].type === buildingType && !visited.has(adjIndex)) {
+                    stack.push(adjIndex);
+                }
+            }
+        }
+
+        return cluster;
+    }
+
+    // Helper function to find all isolated road segments
+    function findIsolatedRoads() {
+        const isolatedRoads = new Set();
+
+        for (let i = 0; i < gridState.length; i++) {
+            if (gridState[i] && gridState[i].type === 'road' && !visited.has(i)) {
+                const roadCluster = dfs(i, 'road');
+                // Check if the road cluster is isolated
+                let isConnectedToOtherRoad = false;
+                for (const index of roadCluster) {
+                    const adjacents = getAdjacentsByIndex(index);
+                    for (const adjIndex of adjacents) {
+                        if (roadCluster.has(adjIndex)) {
+                            isConnectedToOtherRoad = true;
+                            break;
+                        }
+                    }
+                    if (isConnectedToOtherRoad) break;
+                }
+                if (!isConnectedToOtherRoad) {
+                    isolatedRoads.add(i);
+                }
+                roadCluster.forEach(index => visited.add(index));
+            }
+        }
+
+        return isolatedRoads;
+    }
+
+    // Iterate over the gridState to calculate profit and upkeep
+    for (let i = 0; i < gridState.length; i++) {
+        const building = gridState[i];
+        if (building) {
+            const buildingType = building.type;
+            buildingCounts[buildingType]++;
+            totalProfit += buildings[buildingType].profit;
+
+            if (buildingType === 'residential' && !visited.has(i)) {
+                // Find all connected residential buildings to form a cluster
+                const cluster = dfs(i, 'residential');
+                residentialClusters.add(cluster); // Add the cluster to set of residential clusters
+                cluster.forEach(index => visited.add(index));
+            } else if (buildingType !== 'road') {
+                // Other building types or already visited residential buildings
+                totalUpkeep += buildings[buildingType].upkeep;
+            }
+        }
+    }
+
+    // Calculate upkeep for residential clusters
+    let totalResidentialUpkeep = 0;
+    residentialClusters.forEach(cluster => {
+        if (cluster.size > 1) {
+            totalResidentialUpkeep += buildings.residential.upkeep;
+        }
+    });
+
+    // Calculate upkeep for isolated road segments
+    const isolatedRoads = findIsolatedRoads();
+    totalUpkeep += isolatedRoads.size * buildings.road.upkeep;
+
+    // Generate HTML content for the finances information
+    let financesInfo = '<table><tr><th>Building</th><th>Count</th><th>Profit</th><th>Upkeep</th></tr>';
+    for (let type in buildingCounts) {
+        financesInfo += `<tr>
+                            <td>${type.charAt(0).toUpperCase() + type.slice(1)}</td>
+                            <td>${buildingCounts[type]}</td>
+                            <td>${buildingCounts[type] * buildings[type].profit}</td>
+                            <td>${type === 'residential' ? totalResidentialUpkeep : type === 'road' ? isolatedRoads.size * buildings[type].upkeep : buildingCounts[type] * buildings[type].upkeep}</td>
+                         </tr>`;
+    }
+    financesInfo += `<tr>
+                        <td>Total</td>
+                        <td></td>
+                        <td>${totalProfit}</td>
+                        <td>${totalUpkeep}</td>
+                     </tr>`;
+    financesInfo += '</table>';
+
+    // Display the finances information in the modal
+    document.getElementById('finances-info').innerHTML = financesInfo;
+    document.getElementById('finances-modal').style.display = 'block';
 }
+
+
+
+
+
+
+
+
+function closeFinancesModal() {
+    document.getElementById('finances-modal').style.display = 'none';
+}
+
 
 
 function toggleDemolishMode() {
