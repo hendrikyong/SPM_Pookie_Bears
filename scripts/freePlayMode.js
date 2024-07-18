@@ -341,6 +341,10 @@ function updateUI() {
     });
 }
 
+function showFinances(){
+    
+}
+
 
 function toggleDemolishMode() {
     clearHighlights(); // Clear previous highlights

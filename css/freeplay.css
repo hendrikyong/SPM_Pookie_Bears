@@ -433,6 +433,15 @@ body {
     width: 2.75rem;
 }
 
+#finances-btn {
+    position: fixed;
+    z-index: 1;
+    top: 29.5rem; /* Adjusted to ensure there is space between the buttons */
+    right: 1.85rem;
+    height: 2.75rem;
+    width: 2.75rem;
+}
+
 
 #endTurn-btn {
     position: fixed;
@@ -1216,7 +1225,7 @@ body {
   /* zoom */
   #zoom-in, #zoom-out,
   .building, .pause,
-  #build-btn, #demolish-btn,
+  #build-btn, #demolish-btn,#finances-btn,
   #save-btn, #legend-btn, #htp-btn {
       margin: 10px;
       padding: 10px;
