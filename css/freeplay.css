@@ -144,6 +144,26 @@ body {
     z-index: 1000;
 }
 
+.income-box {
+    position: fixed;
+    text-align: center;
+    z-index: 1;
+    top: 11.5rem;
+    width: 5.5rem;
+    right: 0rem;
+    transform: translateX(-150%);
+    background-color: rgba(0, 0, 0, 0.7); /*default black: rgba(0, 0, 0, 0.7) ::: green: rgba(0, 255, 64, 0.7) red:rgba(255, 0, 0, 0.7)*/
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    z-index: 1000;
+}
+
+#income-status {
+    font-size:14px
+}
+
 .building-options {
     border: 2px solid black;
     padding: 10px;

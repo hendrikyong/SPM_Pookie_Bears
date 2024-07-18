@@ -536,6 +536,22 @@ function calculateCoins() {
     let income = totalProfit-totalUpkeep;
     document.getElementById('total-income').textContent = income;
 
+    const incomeBox = document.querySelector('.income-box');
+
+    
+    if (income < 0){
+        document.getElementById('income-status').textContent = "Loss";
+        incomeBox.style.backgroundColor = 'rgba(255, 0, 0, 0.7)';
+    }
+    else if (income == 0) {
+        document.getElementById('income-status').textContent = "Neutral";
+        incomeBox.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    }
+    else {
+        document.getElementById('income-status').textContent = "Profit";
+        incomeBox.style.backgroundColor = 'rgba(0, 255, 64, 0.7)';
+    }
+
 
 
     console.log(`Total Profit: ${totalProfit}, Total Upkeep: ${totalUpkeep}`);
