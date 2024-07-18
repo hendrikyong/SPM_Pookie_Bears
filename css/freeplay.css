@@ -497,6 +497,31 @@ body {
     cursor: pointer;
 }
 
+/* CSS styles for the finances table */
+.finances-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.finances-table th, .finances-table td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.finances-table th {
+    background-color: #f2f2f2;
+}
+
+.finances-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.finances-table tr:hover {
+    background-color: #f1f1f1;
+}
+
 
 
 #endTurn-btn {

@@ -438,7 +438,8 @@ function showFinances() {
     totalUpkeep += isolatedRoads.size * buildings.road.upkeep;
 
     // Generate HTML content for the finances information
-    let financesInfo = '<table><tr><th>Building</th><th>Count</th><th>Profit</th><th>Upkeep</th></tr>';
+    let financesInfo = '<table class="finances-table">';
+    financesInfo += '<tr><th>Building</th><th>Count</th><th>Profit</th><th>Upkeep</th></tr>';
     for (let type in buildingCounts) {
         financesInfo += `<tr>
                             <td>${type.charAt(0).toUpperCase() + type.slice(1)}</td>
