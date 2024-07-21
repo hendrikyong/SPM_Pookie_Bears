@@ -1,5 +1,3 @@
-const apikey = "668e26d5a7d61d10485c21a2";
-
 let navTrigger = document.getElementsByClassName("nav-trigger")[0];
 body = document.getElementsByTagName("body")[0];
 
@@ -452,8 +450,12 @@ async function endTurn() {
     }
 }
 
+const apiKey = "669d4e46dd601fb66cc41805";
+const specificDB= '2784'
+const databaseUrl = "https://pookiebears-" + specificDB + ".restdb.io/rest/";
+
 async function saveScoreToLeaderboard(username, score) {
-  const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
+  const url = databaseUrl + "arcadeleaderboard";
 
   const data = {
     name: username,
@@ -464,7 +466,7 @@ async function saveScoreToLeaderboard(username, score) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-apikey": apikey,
+      "x-apikey": apiKey,
       "cache-control": "no-cache",
     },
     body: JSON.stringify(data),
@@ -487,12 +489,12 @@ async function saveScoreToLeaderboard(username, score) {
 }
 
 async function getLeaderboardScores() {
-  const url = "https://pookiebears-8bfa.restdb.io/rest/arcadeleaderboard";
+  const url = databaseUrl + "arcadeleaderboard";
   let settings = {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "x-apikey": apikey,
+      "x-apikey": apiKey,
       "cache-control": "no-cache",
     },
   };
@@ -732,9 +734,6 @@ function addCoin() {
     coins += 1;
 }
 
-const apiKey = "669d46f20af00e6d8c123186";
-const specificDB= '42c4'
-const databaseUrl = "https://pookiebears-" + specificDB + ".restdb.io/rest/arcademode-saves";
 
 
 async function saveGame() {
@@ -803,8 +802,8 @@ async function saveGame() {
     
         const method = existingSlot ? "PUT" : "POST";
         const url = existingSlot 
-            ? `${databaseUrl}/${existingSlot._id}` 
-            : databaseUrl;
+            ? `${databaseUrl}arcademode-saves/${existingSlot._id}` 
+            : databaseUrl + 'arcademode-saves';
     
         $.ajax({
             async: true,

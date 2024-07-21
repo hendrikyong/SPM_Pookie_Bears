@@ -2,8 +2,9 @@ $(document).ready(function() {
     // Clear local storage for save slots
     localStorage.removeItem('saveSlots');
 
-    const apiKey = "669d2dcd0af00e1a0d122fd1";
-    const specificDB = '9d36';
+
+    const apiKey = "669d4e46dd601fb66cc41805";
+    const specificDB= '2784'
     const databaseUrl = "https://pookiebears-" + specificDB + ".restdb.io/rest/freeplay-saves";
 
     // Get the username from local storage
