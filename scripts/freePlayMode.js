@@ -8,6 +8,7 @@ navTrigger.addEventListener('click', function() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    fetchGameStateFromDB();
     const grid = document.getElementById('grid');
     createGrid(gridSize); // start at 5x5 grid
     let zoomLevel = 1;
@@ -26,23 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         //grid.style.transformOrigin = '0 0';
     });
-
-    // Show username modal
-    const usernameModal = document.getElementById('username-modal');
-    const startGameButton = document.getElementById('start-game-button');
-
-    startGameButton.addEventListener('click', () => {
-        const username = document.getElementById('username-input').value;
-        if (username) {
-            // Store the username or display it in the UI if needed
-            console.log("Username:", username);
-            usernameModal.style.display = 'none'; // Hide the modal
-        } else {
-            alert("Please enter a username");
-        }
-    });
-
-    document.getElementById('load-game-button').addEventListener('click', fetchGameStateFromDB);
 });
 
 let gridSize = 5; // Initial grid size
@@ -722,6 +706,12 @@ function calculateCoins() {
 
 
     console.log(`Total Profit: ${totalProfit}, Total Upkeep: ${totalUpkeep}`);
+
+    return {
+        income: income,
+        totalProfit: totalProfit,
+        totalUpkeep: totalUpkeep
+    };
 }
 
 
@@ -865,8 +855,9 @@ function getAdjacents(grid, row, col) {
     return adjacents;
 }
 
-const apikey = '668e26d5a7d61d10485c21a2'
-const apiurl = 'https://pookiebears-8bfa.restdb.io/rest/'
+const apiKey = "669d2dcd0af00e1a0d122fd1";
+const specificDB= '9d36'
+const databaseUrl = "https://pookiebears-" + specificDB + ".restdb.io/rest/freeplay-saves";
 
 
 function saveGame() {
@@ -879,73 +870,61 @@ function saveGame() {
         turnNumber: turnNumber,
         demolishMode: demolishMode,
         buildingPlacedThisTurn: buildingPlacedThisTurn,
-        expandedThisTurn: expandedThisTurn
+        expandedThisTurn: expandedThisTurn,
+        ...calculateCoins()
     };
 
     // Convert game state to JSON string
     const jsonGameState = JSON.stringify(gameState, null, 2);
-    
+
     let now = new Date();
-
-    // Get the current time in milliseconds since the epoch
     let timeInMs = now.getTime();
-
-    // Get the timezone offset in milliseconds for Singapore (UTC+8)
     let singaporeOffset = 8 * 60 * 60 * 1000;
-
-    // Create a new Date object with the adjusted time
     let singaporeTime = new Date(timeInMs + singaporeOffset);
-
-    // Format the date and time in ISO 8601 format
     let singaporeISOString = singaporeTime.toISOString().replace('Z', '+08:00');
 
-    const username = document.getElementById('username-input').value;
+    const username = localStorage.getItem("username");
+    const currentSaveSlot = JSON.parse(localStorage.getItem("currentSaveSlot"));
+
+    if (!username) {
+        alert("User not logged in.");
+        return;
+    }
+
+    if (!currentSaveSlot) {
+        alert("No save slot selected.");
+        return;
+    }
 
     const savegameData = {
         username: username,
+        saveSlot: currentSaveSlot.saveSlot,
         datetimeCreated: singaporeISOString,
         gamestate: jsonGameState
     };
 
-    const postSaveData = {
-        "async": true,
-        "crossDomain": true,
-        "url": apiurl + "freeplay-saves",
-        "method": "POST",
-        "headers": {
+    // Check if the save slot already exists
+    const saveSlots = JSON.parse(localStorage.getItem("saveSlots")) || [];
+    const existingSlot = saveSlots.find(slot => slot.saveSlot === currentSaveSlot.saveSlot);
+
+    const method = existingSlot ? "PUT" : "POST";
+    const url = existingSlot 
+        ? `${databaseUrl}/${existingSlot._id}` 
+        : databaseUrl;
+
+    $.ajax({
+        async: true,
+        crossDomain: true,
+        url: url,
+        method: method,
+        headers: {
             "content-type": "application/json",
-            "x-apikey": apikey,
+            "x-apikey": apiKey,
             "cache-control": "no-cache"
         },
-        "processData": false,
-        "data": JSON.stringify(savegameData)
-    };
-
-    const leaderboardData = {
-        name: username,
-        score: points
-    }
-
-    var postLeaderboard = {
-        "async": true,
-        "crossDomain": true,
-        "url": apiurl + "freeplayleaderboard",
-        "method": "POST",
-        "headers": {
-          "content-type": "application/json",
-          "x-apikey": apikey,
-          "cache-control": "no-cache"
-        },
-        "processData": false,
-        "data": JSON.stringify(leaderboardData)
-    };
-      
-    $.ajax(postLeaderboard).done(function (response) {
-    console.log(response);
-    });
-
-
-    $.ajax(postSaveData).done(function(response) {
+        data: JSON.stringify(savegameData),
+        processData: false
+    }).done(function(response) {
         console.log(response);
         alert("Game saved successfully!");
     }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -954,69 +933,60 @@ function saveGame() {
     });
 }
 
-
 function fetchGameStateFromDB() {
-    const username = document.getElementById('username-input').value;
+    // Retrieve currentSaveSlot from local storage
+    const currentSaveSlot = JSON.parse(localStorage.getItem('currentSaveSlot'));
 
-    if (!username) {
-        alert("Please enter a username first.");
+    if (!currentSaveSlot) {
+        alert("No save slot selected.");
+        window.location.href = "./freeplay-saves.html";
+    }
+
+    // Extract the game state from the save slot data
+    const gameState = currentSaveSlot.gamestate;
+
+    if (!gameState) {
         return;
     }
 
-    $.ajax({
-        "async": true,
-        "crossDomain": true,
-        "url": apiurl + `freeplay-saves?q={%22username%22:%22${username}%22}`,
-        "method": "GET",
-        "headers": {
-            "content-type": "application/json",
-            "x-apikey": apikey,
-            "cache-control": "no-cache"
-        },
-        success: function(response) {
-            if (response.length === 0) {
-                alert("No save data found for this username.");
-                return;
-            }
-        
-            // The response[0].gamestate might already be a JavaScript object
-            let gameState;
-            try {
-                gameState = typeof response[0].gamestate === "string" ? JSON.parse(response[0].gamestate) : response[0].gamestate;
-            } catch (error) {
-                console.error("Error parsing game state:", error);
-                alert("Failed to parse game state. Please try again.");
-                return;
-            }
+    // Update game variables from the loaded state
+    gridSize = gameState.gridSize;
+    gridState = gameState.gridState;
+    selectedBuilding = gameState.selectedBuilding;
+    points = gameState.points;
+    turnNumber = gameState.turnNumber;
+    demolishMode = gameState.demolishMode;
+    buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
+    expandedThisTurn = gameState.expandedThisTurn;
 
-            console.log
-        
-            // Update game variables from loaded state
-            gridSize = gameState.gridSize;
-            gridState = gameState.gridState;
-            selectedBuilding = gameState.selectedBuilding;
-            points = gameState.points;
-            turnNumber = gameState.turnNumber;
-            demolishMode = gameState.demolishMode;
-            buildingPlacedThisTurn = gameState.buildingPlacedThisTurn;
-            expandedThisTurn = gameState.expandedThisTurn;
-        
-            // Recreate the grid with the loaded state
-            createGrid(gridSize);
-            updateUI();
-        
-            document.getElementById('turn').textContent = turnNumber;
-            document.getElementById('score').textContent = points;
-        
-            document.getElementById('username-modal').style.display = 'none';
-        },
-        
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error("Error fetching game state:", textStatus, errorThrown);
-            alert("Failed to load game. Please try again.");
-        }
-    });
+    // Update additional values from the game state
+    const income = gameState.income || 0;
+    const totalProfit = gameState.totalProfit || 0;
+    const totalUpkeep = gameState.totalUpkeep || 0;
+
+    // Recreate the grid with the loaded state
+    createGrid(gridSize);
+    updateUI();
+
+    // Update the UI with the loaded values
+    document.getElementById('turn').textContent = turnNumber;
+    document.getElementById('score').textContent = points;
+    document.getElementById('total-income').textContent = income;
+
+    const incomeBox = document.querySelector('.income-box');
+    if (income < 0) {
+        document.getElementById('income-status').textContent = "Loss";
+        incomeBox.style.backgroundColor = 'rgba(255, 0, 0, 0.7)';
+    } else if (income === 0) {
+        document.getElementById('income-status').textContent = "Neutral";
+        incomeBox.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    } else {
+        document.getElementById('income-status').textContent = "Profit";
+        incomeBox.style.backgroundColor = 'rgba(0, 255, 64, 0.7)';
+    }
 }
+
+
 
 // Show the modal
 function showModal() {
@@ -1103,7 +1073,7 @@ document.getElementById('pause').addEventListener('click', () => {
   });
   
   document.getElementById('yesBtn').addEventListener('click', () => {
-    window.location.href = 'start.html';
+    window.location.href = 'menu.html';
   });
   
   document.getElementById('noBtn').addEventListener('click', () => {

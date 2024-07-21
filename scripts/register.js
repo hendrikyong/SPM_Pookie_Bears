@@ -1,6 +1,7 @@
 $(document).ready(function() {
-    const apiKey = "668e26d5a7d61d10485c21a2";
-    const databaseUrl = "https://pookiebears-8bfa.restdb.io/rest/accounts";
+    const apiKey = "669d2dcd0af00e1a0d122fd1";
+    const specificDB= '9d36'
+    const databaseUrl = "https://pookiebears-" + specificDB + ".restdb.io/rest/accounts";
 
     $("#register-form").submit(function(event) {
         event.preventDefault();
