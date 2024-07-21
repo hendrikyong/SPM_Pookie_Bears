@@ -60,35 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //grid.style.transformOrigin = '0 0';
   });
 
-  // Show start-load modal, hide username modal first
-  const startLoadModal = document.getElementById("start-load-modal");
-  const usernameModal = document.getElementById('username-modal');
-  const startGameButton = document.getElementById('start-game-button');
-
-  usernameModal.style.display = 'none'; // Hide the modal
-
-  const submitUsernameButton = document.getElementById('submit-username-button');
-
-  startGameButton.addEventListener('click', () => {
-      startLoadModal.style.display = 'none'; // Hide the modal
-  });
-
-  submitUsernameButton.addEventListener('click', () => {
-    const username = document.getElementById('username-input').value;
-    if (username) {
-        // Store the username or display it in the UI if needed
-        console.log("Username:", username);
-        localStorage.setItem('username', username);
-        if (savingScoreToLeaderboard) {
-          saveScoreToLeaderboard(username,points); // Save the score to the leaderboard database
-        }
-        usernameModal.style.display = 'none'; // Hide the modal
-    } else {
-        alert("Please enter a username");
-    }
-});
-
-  document.getElementById('load-game-button').addEventListener('click', fetchGameStateFromDB);
+  fetchGameStateFromDB();
 });
 
 // Changing layout between construction and finances
@@ -555,70 +527,46 @@ async function getLeaderboardScores() {
       return []; // Return an empty array in case of error
     });
 }
-
 function fetchGameStateFromDB() {
-  const username = localStorage.getItem('username');
+  // Retrieve currentSaveSlot from local storage
+  const currentSaveSlot = JSON.parse(localStorage.getItem('currentSaveSlot'));
 
-  if (!username) {
-      alert("You have not saved any game data.");
+  if (!currentSaveSlot) {
+      alert("No save slot selected.");
+      window.location.href = "./arcade-saves.html"; // Redirect to the save slots page if no slot is selected
       return;
   }
 
-  $.ajax({
-      "async": true,
-      "crossDomain": true,
-      "url": `https://pookiebears-8bfa.restdb.io/rest/arcademode-saves?q={%22username%22:%22${username}%22}`,
-      "method": "GET",
-      "headers": {
-          "content-type": "application/json",
-          "x-apikey": apikey,
-          "cache-control": "no-cache"
-      },
-      success: function(response) {
-          if (response.length === 0) {
-              alert("No save data found for this username.");
-              return;
-          }
-      
-          // The response[0].gamestate might already be a JavaScript object
-          let gameState;
-          try {
-              gameState = typeof response[0].gamestate === "string" ? JSON.parse(response[0].gamestate) : response[0].gamestate;
-          } catch (error) {
-              console.error("Error parsing game state:", error);
-              alert("Failed to parse game state. Please try again.");
-              return; 
-          }
-      
-          // Update game variables from loaded state
-          gridSize = gameState.rowSize,
-          gridMap = gameState.gridMap,
-          selectedBuildings = gameState.selectedBuildings,
-          points =  gameState.points,
-          coins = gameState.coins,
-          turnNumber = gameState.turnNumber,
-          demolishMode = gameState.demolishMode,
+  // Extract the game state from the save slot data
+  const gameState = currentSaveSlot.gamestate;
 
-          // Update the grid with the loaded state
-          updateGrid();
-          updateScoreboard();
-          
-          document.getElementById('turn').textContent = turnNumber;
-          document.getElementById('score').textContent = points;
-          document.getElementById('coins').textContent = coins;
+  if (!gameState) {
+      return;
+  }
 
-          updateTurnCounter();
-          updateSelectedBuildingsUI();
+  // Update game variables from the loaded state
+  gridSize = gameState.gridSize; // Adjust according to your game state structure
+  gridMap = gameState.gridMap; // Use gridMap or gridState based on your structure
+  selectedBuildings = gameState.selectedBuildings;
+  points = gameState.points;
+  coins = gameState.coins;
+  turnNumber = gameState.turnNumber;
+  demolishMode = gameState.demolishMode;
 
-          document.getElementById('start-load-modal').style.display = 'none';
-      },
-      
-      error: function(jqXHR, textStatus, errorThrown) {
-          console.error("Error fetching game state:", textStatus, errorThrown);
-          alert("Failed to load game. Please try again.");
-      }
-  });
+  // Update the grid with the loaded state
+  updateGrid();
+  updateScoreboard();
+  
+  // Update the UI with the loaded values
+  document.getElementById('turn').textContent = turnNumber;
+  document.getElementById('score').textContent = points;
+  document.getElementById('coins').textContent = coins;
+
+  updateTurnCounter();
+  updateSelectedBuildingsUI();
+
 }
+
 
 function updateGrid() {
   const grid = document.getElementById('grid');
@@ -784,33 +732,17 @@ function addCoin() {
     coins += 1;
 }
 
+const apiKey = "669d46f20af00e6d8c123186";
+const specificDB= '42c4'
+const databaseUrl = "https://pookiebears-" + specificDB + ".restdb.io/rest/arcademode-saves";
+
+
 async function saveGame() {
 
-  let usernameEntered = false;
 
   savingScoreToLeaderboard = false;
 
-  while (!usernameEntered) {
-      const usernameModal = document.getElementById('username-modal');
-      usernameModal.style.display = 'block'; // Make sure to display the modal
-
-      // Wait for username submission
-      await new Promise((resolve) => {
-          const submitUsernameButton = document.getElementById('submit-username-button');
-          submitUsernameButton.addEventListener('click', () => {
-              const username = document.getElementById('username-input').value;
-              if (username) {
-                  // Store the username or display it in the UI if needed
-                  console.log("Username:", username);
-                  usernameModal.style.display = 'none'; // Hide the modal
-                  resolve(); // Resolve the promise to continue
-                  usernameEntered = true; // Set flag to true to exit the loop
-              } else {
-                  alert("Please enter a username");
-              }
-          });
-      });
-  }
+  
 
   const grid = document.getElementById('grid');
 
@@ -845,35 +777,54 @@ async function saveGame() {
     // Format the date and time in ISO 8601 format
     let singaporeISOString = singaporeTime.toISOString().replace('Z', '+08:00');
 
-    const username = document.getElementById('username-input').value;
+    const username = localStorage.getItem("username");
+    const currentSaveSlot = JSON.parse(localStorage.getItem("currentSaveSlot"));
+
+    if (!username) {
+        alert("User not logged in.");
+        return;
+    }
+
+    if (!currentSaveSlot) {
+        alert("No save slot selected.");
+        return;
+    }
 
     const savegameData = {
         username: username,
+        saveSlot: currentSaveSlot.saveSlot,
         datetimeCreated: singaporeISOString,
         gamestate: jsonGameState
     };
 
-    const postSaveData = {
-        "async": true,
-        "crossDomain": true,
-        "url": "https://pookiebears-8bfa.restdb.io/rest/arcademode-saves",
-        "method": "POST",
-        "headers": {
-            "content-type": "application/json",
-            "x-apikey": apikey,
-            "cache-control": "no-cache"
-        },
-        "processData": false,
-        "data": JSON.stringify(savegameData)
-    };
-
-    $.ajax(postSaveData).done(function(response) {
-        console.log(response);
-        alert("Game saved successfully!");
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-        console.error("Error saving game:", textStatus, errorThrown);
-        alert("Failed to save game. Please try again.");
-    });
+        // Check if the save slot already exists
+        const saveSlots = JSON.parse(localStorage.getItem("saveSlots")) || [];
+        const existingSlot = saveSlots.find(slot => slot.saveSlot === currentSaveSlot.saveSlot);
+    
+        const method = existingSlot ? "PUT" : "POST";
+        const url = existingSlot 
+            ? `${databaseUrl}/${existingSlot._id}` 
+            : databaseUrl;
+    
+        $.ajax({
+            async: true,
+            crossDomain: true,
+            url: url,
+            method: method,
+            headers: {
+                "content-type": "application/json",
+                "x-apikey": apiKey,
+                "cache-control": "no-cache"
+            },
+            data: JSON.stringify(savegameData),
+            processData: false
+        }).done(function(response) {
+            console.log(response);
+            alert("Game saved successfully!");
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error("Error saving game:", textStatus, errorThrown);
+            alert("Failed to save game. Please try again.");
+        });
 }
 
 function exitGame() {
