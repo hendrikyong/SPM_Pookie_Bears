@@ -19,18 +19,17 @@
     <main>
         <section class="login-form">
             <h2>Login</h2>
-            <form>
+            <form id="login-form">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
                 
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
                 
-                <button type="submit">Login</button> 
+                <button type="submit">Login</button>
                 <br>
                 or
                 <br>
-
             </form>
             <a href="./register.html">
                 <button id="register-btn">Register</button>
@@ -41,6 +40,8 @@
             <button id="start-btn">Back to start page</button>
         </a>
     </main>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="./scripts/login.js"></script>
 </body>
 
 </html>
