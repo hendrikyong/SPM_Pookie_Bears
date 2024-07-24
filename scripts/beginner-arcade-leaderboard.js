@@ -1,16 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM loaded");
-  const url = "https://pookiebears-04f9.restdb.io/rest/freeplayleaderboard";
-  const apikey = "6686c097e0ddd887ed0940e1";
+  const url = "https://pookiebears-ea23.restdb.io/rest/beginner-arcadeleaderboard";
+  const apikey = "66a11886a412941752383803";
   // const url = "https://feddddd-6882.restdb.io/rest/assignment2leaderboard";
   // const apikey = "65c4358c86354f3586464a0d";
 
   const currentPage = window.location.pathname; // Get current page path
   const arcadeButton = document.getElementById("arcade-button");
-  const freePlayButton = document.getElementById("free-play-button");
+  const beginnerArcadeButton = document.getElementById("beginner-arcade-button");
 
-  if (currentPage.includes("freeplay-leaderboard.html")) {
-    freePlayButton.classList.add("active");
+  if (currentPage.includes("beginner-arcade-leaderboard.html")) {
+    beginnerArcadeButton.classList.add("active");
   } else if (currentPage.includes("arcade-leaderboard.html")) {
     arcadeButton.classList.add("active");
   }

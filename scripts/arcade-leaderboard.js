@@ -2,8 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM loaded");
 
   
-  const apiKey = "669d4e46dd601fb66cc41805";
-  const specificDB= '2784'
+  const apiKey = "66a11886a412941752383803";
+  const specificDB= 'ea23'
   const databaseUrl = "https://pookiebears-" + specificDB + ".restdb.io/rest/";
 
   // const url = "https://pookiebears-04f9.restdb.io/rest/arcadeleaderboard";
@@ -14,12 +14,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const apikey = apiKey;
   const currentPage = window.location.pathname; // Get current page path
   const arcadeButton = document.getElementById("arcade-button");
-  const freePlayButton = document.getElementById("free-play-button");
+  const beginnerArcadeButton = document.getElementById("beginner-arcade-button");
 
   if (currentPage.includes("arcade-leaderboard.html")) {
     arcadeButton.classList.add("active");
-  } else if (currentPage.includes("free-play-leaderboard.html")) {
-    freePlayButton.classList.add("active");
+  } else if (currentPage.includes("beginner-arcade-leaderboard.html")) {
+    beginnerArcadeButton.classList.add("active");
   }
 
   getData();

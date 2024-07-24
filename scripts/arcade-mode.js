@@ -345,7 +345,7 @@ async function endTurn() {
     // updateProfitAndUpkeep();
     updatePoints();
 
-    turnNumber += 1;firstBuildingPlaced
+    turnNumber += 1;
 
     updateTurnCounter();
     // Check if all squares are used
@@ -360,43 +360,20 @@ async function endTurn() {
         const userScore = points;
         const leaderboardScores = await getLeaderboardScores();
 
+        if (leaderboardScores.length < 10) {
+          await saveScoreToLeaderboard(localStorage.getItem("username"), points);
+          alert("Congratulations! You have made it to the leaderboard!");
+          window.location.href = './menu.html';
+        }
+
         console.log(leaderboardScores[9]);
-        
         console.log(leaderboardScores.length);
         console.log(userScore);
 
-        if (leaderboardScores.length >= 10 && userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
-            // Show the username modal
-            const usernameModal = document.getElementById('username-modal');
-            usernameModal.style.display = 'block'; // Make sure to display the modal
-
-            let usernameEntered = false;
-
-            while (!usernameEntered) {
-                const usernameModal = document.getElementById('username-modal');
-                usernameModal.style.display = 'block'; // Make sure to display the modal
-    
-                // Wait for username submission
-                await new Promise((resolve) => {
-                    const submitUsernameButton = document.getElementById('submit-username-button');
-                    submitUsernameButton.addEventListener('click', () => {
-                        const username = document.getElementById('username-input').value;
-                        if (username) {
-                            // Store the username or display it in the UI if needed
-                            console.log("Username:", username);
-                            usernameModal.style.display = 'none'; // Hide the modal
-                            resolve(); // Resolve the promise to continue
-                            usernameEntered = true; // Set flag to true to exit the loop
-                        } else {
-                            alert("Please enter a username");
-                        }
-                    });
-                });
-            }
-        } else {
-            // If the user's score is not greater than the 10th place, dont ask for username
-            document.getElementById('username-modal').style.display = 'none';
-        }
+        if (userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
+          await saveScoreToLeaderboard(localStorage.getItem("username"), points);
+          alert("Congratulations! You have made it to the leaderboard!");
+        } 
         alert(`All squares are used. Game Over! Your final score is: ${points}!`);
         window.location.href = './menu.html';
     }
@@ -406,52 +383,27 @@ async function endTurn() {
         const userScore = points;
         const leaderboardScores = await getLeaderboardScores();
 
+        if (leaderboardScores.length < 10) {
+          await saveScoreToLeaderboard(localStorage.getItem("username"), points);
+          alert("Congratulations! You have made it to the leaderboard!");
+          window.location.href = './menu.html';
+        }
+
         console.log(leaderboardScores[9]);
-        
         console.log(leaderboardScores.length);
         console.log(userScore);
 
-
-        if (leaderboardScores.length >= 10 && userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
-            // Show the username modal
-            const usernameModal = document.getElementById('username-modal');
-            usernameModal.style.display = 'block'; // Make sure to display the modal
-
-            let usernameEntered = false;
-
-            while (!usernameEntered) {
-                const usernameModal = document.getElementById('username-modal');
-                usernameModal.style.display = 'block'; // Make sure to display the modal
-    
-                // Wait for username submission
-                await new Promise((resolve) => {
-                    const submitUsernameButton = document.getElementById('submit-username-button');
-                    submitUsernameButton.addEventListener('click', () => {
-                        const username = document.getElementById('username-input').value;
-                        if (username) {
-                            // Store the username or display it in the UI if needed
-                            console.log("Username:", username);
-                            usernameModal.style.display = 'none'; // Hide the modal
-                            resolve(); // Resolve the promise to continue
-                            usernameEntered = true; // Set flag to true to exit the loop
-                        } else {
-                            alert("Please enter a username");
-                        }
-                    });
-                });
-            }
-
-        } else {
-            // If the user's score is not greater than the 10th place, dont ask for username
-            document.getElementById('username-modal').style.display = 'none';
-        }
+        if (userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
+          await saveScoreToLeaderboard(localStorage.getItem("username"), points);
+          alert("Congratulations! You have made it to the leaderboard!");
+        } 
         alert(`You ran out of coins. Game Over! Your final score is: ${points}!`);
         window.location.href = './menu.html';
     }
 }
 
-const apiKey = "669d4e46dd601fb66cc41805";
-const specificDB= '2784'
+const apiKey = "66a11886a412941752383803";
+const specificDB= 'ea23'
 const databaseUrl = "https://pookiebears-" + specificDB + ".restdb.io/rest/";
 
 async function saveScoreToLeaderboard(username, score) {

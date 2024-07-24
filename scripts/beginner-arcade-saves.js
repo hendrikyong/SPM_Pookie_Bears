@@ -1,11 +1,11 @@
 $(document).ready(function() {
-    // Clear local storage for save slots
+    // Clear local storage for save slots when entering the page
     localStorage.removeItem('saveSlots');
-
+    localStorage.removeItem('currentSaveSlot');
 
     const apiKey = "66a11886a412941752383803";
-    const specificDB= 'ea23'
-    const databaseUrl = "https://pookiebears-" + specificDB + ".restdb.io/rest/freeplay-saves";
+    const specificDB = 'ea23';
+    const databaseUrl = `https://pookiebears-${specificDB}.restdb.io/rest/beginner-arcademode-saves`;
 
     // Get the username from local storage
     const username = localStorage.getItem("username");
@@ -94,12 +94,7 @@ $(document).ready(function() {
 
                         // Clear the deleted slot data from local storage
                         localStorage.removeItem(`currentSaveSlot${i}`);
-                        window.location.reload();
-
-
-                        // Update the button to reflect an empty slot
-                        button.find(".slot-details").html(`<div><strong>Save Slot ${i}</strong></div>`);
-                        deleteButton.remove(); // Remove the delete button
+                        window.location.reload(); // Refresh the page to reflect changes
                     }).fail(function(jqXHR) {
                         alert("An error occurred while deleting the save slot.");
                         console.log(jqXHR);
@@ -110,28 +105,15 @@ $(document).ready(function() {
                 button.find(".slot-details").html(`<div><strong>Save Slot ${i}</strong></div>`);
             }
 
-            // Add click event to navigate to freeplay-mode and store gamestate
+            // Add click event to navigate to arcade-mode and store gamestate
             button.on("click", function() {
                 let saveSlotData = slot ? slot : {
                     saveSlot: i,
-                    gamestate: {
-                        gridSize: 5,
-                        gridState: Array(25).fill(null),
-                        selectedBuilding: null,
-                        points: 0,
-                        turnNumber: 1,
-                        demolishMode: false,
-                        buildingPlacedThisTurn: false,
-                        expandedThisTurn: false,
-                        income: 0,
-                        totalProfit: 0,
-                        totalUpkeep: 0
-                    }
                 };
 
                 // Store the save slot's gamestate in local storage
                 localStorage.setItem("currentSaveSlot", JSON.stringify(saveSlotData));
-                window.location.href = "./freeplay-mode.html";
+                window.location.href = "./beginner-arcade-mode.html";
             });
 
             slotsContainer.append(button);

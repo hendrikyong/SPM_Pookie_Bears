@@ -45,6 +45,8 @@
         const arcadeButton = document.getElementById('arcade-button');
         const freeplayButton = document.getElementById('freeplay-button');
         const backButton = document.getElementById('back-button');
+        const beginnerArcadeButton = document.getElementById('beginner-arcade-button');
+
 
         arcadeButton.addEventListener('click', () => {
             window.location.href = './arcade-saves.html';
@@ -54,6 +56,10 @@
             window.location.href = './freeplay-saves.html';
         });
 
+        beginnerArcadeButton.addEventListener('click', () => {
+            window.location.href = './beginner-arcade-saves.html';
+        });
+        
         backButton.addEventListener('click', () => {
             window.location.href = './start.html';
         });

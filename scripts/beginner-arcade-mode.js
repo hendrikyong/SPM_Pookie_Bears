@@ -1,5 +1,3 @@
-const apikey = "668e26d5a7d61d10485c21a2";
-
 let navTrigger = document.getElementsByClassName("nav-trigger")[0];
 body = document.getElementsByTagName("body")[0];
 
@@ -15,8 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let zoomLevel = 1;
 
   // Set the CSS grid template rows and columns dynamically
-  grid.style.gridTemplateColumns = `repeat(${gridSize}, 40px)`; // 40px is the fixed width of each square
-  grid.style.gridTemplateRows = `repeat(${gridSize}, 40px)`; // 40px is the fixed height of each square
+  grid.style.gridTemplateColumns = `repeat(${gridSize}, 150px)`; // 40px is the fixed width of each square
+  grid.style.gridTemplateRows = `repeat(${gridSize}, 150px)`; // 40px is the fixed height of each square
 
   // Create the grid squares
   for (let m = 0; m < gridSize; m++) {
@@ -60,35 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //grid.style.transformOrigin = '0 0';
   });
 
-  // Show start-load modal, hide username modal first
-  const startLoadModal = document.getElementById("start-load-modal");
-  const usernameModal = document.getElementById('username-modal');
-  const startGameButton = document.getElementById('start-game-button');
-
-  usernameModal.style.display = 'none'; // Hide the modal
-
-  const submitUsernameButton = document.getElementById('submit-username-button');
-
-  startGameButton.addEventListener('click', () => {
-      startLoadModal.style.display = 'none'; // Hide the modal
-  });
-
-  submitUsernameButton.addEventListener('click', () => {
-    const username = document.getElementById('username-input').value;
-    if (username) {
-        // Store the username or display it in the UI if needed
-        console.log("Username:", username);
-        localStorage.setItem('username', username);
-        if (savingScoreToLeaderboard) {
-          saveScoreToLeaderboard(username,points); // Save the score to the leaderboard database
-        }
-        usernameModal.style.display = 'none'; // Hide the modal
-    } else {
-        alert("Please enter a username");
-    }
-});
-
-  document.getElementById('load-game-button').addEventListener('click', fetchGameStateFromDB);
+  fetchGameStateFromDB();
 });
 
 // Changing layout between construction and finances
@@ -375,7 +345,7 @@ async function endTurn() {
     // updateProfitAndUpkeep();
     updatePoints();
 
-    turnNumber += 1;firstBuildingPlaced
+    turnNumber += 1;
 
     updateTurnCounter();
     // Check if all squares are used
@@ -390,43 +360,20 @@ async function endTurn() {
         const userScore = points;
         const leaderboardScores = await getLeaderboardScores();
 
+        if (leaderboardScores.length < 10) {
+          await saveScoreToLeaderboard(localStorage.getItem("username"), points);
+          alert("Congratulations! You have made it to the leaderboard!");
+          window.location.href = './menu.html';
+        }
+
         console.log(leaderboardScores[9]);
-        
         console.log(leaderboardScores.length);
         console.log(userScore);
 
-        if (leaderboardScores.length >= 10 && userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
-            // Show the username modal
-            const usernameModal = document.getElementById('username-modal');
-            usernameModal.style.display = 'block'; // Make sure to display the modal
-
-            let usernameEntered = false;
-
-            while (!usernameEntered) {
-                const usernameModal = document.getElementById('username-modal');
-                usernameModal.style.display = 'block'; // Make sure to display the modal
-    
-                // Wait for username submission
-                await new Promise((resolve) => {
-                    const submitUsernameButton = document.getElementById('submit-username-button');
-                    submitUsernameButton.addEventListener('click', () => {
-                        const username = document.getElementById('username-input').value;
-                        if (username) {
-                            // Store the username or display it in the UI if needed
-                            console.log("Username:", username);
-                            usernameModal.style.display = 'none'; // Hide the modal
-                            resolve(); // Resolve the promise to continue
-                            usernameEntered = true; // Set flag to true to exit the loop
-                        } else {
-                            alert("Please enter a username");
-                        }
-                    });
-                });
-            }
-        } else {
-            // If the user's score is not greater than the 10th place, dont ask for username
-            document.getElementById('username-modal').style.display = 'none';
-        }
+        if (userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
+          await saveScoreToLeaderboard(localStorage.getItem("username"), points);
+          alert("Congratulations! You have made it to the leaderboard!");
+        } 
         alert(`All squares are used. Game Over! Your final score is: ${points}!`);
         window.location.href = './menu.html';
     }
@@ -436,52 +383,33 @@ async function endTurn() {
         const userScore = points;
         const leaderboardScores = await getLeaderboardScores();
 
-        console.log(leaderboardScores[9]);
-        
+        if (leaderboardScores.length < 10) {
+          await saveScoreToLeaderboard(localStorage.getItem("username"), points);
+          alert("Congratulations! You have made it to the leaderboard!");
+          window.location.href = './menu.html';
+        }
+
+        console.log(leaderboardScores[9]);  
         console.log(leaderboardScores.length);
         console.log(userScore);
 
+        if (userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
+          await saveScoreToLeaderboard(localStorage.getItem("username"), points);
+          alert("Congratulations! You have made it to the leaderboard!");
+          window.location.href = './menu.html';
+        } 
 
-        if (leaderboardScores.length >= 10 && userScore > leaderboardScores[9]) { // Assuming the scores are 0-indexed
-            // Show the username modal
-            const usernameModal = document.getElementById('username-modal');
-            usernameModal.style.display = 'block'; // Make sure to display the modal
-
-            let usernameEntered = false;
-
-            while (!usernameEntered) {
-                const usernameModal = document.getElementById('username-modal');
-                usernameModal.style.display = 'block'; // Make sure to display the modal
-    
-                // Wait for username submission
-                await new Promise((resolve) => {
-                    const submitUsernameButton = document.getElementById('submit-username-button');
-                    submitUsernameButton.addEventListener('click', () => {
-                        const username = document.getElementById('username-input').value;
-                        if (username) {
-                            // Store the username or display it in the UI if needed
-                            console.log("Username:", username);
-                            usernameModal.style.display = 'none'; // Hide the modal
-                            resolve(); // Resolve the promise to continue
-                            usernameEntered = true; // Set flag to true to exit the loop
-                        } else {
-                            alert("Please enter a username");
-                        }
-                    });
-                });
-            }
-
-        } else {
-            // If the user's score is not greater than the 10th place, dont ask for username
-            document.getElementById('username-modal').style.display = 'none';
-        }
         alert(`You ran out of coins. Game Over! Your final score is: ${points}!`);
         window.location.href = './menu.html';
     }
 }
 
+const apiKey = "66a11886a412941752383803";
+const specificDB= 'ea23'
+const databaseUrl = "https://pookiebears-" + specificDB + ".restdb.io/rest/";
+
 async function saveScoreToLeaderboard(username, score) {
-  const url = "https://pookiebears-8bfa.restdb.io/rest/beginner-arcadeleaderboard";
+  const url = databaseUrl + "beginner-arcadeleaderboard";
 
   const data = {
     name: username,
@@ -492,7 +420,7 @@ async function saveScoreToLeaderboard(username, score) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-apikey": apikey,
+      "x-apikey": apiKey,
       "cache-control": "no-cache",
     },
     body: JSON.stringify(data),
@@ -515,12 +443,12 @@ async function saveScoreToLeaderboard(username, score) {
 }
 
 async function getLeaderboardScores() {
-  const url = "https://pookiebears-8bfa.restdb.io/rest/beginner-arcadeleaderboard";
+  const url = databaseUrl + "beginner-arcadeleaderboard";
   let settings = {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "x-apikey": apikey,
+      "x-apikey": apiKey,
       "cache-control": "no-cache",
     },
   };
@@ -555,70 +483,46 @@ async function getLeaderboardScores() {
       return []; // Return an empty array in case of error
     });
 }
-
 function fetchGameStateFromDB() {
-  const username = localStorage.getItem('username');
+  // Retrieve currentSaveSlot from local storage
+  const currentSaveSlot = JSON.parse(localStorage.getItem('currentSaveSlot'));
 
-  if (!username) {
-      alert("You have not saved any game data.");
+  if (!currentSaveSlot) {
+      alert("No save slot selected.");
+      window.location.href = "./beginner-arcade-saves.html"; // Redirect to the save slots page if no slot is selected
       return;
   }
 
-  $.ajax({
-      "async": true,
-      "crossDomain": true,
-      "url": `https://pookiebears-8bfa.restdb.io/rest/beginner-arcademode-saves?q={%22username%22:%22${username}%22}`,
-      "method": "GET",
-      "headers": {
-          "content-type": "application/json",
-          "x-apikey": apikey,
-          "cache-control": "no-cache"
-      },
-      success: function(response) {
-          if (response.length === 0) {
-              alert("No save data found for this username.");
-              return;
-          }
-      
-          // The response[0].gamestate might already be a JavaScript object
-          let gameState;
-          try {
-              gameState = typeof response[0].gamestate === "string" ? JSON.parse(response[0].gamestate) : response[0].gamestate;
-          } catch (error) {
-              console.error("Error parsing game state:", error);
-              alert("Failed to parse game state. Please try again.");
-              return; 
-          }
-      
-          // Update game variables from loaded state
-          gridSize = gameState.rowSize,
-          gridMap = gameState.gridMap,
-          selectedBuildings = gameState.selectedBuildings,
-          points =  gameState.points,
-          coins = gameState.coins,
-          turnNumber = gameState.turnNumber,
-          demolishMode = gameState.demolishMode,
+  // Extract the game state from the save slot data
+  const gameState = currentSaveSlot.gamestate;
 
-          // Update the grid with the loaded state
-          updateGrid();
-          updateScoreboard();
-          
-          document.getElementById('turn').textContent = turnNumber;
-          document.getElementById('score').textContent = points;
-          document.getElementById('coins').textContent = coins;
+  if (!gameState) {
+      return;
+  }
 
-          updateTurnCounter();
-          updateSelectedBuildingsUI();
+  // Update game variables from the loaded state
+  gridSize = gameState.gridSize; // Adjust according to your game state structure
+  gridMap = gameState.gridMap; // Use gridMap or gridState based on your structure
+  selectedBuildings = gameState.selectedBuildings;
+  points = gameState.points;
+  coins = gameState.coins;
+  turnNumber = gameState.turnNumber;
+  demolishMode = gameState.demolishMode;
 
-          document.getElementById('start-load-modal').style.display = 'none';
-      },
-      
-      error: function(jqXHR, textStatus, errorThrown) {
-          console.error("Error fetching game state:", textStatus, errorThrown);
-          alert("Failed to load game. Please try again.");
-      }
-  });
+  // Update the grid with the loaded state
+  updateGrid();
+  updateScoreboard();
+  
+  // Update the UI with the loaded values
+  document.getElementById('turn').textContent = turnNumber;
+  document.getElementById('score').textContent = points;
+  document.getElementById('coins').textContent = coins;
+
+  updateTurnCounter();
+  updateSelectedBuildingsUI();
+
 }
+
 
 function updateGrid() {
   const grid = document.getElementById('grid');
@@ -784,33 +688,14 @@ function addCoin() {
     coins += 1;
 }
 
+
+
 async function saveGame() {
 
-  let usernameEntered = false;
 
   savingScoreToLeaderboard = false;
 
-  while (!usernameEntered) {
-      const usernameModal = document.getElementById('username-modal');
-      usernameModal.style.display = 'block'; // Make sure to display the modal
-
-      // Wait for username submission
-      await new Promise((resolve) => {
-          const submitUsernameButton = document.getElementById('submit-username-button');
-          submitUsernameButton.addEventListener('click', () => {
-              const username = document.getElementById('username-input').value;
-              if (username) {
-                  // Store the username or display it in the UI if needed
-                  console.log("Username:", username);
-                  usernameModal.style.display = 'none'; // Hide the modal
-                  resolve(); // Resolve the promise to continue
-                  usernameEntered = true; // Set flag to true to exit the loop
-              } else {
-                  alert("Please enter a username");
-              }
-          });
-      });
-  }
+  
 
   const grid = document.getElementById('grid');
 
@@ -845,35 +730,54 @@ async function saveGame() {
     // Format the date and time in ISO 8601 format
     let singaporeISOString = singaporeTime.toISOString().replace('Z', '+08:00');
 
-    const username = document.getElementById('username-input').value;
+    const username = localStorage.getItem("username");
+    const currentSaveSlot = JSON.parse(localStorage.getItem("currentSaveSlot"));
+
+    if (!username) {
+        alert("User not logged in.");
+        return;
+    }
+
+    if (!currentSaveSlot) {
+        alert("No save slot selected.");
+        return;
+    }
 
     const savegameData = {
         username: username,
+        saveSlot: currentSaveSlot.saveSlot,
         datetimeCreated: singaporeISOString,
         gamestate: jsonGameState
     };
 
-    const postSaveData = {
-        "async": true,
-        "crossDomain": true,
-        "url": "https://pookiebears-8bfa.restdb.io/rest/beginner-arcademode-saves",
-        "method": "POST",
-        "headers": {
-            "content-type": "application/json",
-            "x-apikey": apikey,
-            "cache-control": "no-cache"
-        },
-        "processData": false,
-        "data": JSON.stringify(savegameData)
-    };
-
-    $.ajax(postSaveData).done(function(response) {
-        console.log(response);
-        alert("Game saved successfully!");
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-        console.error("Error saving game:", textStatus, errorThrown);
-        alert("Failed to save game. Please try again.");
-    });
+        // Check if the save slot already exists
+        const saveSlots = JSON.parse(localStorage.getItem("saveSlots")) || [];
+        const existingSlot = saveSlots.find(slot => slot.saveSlot === currentSaveSlot.saveSlot);
+    
+        const method = existingSlot ? "PUT" : "POST";
+        const url = existingSlot 
+            ? `${databaseUrl}beginner-arcademode-saves/${existingSlot._id}` 
+            : databaseUrl + 'beginner-arcademode-saves';
+    
+        $.ajax({
+            async: true,
+            crossDomain: true,
+            url: url,
+            method: method,
+            headers: {
+                "content-type": "application/json",
+                "x-apikey": apiKey,
+                "cache-control": "no-cache"
+            },
+            data: JSON.stringify(savegameData),
+            processData: false
+        }).done(function(response) {
+            console.log(response);
+            alert("Game saved successfully!");
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error("Error saving game:", textStatus, errorThrown);
+            alert("Failed to save game. Please try again.");
+        });
 }
 
 function exitGame() {

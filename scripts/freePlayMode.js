@@ -856,8 +856,8 @@ function getAdjacents(grid, row, col) {
 }
 
 
-const apiKey = "669d4e46dd601fb66cc41805";
-const specificDB= '2784'
+const apiKey = "66a11886a412941752383803";
+const specificDB= 'ea23'
 const databaseUrl = "https://pookiebears-" + specificDB + ".restdb.io/rest/freeplay-saves";
 
 function saveGame() {

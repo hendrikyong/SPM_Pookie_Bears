@@ -3,8 +3,8 @@ $(document).ready(function() {
     localStorage.removeItem('saveSlots');
     localStorage.removeItem('currentSaveSlot');
 
-    const apiKey = "669d46f20af00e6d8c123186";
-    const specificDB = '42c4';
+    const apiKey = "66a11886a412941752383803";
+    const specificDB = 'ea23';
     const databaseUrl = `https://pookiebears-${specificDB}.restdb.io/rest/arcademode-saves`;
 
     // Get the username from local storage
