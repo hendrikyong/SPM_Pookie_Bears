@@ -1,41 +1,114 @@
-# SPM_Pookie_Bears
+# SPM Pookie Bears: Arcade City-Building Game
 
-This branch is the refactor of freeplay mode
+## Overview
 
-Things to-do:
+**SPM Pookie Bears** is an exciting arcade-based city-building game with three game modes:
+1. **Arcade Beginner Mode**
+2. **Normal Arcade Mode**
+3. **Free Play Mode**
 
-1.  Make grid ----done
+The game challenges players to build and manage a city strategically to maximize happiness and prosperity. Developed as part of the Software Project Management (SPM) module, the project applies Scrum methodologies for planning and execution.
 
-2.  basic css ----done
+## Game Modes and Features
 
-3.  building placement ----done
+### Game Modes
+1. **Arcade Beginner Mode**:
+   - Start with limited coins and grid size.
+   - Randomly selected buildings each turn.
+   - Score as many points as possible through strategic building placement.
 
-4.  grid expansion ---- done
+2. **Normal Arcade Mode**:
+   - A more challenging version of the Beginner mode with added complexities.
 
-5.  road adjacency calculation
+3. **Free Play Mode**:
+   - Unlimited coins and a grid that expands dynamically.
+   - Freedom to construct any building without restrictions.
 
-6.  scoring calculation ---- done methinks pls check for me im dead ty
+### Key Features
+- **City-Building Gameplay**:
+  - Construct and demolish buildings.
+  - Earn points based on adjacency and placement of buildings.
+  - Expand your city dynamically in Free Play mode.
+  
+- **Resource Management**:
+  - Coins are earned and spent based on building upkeep and generation.
 
-        	-- residential to residential --done
+- **Save and Load Games**:
+  - Save the current game state to resume later.
 
-        	-- residential to industrial --done
+- **High Score System**:
+  - Records the top 10 scores for both Arcade and Free Play modes.
 
-        	-- residential to park --done
+- **End Conditions**:
+  - **Arcade Mode**: Ends when coins run out or the grid is full.
+  - **Free Play Mode**: Ends if the city incurs losses for 20 consecutive turns.
 
-        	-- residential to commercial --done
+## How to Run the Game
 
+1. **Open the Project in VS Code**:
+   - Clone the repository:
+     ```bash
+     git clone https://github.com/hendrikyong/SPM_Pookie_Bears.git
+     cd SPM_Pookie_Bears
+     ```
+   - Open the project folder in [Visual Studio Code](https://code.visualstudio.com/).
 
+2. **Start a Local Server**:
+   - Install the "Live Server" extension in VS Code.
+   - Right-click on the `index.html` file and select **"Open with Live Server"**.
+   - The game will run at `http://localhost:3000`.
 
-        	-- industry score 1 point -- done
+3. **Play the Game**:
+   - Use the main menu to select a game mode:
+     - **Start New Arcade Game**
+     - **Start New Free Play Game**
+     - **Load Saved Game**
+     - **Display High Scores**
 
-        	-- commercial to commercial -- done
+## Scoring and Rules
 
-        	-- 1 point park to park -- done
+### Buildings and Scoring
+- **Residential (R)**:
+  - +1 point per adjacent Residential or Commercial.
+  - +2 points per adjacent Park.
+  - -1 point if adjacent to an Industry.
 
-        	-- 1 point road to road in a row -- done i love you
+- **Industry (I)**:
+  - +1 point per Industry in the city.
+  - Generates +1 coin per adjacent Residential.
 
-7.  end game
+- **Commercial (C)**:
+  - +1 point per adjacent Commercial.
+  - Generates +1 coin per adjacent Residential.
 
-8.  save game
+- **Park (O)**:
+  - +1 point per adjacent Park.
 
-9.  high fidelity interface
+- **Road (*)**:
+  - +1 point per connected Road in the same row.
+
+### Resource Management
+- Residential, Industry, Commercial, Parks, and Roads have unique upkeep and profit mechanics. Proper planning is essential to avoid deficits.
+
+## Development Methodology
+
+This project was developed using the Scrum Framework:
+- **Sprints**:
+  - 2-week iterations to ensure consistent progress.
+- **User Stories**:
+  - Captured and tracked in Jira using the provided templates.
+- **Team Collaboration**:
+  - Peer evaluations, retrospectives, and sprint reviews to enhance team effectiveness.
+
+## Technologies Used
+
+- **Frontend**: HTML, CSS, JavaScript
+- **Backend**: None (runs on the browser with local hosting)
+- **Version Control**: Git
+- **Project Management**: Jira
+
+## Acknowledgements
+
+Special thanks to:
+- Mr Terence for his guidance as a stakeholder/teacher.
+- Fellow teammates for their collaboration on this exciting project.
