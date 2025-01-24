@@ -55,7 +55,7 @@ The game challenges players to build and manage a city strategically to maximize
 
 2. **Start a Local Server**:
    - Install the "Live Server" extension in VS Code.
-   - Right-click on the `index.html` file and select **"Open with Live Server"**.
+   - Right-click on the `menu.html` file and select **"Open with Live Server"**.
    - The game will run at `http://localhost:3000`.
 
 3. **Play the Game**:
